@@ -4,13 +4,16 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:OnlabNews.Views"
+	xmlns:vm="using:OnlabNews.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-	prism:ViewModelLocator.AutoWireViewModel="True" >
+	prism:ViewModelLocator.AutoWireViewModel="True">
 
 	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-		
+		<TextBlock Width="300" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,100" Text="{Binding ArticleLink}"/>
+		<Button Command="{Binding OnClickCommand}" Content="Button" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,200"/>
+		<Button Command="{Binding ArticleClickCommand}" Content="Button" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,250"/>
 	</Grid>
 
 </prism:SessionStateAwarePage>
