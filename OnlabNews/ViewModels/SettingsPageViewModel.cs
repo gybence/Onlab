@@ -22,55 +22,55 @@ namespace OnlabNews.ViewModels
 
 		public SettingsPageViewModel() //manual reading from file example
 		{
-			XmlReaderSettings settings = new XmlReaderSettings
-			{
-				IgnoreWhitespace = true,
-				IgnoreComments = true
-			};
-			XmlReader reader = XmlReader.Create("file.xml", settings);
-			var feedReader = new RssFeedReader(reader);
-			OtherOnClick = new DelegateCommand(async () =>
-			{
-				Bsd = "default text";
+		//	XmlReaderSettings settings = new XmlReaderSettings
+		//	{
+		//		IgnoreWhitespace = true,
+		//		IgnoreComments = true
+		//	};
+		//	XmlReader reader = XmlReader.Create("file.xml", settings);
+		//	var feedReader = new RssFeedReader(reader);
+		//	OtherOnClick = new DelegateCommand(async () =>
+		//	{
+		//		Bsd = "default text";
 			
-				while (await feedReader.Read())
-				{
-					switch (feedReader.ElementType)
-					{
-						// Read category
-						case SyndicationElementType.Category:
-							ISyndicationCategory category = await feedReader.ReadCategory();
-							break;
+		//		while (await feedReader.Read())
+		//		{
+		//			switch (feedReader.ElementType)
+		//			{
+		//				// Read category
+		//				case SyndicationElementType.Category:
+		//					ISyndicationCategory category = await feedReader.ReadCategory();
+		//					break;
 
-						// Read Image
-						case SyndicationElementType.Image:
-							ISyndicationImage image = await feedReader.ReadImage();
-							Bsd = image.Url.OriginalString;
-							break;
+		//				// Read Image
+		//				case SyndicationElementType.Image:
+		//					ISyndicationImage image = await feedReader.ReadImage();
+		//					Bsd = image.Url.OriginalString;
+		//					break;
 
-						// Read Item
-						case SyndicationElementType.Item:
-							ISyndicationItem item = await feedReader.ReadItem();
-							break;
+		//				// Read Item
+		//				case SyndicationElementType.Item:
+		//					ISyndicationItem item = await feedReader.ReadItem();
+		//					break;
 
-						// Read link
-						case SyndicationElementType.Link:
-							ISyndicationLink link = await feedReader.ReadLink();
-							//Bsd = link.Uri.OriginalString;
-							break;
+		//				// Read link
+		//				case SyndicationElementType.Link:
+		//					ISyndicationLink link = await feedReader.ReadLink();
+		//					//Bsd = link.Uri.OriginalString;
+		//					break;
 
-						// Read Person
-						case SyndicationElementType.Person:
-							ISyndicationPerson person = await feedReader.ReadPerson();
-							break;
+		//				// Read Person
+		//				case SyndicationElementType.Person:
+		//					ISyndicationPerson person = await feedReader.ReadPerson();
+		//					break;
 
-						// Read content
-						default:
-							ISyndicationContent content = await feedReader.ReadContent();
-							break;
-					}
-				}
-			});
+		//				// Read content
+		//				default:
+		//					ISyndicationContent content = await feedReader.ReadContent();
+		//					break;
+		//			}
+		//		}
+		//	});
 		}
 
 		public override void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)
