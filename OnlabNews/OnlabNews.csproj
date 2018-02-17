@@ -101,6 +101,8 @@
     <Compile Include="AppShell.xaml.cs">
       <DependentUpon>AppShell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\NavConverter.cs" />
+    <Compile Include="Extensions\MenuItems.cs" />
     <Compile Include="Extensions\NavProperties.cs" />
     <Compile Include="Extensions\NavViewEx.cs" />
     <Compile Include="ViewModels\ArticleItem.cs" />

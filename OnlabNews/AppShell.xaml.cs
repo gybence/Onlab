@@ -1,18 +1,9 @@
-﻿using OnlabNews.Views;
-using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using OnlabNews.Extensions;
+using OnlabNews.Views;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -23,19 +14,33 @@ namespace OnlabNews
 	/// </summary>
 	public sealed partial class AppShell : Page
 	{
+
+		ObservableCollection<object> _menuItems;
+		public ObservableCollection<object> MenuItems { get => _menuItems; set => _menuItems = value; }
+
 		public AppShell()
 		{
-			
+			MenuItems = new ObservableCollection<object>
+			{
+				new NavItemEx { Text = "Home", Symbol="Home", Tag="home", PageType = typeof(MainPage)},	
+				new NavItemSeparatorEx(),
+				new NavItemHeaderEx {Text="Main pages"},
+				new NavItemEx { Text = "Feed page", Symbol="List",Tag="feed", PageType = typeof(FeedPage) },
+				new NavItemEx { Text = "Article page", Symbol="Document",  Tag="article", PageType = typeof(ArticlePage)},
+				new NavItemEx { Text = "Dummy page", Symbol="Emoji", Tag="dummy", PageType = typeof(SettingsPage)},
+				//new NavItemSeparatorEx(),
+				//new NavItemEx { Text = "My content", Symbol="Folder", Tag="content", PageType = typeof(MainPage)},
+			};
 			this.InitializeComponent();
 			
 		}
 		private void NavView_Loaded(object sender, RoutedEventArgs e)
 		{
-
+			
 			// you can also add items in code behind
-			NavView.MenuItems.Add(new NavigationViewItemSeparator());
-			NavView.MenuItems.Add(new NavigationViewItem()
-			{ Content = "My content", Icon = new SymbolIcon(Symbol.Folder), Tag = "content" });
+			//NavView.MenuItems.Add(new NavigationViewItemSeparator());
+			//NavView.MenuItems.Add(new NavigationViewItem()
+			//{ Content = "My content", Icon = new SymbolIcon(Symbol.Folder), Tag = "content" });
 
 			// set the initial SelectedItem 
 			foreach (NavigationViewItemBase item in NavView.MenuItems)
@@ -85,21 +90,21 @@ namespace OnlabNews
 					ContentFrame.Navigate(typeof(MainPage));
 					break;
 
-				case "apps":
+				case "feed":
 					ContentFrame.Navigate(typeof(FeedPage));
 					break;
 
-				case "games":
+				case "article":
 					ContentFrame.Navigate(typeof(ArticlePage));
 					break;
 
-				case "music":
+				case "dummy":
 					ContentFrame.Navigate(typeof(SettingsPage));
 					break;
 
-				case "content":
-					ContentFrame.Navigate(typeof(SettingsPage));
-					break;
+				//case "content":
+				//	ContentFrame.Navigate(typeof(SettingsPage));
+				//	break;
 			}
 		}
 

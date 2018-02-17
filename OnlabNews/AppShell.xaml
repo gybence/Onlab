@@ -5,29 +5,23 @@
     xmlns:local="using:OnlabNews"
 	xmlns:views="using:OnlabNews.Views"
 	xmlns:ext="using:OnlabNews.Extensions"
+	xmlns:conv="using:OnlabNews.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+	<Page.Resources>
+		<conv:NavConverter x:Key="NavConverter"/>
+	</Page.Resources>
+	
 	<ext:NavViewEx x:Name="NavView"
                     ItemInvoked="NavView_ItemInvoked"
                     SelectionChanged="NavView_SelectionChanged"
                     Loaded="NavView_Loaded"
-                    Canvas.ZIndex="0">
-
-		<NavigationView.MenuItems>
-			<NavigationViewItem x:Uid="HomeNavItem" Content="Home" Tag="home" ext:NavProperties.PageType="views:MainPage">
-				<NavigationViewItem.Icon>
-					<FontIcon Glyph="&#xE10F;"/>
-				</NavigationViewItem.Icon>
-			</NavigationViewItem>
-			<NavigationViewItemSeparator/>
-			<NavigationViewItemHeader Content="Main pages"/>
-			<NavigationViewItem x:Uid="AppsNavItem" Icon="AllApps" Content="Apps" Tag="apps" ext:NavProperties.PageType="views:FeedPage"/>
-			<NavigationViewItem x:Uid="GamesNavItem" Icon="Video" Content="Games" Tag="games" ext:NavProperties.PageType="views:ArticlePage"/>
-			<NavigationViewItem x:Uid="MusicNavItem" Icon="Audio" Content="Music" Tag="music" ext:NavProperties.PageType="views:SettingsPage"/>
-		</NavigationView.MenuItems>
-
+                    Canvas.ZIndex="0"
+				    MenuItemsSource="{x:Bind MenuItems, Converter={StaticResource NavConverter}}"
+				   >
+		
 		<NavigationView.AutoSuggestBox>
 			<AutoSuggestBox x:Name="ASB" QueryIcon="Find"/>
 		</NavigationView.AutoSuggestBox>
@@ -73,3 +67,17 @@
 	</ext:NavViewEx>
 
 </Page>
+
+
+<!--<NavigationView.MenuItems>
+			<NavigationViewItem x:Uid="HomeNavItem" Content="Home" Tag="home" ext:NavProperties.PageType="views:MainPage">
+				<NavigationViewItem.Icon>
+					<FontIcon Glyph="&#xE10F;"/>
+				</NavigationViewItem.Icon>
+			</NavigationViewItem>
+			<NavigationViewItemSeparator/>
+			<NavigationViewItemHeader Content="Main pages"/>
+			<NavigationViewItem x:Uid="AppsNavItem" Icon="AllApps" Content="Apps" Tag="apps" ext:NavProperties.PageType="views:FeedPage"/>
+			<NavigationViewItem x:Uid="GamesNavItem" Icon="Video" Content="Games" Tag="games" ext:NavProperties.PageType="views:ArticlePage"/>
+			<NavigationViewItem x:Uid="MusicNavItem" Icon="Audio" Content="Music" Tag="music" ext:NavProperties.PageType="views:SettingsPage"/>
+		</NavigationView.MenuItems>-->
