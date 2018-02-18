@@ -42,12 +42,13 @@ namespace OnlabNews.Converters
 				Icon =new SymbolIcon { Symbol = (Symbol)Enum.Parse(typeof(Symbol),item.Symbol)}
 			};
 			x.SetValue(NavProperties.PageTypeProperty, item.PageType);
+			x.SetValue(NavProperties.IsStartPageProperty, item.IsStartPage);
 			return x;
 		}
 
 		NavigationViewItemHeader ToItem(NavItemHeaderEx item)
 		{
-			return new NavigationViewItemHeader { Content = item.Text, };
+			return new NavigationViewItemHeader { Content = item.Text/*, Opacity = item.Opacity*/};
 		}
 
 

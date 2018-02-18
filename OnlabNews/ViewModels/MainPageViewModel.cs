@@ -26,6 +26,7 @@ namespace OnlabNews.ViewModels
 		{
 			_navigationService = navigationService;
 			OnClickCommand = new DelegateCommand(() => OnClick());
+			
 		}
 
 		public void OnClick()

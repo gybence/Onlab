@@ -1,5 +1,6 @@
 ﻿using OnlabNews.Extensions;
 using OnlabNews.Views;
+using Prism.Windows.Navigation;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Windows.UI.Xaml;
@@ -22,35 +23,45 @@ namespace OnlabNews
 		{
 			MenuItems = new ObservableCollection<object>
 			{
-				new NavItemEx { Text = "Home", Symbol="Home", Tag="home", PageType = typeof(MainPage)},	
+				new NavItemEx { Text = "Home", Symbol="Home", Tag="Main", PageType = typeof(MainPage), IsStartPage=true},	
 				new NavItemSeparatorEx(),
 				new NavItemHeaderEx {Text="Main pages"},
-				new NavItemEx { Text = "Feed page", Symbol="List",Tag="feed", PageType = typeof(FeedPage) },
-				new NavItemEx { Text = "Article page", Symbol="Document",  Tag="article", PageType = typeof(ArticlePage)},
-				new NavItemEx { Text = "Dummy page", Symbol="Emoji", Tag="dummy", PageType = typeof(SettingsPage)},
+				new NavItemEx { Text = "Feed page", Symbol="List",Tag="Feed", PageType = typeof(FeedPage)},
+				new NavItemEx { Text = "Article page", Symbol="Document",  Tag="Article", PageType = typeof(ArticlePage)},
+				new NavItemEx { Text = "Dummy page", Symbol="Emoji", Tag="Settings", PageType = typeof(SettingsPage)},
 				//new NavItemSeparatorEx(),
 				//new NavItemEx { Text = "My content", Symbol="Folder", Tag="content", PageType = typeof(MainPage)},
 			};
 			this.InitializeComponent();
 			
 		}
-		private void NavView_Loaded(object sender, RoutedEventArgs e)
+
+		public void SetContentFrame(Frame frame, INavigationService service)
+		{
+			//rootSplitView.Content = frame;
+			NavView.Setup(frame, service);
+		}
+	}
+}
+
+/*
+   private void NavView_Loaded(object sender, RoutedEventArgs e)
 		{
 			
 			// you can also add items in code behind
 			//NavView.MenuItems.Add(new NavigationViewItemSeparator());
 			//NavView.MenuItems.Add(new NavigationViewItem()
 			//{ Content = "My content", Icon = new SymbolIcon(Symbol.Folder), Tag = "content" });
-
+			
 			// set the initial SelectedItem 
-			foreach (NavigationViewItemBase item in NavView.MenuItems)
-			{
-				if (item is NavigationViewItem && item.Tag.ToString() == "home")
-				{
-					NavView.SelectedItem = item;
-					break;
-				}
-			}
+			//foreach (NavigationViewItemBase item in NavView.MenuItems)
+			//{
+			//	if (item is NavigationViewItem && item.Tag.ToString() == "home")
+			//	{
+			//		NavView.SelectedItem = item;
+			//		break;
+			//	}
+			//}
 		}
 
 		private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
@@ -91,7 +102,7 @@ namespace OnlabNews
 					break;
 
 				case "feed":
-					ContentFrame.Navigate(typeof(FeedPage));
+					//ContentFrame.Navigate(typeof(FeedPage));
 					break;
 
 				case "article":
@@ -108,11 +119,4 @@ namespace OnlabNews
 			}
 		}
 
-		public void SetContentFrame(Frame frame)
-		{
-			//rootSplitView.Content = frame;
-			NavView.Setup(frame);
-		}
-	}
-}
-
+	*/

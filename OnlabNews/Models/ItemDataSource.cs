@@ -26,8 +26,8 @@ namespace OnlabNews.Models
 		}
 
 
-		ObservableCollection<ArticleItem> _articleCollection;
-		internal ObservableCollection<ArticleItem> ArticleCollection { get { return _articleCollection; } set { _articleCollection = value; } }
+		ObservableCollection<ArticleItem> _articleCollection = new ObservableCollection<ArticleItem>();
+		public ObservableCollection<ArticleItem> ArticleCollection { get { return _articleCollection; } set { _articleCollection = value; } }
 
 
 		CoreDispatcher dispatcher;

@@ -6,4 +6,10 @@
 	xmlns:prismUnity="using:Prism.Unity.Windows"
 	RequestedTheme="Light">
 
+	<prismUnity:PrismUnityApplication.Resources>
+		<!--<AcrylicBrush x:Key="NavigationViewDefaultPaneBackground"
+              BackgroundSource="Backdrop" TintColor="Yellow" TintOpacity=".6"/>
+		<AcrylicBrush x:Key="NavigationViewExpandedPaneBackground"
+              BackgroundSource="HostBackdrop" TintColor="Orange" TintOpacity=".8"/>-->
+	</prismUnity:PrismUnityApplication.Resources>
 </prismUnity:PrismUnityApplication>

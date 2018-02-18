@@ -11,12 +11,14 @@ namespace OnlabNews.Extensions
 	{
 		public string Symbol { get; set; }
 		public string Text { get; set; }
-		public string Tag { get;  set; }
-		public Type PageType { get;  set; }
+		public string Tag { get; set; }
+		public Type PageType { get; set; }
+		public bool IsStartPage { get; set; } = false;
 	}
 	public class NavItemHeaderEx 
 	{
 		public string Text { get; set; }
+		//public int Opacity { get; set; } = 0;
 	}
 	public class NavItemSeparatorEx { }
 }

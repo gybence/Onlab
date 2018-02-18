@@ -10,8 +10,8 @@
 	prism:ViewModelLocator.AutoWireViewModel="True">
 	
 	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-			<TextBlock Width="300" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,100" Text="{Binding ArticleLink}"/>
-			<Button Command="{Binding OnClickCommand}" Content="Button" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,200"/>
-			<Button Command="{Binding ArticleClickCommand}" Content="Button" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,250"/>
+		<TextBlock Width="300" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,100" Text="{x:Bind ConcreteDataContext.PickedArticle.Uri, Mode=OneWay}"/>
+			<Button Command="{x:Bind ConcreteDataContext.OnClickCommand}" Content="Button" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,200"/>
+			<Button Command="{x:Bind ConcreteDataContext.ArticleClickCommand}" Content="Button" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,250"/>
 	</Grid>
 </prism:SessionStateAwarePage>

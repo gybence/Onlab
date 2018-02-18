@@ -10,18 +10,30 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using OnlabNews.Views;
 
 namespace OnlabNews.ViewModels
 {
     public class SettingsPageViewModel : ViewModelBase
     {
+		#region properties
+
+		INavigationService _navigationService;
+
 		string _bsd;
 		public string Bsd { get => _bsd; set { SetProperty(ref _bsd, value); } }
 
 		public DelegateCommand OtherOnClick { get; private set; }
 
-		public SettingsPageViewModel() //manual reading from file example
+		#endregion
+
+		public SettingsPageViewModel(INavigationService navigationService) //manual reading from file example
 		{
+			_navigationService = navigationService;
+			OtherOnClick = new DelegateCommand(() =>
+			{
+				_navigationService.Navigate("Main", null);
+			});
 		//	XmlReaderSettings settings = new XmlReaderSettings
 		//	{
 		//		IgnoreWhitespace = true,

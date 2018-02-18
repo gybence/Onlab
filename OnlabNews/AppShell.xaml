@@ -13,13 +13,13 @@
 	<Page.Resources>
 		<conv:NavConverter x:Key="NavConverter"/>
 	</Page.Resources>
-	
-	<ext:NavViewEx x:Name="NavView"
-                    ItemInvoked="NavView_ItemInvoked"
+	<!--ItemInvoked="NavView_ItemInvoked"
                     SelectionChanged="NavView_SelectionChanged"
-                    Loaded="NavView_Loaded"
+					Loaded="NavView_Loaded"-->
+	<ext:NavViewEx x:Name="NavView"       
                     Canvas.ZIndex="0"
 				    MenuItemsSource="{x:Bind MenuItems, Converter={StaticResource NavConverter}}"
+				    SettingsPageType="views:SettingsPage"
 				   >
 		
 		<NavigationView.AutoSuggestBox>

@@ -26,7 +26,8 @@ namespace OnlabNews
 		protected override UIElement CreateShell(Frame rootFrame)
 		{
 			var shell = Container.Resolve<AppShell>();
-			shell.SetContentFrame(rootFrame);
+			var service = Container.Resolve<INavigationService>();
+			shell.SetContentFrame(rootFrame, service);
 			return shell;
 		}
 
@@ -34,7 +35,7 @@ namespace OnlabNews
 
 		protected override Task OnLaunchApplicationAsync(LaunchActivatedEventArgs args)
 		{
-			NavigationService.Navigate("Main", null);
+			//NavigationService.Navigate("Main", null);
 
 			Window.Current.Activate();
 

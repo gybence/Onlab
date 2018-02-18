@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Web.Syndication;
+using OnlabNews.Models;
 
 namespace OnlabNews.ViewModels
 {
@@ -17,8 +18,8 @@ namespace OnlabNews.ViewModels
 
 		INavigationService _navigationService;
 
-		string _articleLink;
-		public string ArticleLink { get => _articleLink; set { SetProperty(ref _articleLink, value); } }
+		ArticleItem _pickedArticle;
+		public ArticleItem PickedArticle { get => _pickedArticle; set { SetProperty(ref _pickedArticle, value); } }
 
 
 		ObservableCollection<string> _items = new ObservableCollection<string>();
@@ -26,6 +27,7 @@ namespace OnlabNews.ViewModels
 
 		public DelegateCommand OnClickCommand { get; private set; }
 		public DelegateCommand ArticleClickCommand { get; private set; }
+
 		#endregion
 
 		public FeedPageViewModel(INavigationService navigationService)
@@ -37,42 +39,30 @@ namespace OnlabNews.ViewModels
 		}
 		public void ArticleClick()
 		{
-			_navigationService.Navigate("Article", ArticleLink);
+			_navigationService.Navigate("Article", PickedArticle);
 			//_navigationService.Navigate("Settings",null);
 		}
 
 		public async Task OnClick()
 		{
-			SyndicationClient client = new SyndicationClient();
-			SyndicationFeed feed;
-			Uri uri = null;
-			string uriString = "http://feeds.bbci.co.uk/news/rss.xml?edition=uk";
-			//string uriString = "http://rss.cnn.com/rss/edition.rss";
 			try
 			{
-				uri = new Uri(uriString);
-			}
-			catch (Exception e)
-			{
-
-			}
-			try
-			{
+				SyndicationClient client = new SyndicationClient();
 				client.SetRequestHeader("User-Agent", "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)");
-				feed = await client.RetrieveFeedAsync(uri);
+				string uriString = "https://index.hu/24ora/rss/";
+				Uri uri = new Uri(uriString);
+				SyndicationFeed feed = await client.RetrieveFeedAsync(uri);
 				var title = feed.Title.Text;
+
 				foreach (SyndicationItem item in feed.Items)
 					DisplayCurrentItem(item);
 
-
-				ArticleLink = Items[1];
+				PickedArticle = ItemDataSource.Instance.ArticleCollection[1];
 			}
 			catch
 			{
 
 			}
-
-			//_navigationService.Navigate("Settings",null);
 		}
 
 		private void DisplayCurrentItem(SyndicationItem item)
@@ -92,7 +82,7 @@ namespace OnlabNews.ViewModels
 			}
 			//Items.Add(itemTitle + "\n" + itemLink + "\n" + itemContent + "\n" + extensions);
 
-			Items.Add(item.Id);
+			ItemDataSource.Instance.ArticleCollection.Add(new ArticleItem {Title=itemTitle, Uri=item.Id });
 
 
 		}

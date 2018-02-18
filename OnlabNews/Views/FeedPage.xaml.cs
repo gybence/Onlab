@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Prism.Windows.Mvvm;
+using OnlabNews.ViewModels;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -23,6 +24,13 @@ namespace OnlabNews.Views
 	/// </summary>
 	public sealed partial class FeedPage : SessionStateAwarePage
 	{
+		public FeedPageViewModel ConcreteDataContext
+		{
+			get
+			{
+				return DataContext as FeedPageViewModel;
+			}
+		}
 		public FeedPage()
 		{
 			this.InitializeComponent();

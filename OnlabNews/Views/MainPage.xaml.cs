@@ -1,4 +1,5 @@
-﻿using Prism.Windows.Mvvm;
+﻿using OnlabNews.ViewModels;
+using Prism.Windows.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,6 +24,13 @@ namespace OnlabNews.Views
 	/// </summary>
 	public sealed partial class MainPage : SessionStateAwarePage
 	{
+		public MainPageViewModel ConcreteDataContext
+		{
+			get
+			{
+				return DataContext as MainPageViewModel;
+			}
+		}
 		public MainPage()
 		{
 			this.InitializeComponent();

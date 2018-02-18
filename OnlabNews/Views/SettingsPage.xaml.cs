@@ -1,4 +1,5 @@
-﻿using Prism.Windows.Mvvm;
+﻿using OnlabNews.ViewModels;
+using Prism.Windows.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,7 +24,14 @@ namespace OnlabNews.Views
     /// </summary>
     public sealed partial class SettingsPage : SessionStateAwarePage
     {
-        public SettingsPage()
+		public SettingsPageViewModel ConcreteDataContext
+		{
+			get
+			{
+				return DataContext as SettingsPageViewModel;
+			}
+		}
+		public SettingsPage()
         {
             this.InitializeComponent();
         }
