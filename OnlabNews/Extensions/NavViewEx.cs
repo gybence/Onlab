@@ -42,6 +42,7 @@ namespace OnlabNews.Extensions
 				}
 				UpdateBackButton();
 			}
+			get { return base.SelectedItem; }
 		}
 
 		#endregion

@@ -39,7 +39,10 @@ namespace OnlabNews.ViewModels
 		{
 			base.OnNavigatedTo(e, viewModelState);
 		}
-
+		public override void OnNavigatingFrom(NavigatingFromEventArgs e, Dictionary<string, object> viewModelState, bool suspending)
+		{
+			base.OnNavigatingFrom(e, viewModelState, suspending);
+		}
 
 
 	}

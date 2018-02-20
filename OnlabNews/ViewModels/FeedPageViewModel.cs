@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Web.Syndication;
 using OnlabNews.Models;
+using Windows.UI.Xaml.Controls;
 
 namespace OnlabNews.ViewModels
 {
@@ -26,7 +27,13 @@ namespace OnlabNews.ViewModels
 		public ObservableCollection<string> Items { get => _items; set => _items = value; }
 
 		public DelegateCommand OnClickCommand { get; private set; }
-		public DelegateCommand ArticleClickCommand { get; private set; }
+		//public DelegateCommand ArticleClickCommand { get; private set; }
+
+		public ItemDataSource ItemDataSource
+		{
+			get { return ItemDataSource.Instance; }
+			set { }
+		}
 
 		#endregion
 
@@ -34,62 +41,30 @@ namespace OnlabNews.ViewModels
 		{
 			_navigationService = navigationService;
 
-			OnClickCommand = new DelegateCommand(async () => await OnClick());
-			ArticleClickCommand = new DelegateCommand(() => ArticleClick());
+			OnClickCommand = new DelegateCommand(() => OnClick());
+			//ArticleClickCommand = new DelegateCommand(() => ArticleClick());
 		}
-		public void ArticleClick()
+
+		public void OnClick()
 		{
-			_navigationService.Navigate("Article", PickedArticle);
+			PickedArticle = ItemDataSource.Instance.ArticleCollection[1];
+		}
+
+		public void ArticleClick(object sender, ItemClickEventArgs e)
+		{
+			var item = e.ClickedItem;
+			_navigationService.Navigate("Article", item);
 			//_navigationService.Navigate("Settings",null);
 		}
 
-		public async Task OnClick()
-		{
-			try
-			{
-				SyndicationClient client = new SyndicationClient();
-				client.SetRequestHeader("User-Agent", "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)");
-				string uriString = "https://index.hu/24ora/rss/";
-				Uri uri = new Uri(uriString);
-				SyndicationFeed feed = await client.RetrieveFeedAsync(uri);
-				var title = feed.Title.Text;
-
-				foreach (SyndicationItem item in feed.Items)
-					DisplayCurrentItem(item);
-
-				PickedArticle = ItemDataSource.Instance.ArticleCollection[1];
-			}
-			catch
-			{
-
-			}
-		}
-
-		private void DisplayCurrentItem(SyndicationItem item)
-		{
-
-			string itemTitle = item.Title == null ? "No title" : item.Title.Text;
-			string itemLink = item.Links == null ? "No link" : item.Links.FirstOrDefault().ToString();
-			string itemContent = item.Content == null ? "No content" : item.Content.Text;
-
-			string extensions = "";
-			foreach (SyndicationNode node in item.ElementExtensions)
-			{
-				string nodeName = node.NodeName;
-				string nodeNamespace = node.NodeNamespace;
-				string nodeValue = node.NodeValue;
-				extensions += nodeName + "\n" + nodeNamespace + "\n" + nodeValue + "\n";
-			}
-			//Items.Add(itemTitle + "\n" + itemLink + "\n" + itemContent + "\n" + extensions);
-
-			ItemDataSource.Instance.ArticleCollection.Add(new ArticleItem {Title=itemTitle, Uri=item.Id });
-
-
-		}
 
 		public override void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)
 		{
 			base.OnNavigatedTo(e, viewModelState);
+		}
+		public override void OnNavigatingFrom(NavigatingFromEventArgs e, Dictionary<string, object> viewModelState, bool suspending)
+		{
+			base.OnNavigatingFrom(e, viewModelState, suspending);
 		}
 	}
 }

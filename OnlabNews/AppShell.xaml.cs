@@ -1,6 +1,7 @@
 ﻿using OnlabNews.Extensions;
 using OnlabNews.Views;
 using Prism.Windows.Navigation;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Windows.UI.Xaml;

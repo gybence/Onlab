@@ -12,7 +12,7 @@
 
 	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 		<TextBlock HorizontalAlignment="Left" Margin="232,66,0,0" Text="MainPage" TextWrapping="Wrap" VerticalAlignment="Top"/>
-		<Button Content="Button" HorizontalAlignment="Left" Margin="238,98,0,0" VerticalAlignment="Top"  Command="{x:Bind ConcreteDataContext.OnClickCommand}" />
+		<Button Content="Button" HorizontalAlignment="Left" Margin="238,98,0,0" VerticalAlignment="Top"  Command="{x:Bind ViewModel.OnClickCommand}" />
 	</Grid>
 
 </prism:SessionStateAwarePage>

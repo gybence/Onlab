@@ -11,8 +11,8 @@
 
 	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-		<TextBlock HorizontalAlignment="Left" Margin="441,159,0,0" Text="{Binding Bsd, Mode=OneWay}" VerticalAlignment="Top"/>
-		<Button Command="{Binding OtherOnClick}" Content="Button" HorizontalAlignment="Left" Margin="519,258,0,0" VerticalAlignment="Top"/>
+		<TextBlock HorizontalAlignment="Left" Margin="441,159,0,0" Text="{x:Bind ViewModel.CustomText, Mode=OneWay}" VerticalAlignment="Top"/>
+		<Button Command="{x:Bind ViewModel.SettingsButtonOnClick}" Content="Button" HorizontalAlignment="Left" Margin="519,258,0,0" VerticalAlignment="Top"/>
 
 	</Grid>
 	

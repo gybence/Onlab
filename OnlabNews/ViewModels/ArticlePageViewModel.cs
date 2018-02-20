@@ -27,7 +27,8 @@ namespace OnlabNews.ViewModels
 		}
 		public override void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)
 		{
-			ArticleLink = (e.Parameter as ArticleItem).Uri;
+
+			ArticleLink = e.Parameter == null ? "https://google.com" : (e.Parameter as ArticleItem).Uri;
 			base.OnNavigatedTo(e, viewModelState);
 			
 		}

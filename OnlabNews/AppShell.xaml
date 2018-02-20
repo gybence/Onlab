@@ -21,7 +21,7 @@
 				    MenuItemsSource="{x:Bind MenuItems, Converter={StaticResource NavConverter}}"
 				    SettingsPageType="views:SettingsPage"
 				   >
-		
+	
 		<NavigationView.AutoSuggestBox>
 			<AutoSuggestBox x:Name="ASB" QueryIcon="Find"/>
 		</NavigationView.AutoSuggestBox>

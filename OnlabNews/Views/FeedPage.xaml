@@ -4,14 +4,29 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:OnlabNews.Views"
 	xmlns:prism ="using:Prism.Windows.Mvvm"
+	xmlns:vm="using:OnlabNews.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
 	prism:ViewModelLocator.AutoWireViewModel="True">
 	
 	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-		<TextBlock Width="300" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,100" Text="{x:Bind ConcreteDataContext.PickedArticle.Uri, Mode=OneWay}"/>
-			<Button Command="{x:Bind ConcreteDataContext.OnClickCommand}" Content="Button" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,200"/>
-			<Button Command="{x:Bind ConcreteDataContext.ArticleClickCommand}" Content="Button" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,250"/>
+		<!--<TextBlock Width="300" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,100" Text="{x:Bind ViewModel.PickedArticle.Uri, Mode=OneWay}"/>
+		<Button Command="{x:Bind ViewModel.OnClickCommand}" Content="Button" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,200"/>
+		<Button Command="{x:Bind ViewModel.ArticleClickCommand}" Content="Button" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,250"/>-->
+
+		<ListView IsItemClickEnabled="True" SelectionMode="None" x:Name="ArticleList"
+							 ItemClick="{x:Bind ViewModel.ArticleClick}"
+							  ItemsSource="{x:Bind ViewModel.ItemDataSource.ArticleCollection, Mode=OneWay}" 
+
+							 >
+			<ListView.ItemTemplate>
+				<DataTemplate x:DataType="vm:ArticleItem">
+					<StackPanel Margin="5 5 5 5" Height="20">
+						<TextBlock Foreground="Gray" Margin="5 0"  TextTrimming="CharacterEllipsis" Text="{x:Bind Uri, Mode=OneWay}"  />
+					</StackPanel>
+				</DataTemplate>
+			</ListView.ItemTemplate>
+		</ListView>
 	</Grid>
 </prism:SessionStateAwarePage>

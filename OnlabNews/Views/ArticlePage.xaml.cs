@@ -24,7 +24,7 @@ namespace OnlabNews.Views
 	/// </summary>
 	public sealed partial class ArticlePage : SessionStateAwarePage
 	{
-		public ArticlePageViewModel ConcreteDataContext
+		public ArticlePageViewModel ViewModel
 		{
 			get
 			{

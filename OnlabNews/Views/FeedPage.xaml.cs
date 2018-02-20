@@ -24,7 +24,7 @@ namespace OnlabNews.Views
 	/// </summary>
 	public sealed partial class FeedPage : SessionStateAwarePage
 	{
-		public FeedPageViewModel ConcreteDataContext
+		public FeedPageViewModel ViewModel
 		{
 			get
 			{

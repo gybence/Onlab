@@ -20,17 +20,17 @@ namespace OnlabNews.ViewModels
 
 		INavigationService _navigationService;
 
-		string _bsd;
-		public string Bsd { get => _bsd; set { SetProperty(ref _bsd, value); } }
+		string _customText;
+		public string CustomText { get => _customText; set { SetProperty(ref _customText, value); } }
 
-		public DelegateCommand OtherOnClick { get; private set; }
+		public DelegateCommand SettingsButtonOnClick { get; private set; }
 
 		#endregion
 
 		public SettingsPageViewModel(INavigationService navigationService) //manual reading from file example
 		{
 			_navigationService = navigationService;
-			OtherOnClick = new DelegateCommand(() =>
+			SettingsButtonOnClick = new DelegateCommand(() =>
 			{
 				_navigationService.Navigate("Main", null);
 			});
@@ -87,7 +87,7 @@ namespace OnlabNews.ViewModels
 
 		public override void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)
 		{
-			Bsd = this.GetType().ToString();
+			CustomText = GetType().ToString();
 			base.OnNavigatedTo(e, viewModelState);
 
 		}

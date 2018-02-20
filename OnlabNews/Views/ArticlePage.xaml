@@ -11,7 +11,7 @@
 	prism:ViewModelLocator.AutoWireViewModel="True" >
 
 	<StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-		<WebView Width="1024" Height="768" Source="{x:Bind ConcreteDataContext.ArticleLink}" x:Name="MyWebView">
+		<WebView Width="1024" Height="768" Source="{x:Bind ViewModel.ArticleLink}" x:Name="MyWebView">
 			
 		</WebView>
 		
