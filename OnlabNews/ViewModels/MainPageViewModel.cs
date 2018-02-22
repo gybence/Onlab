@@ -26,14 +26,27 @@ namespace OnlabNews.ViewModels
 		{
 			_navigationService = navigationService;
 			OnClickCommand = new DelegateCommand(() => OnClick());
-			
+
+			Task.Run(ItemDataSource.Instance.QueryArticles);
 		}
 
 		public void OnClick()
 		{
-			_navigationService.Navigate("Feed", null);
-		
-			//ContentFrame.
+			//_navigationService.Navigate("Feed", null);
+
+			//using (var ctx = new AppContext())
+			//{
+			//	var user = new User() { UserName="Dummyboii"};
+
+			//	ctx.Users.Add(user);
+			//	try
+			//	{
+			//		ctx.SaveChanges();
+			//	}catch(Exception e)
+			//	{
+			//	}
+			//}
+
 		}
 		public override void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)
 		{

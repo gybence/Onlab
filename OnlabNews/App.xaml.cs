@@ -20,7 +20,15 @@ namespace OnlabNews
         public App()
         {
             this.InitializeComponent();
-        }
+			//using (var db = new AppContext())
+			//{
+			//	try { db.Database.Migrate(); }
+			//	catch (Exception ex)
+			//	{
+			//		// do something
+			//	}
+			//}
+		}
 
 		#region prism
 		protected override UIElement CreateShell(Frame rootFrame)

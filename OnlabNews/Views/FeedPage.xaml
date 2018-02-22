@@ -8,6 +8,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+	NavigationCacheMode="Enabled"
 	prism:ViewModelLocator.AutoWireViewModel="True">
 	
 	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -23,7 +24,7 @@
 			<ListView.ItemTemplate>
 				<DataTemplate x:DataType="vm:ArticleItem">
 					<StackPanel Margin="5 5 5 5" Height="20">
-						<TextBlock Foreground="Gray" Margin="5 0"  TextTrimming="CharacterEllipsis" Text="{x:Bind Uri, Mode=OneWay}"  />
+						<TextBlock Foreground="Gray" Margin="5 0"  TextTrimming="CharacterEllipsis" Text="{x:Bind Title, Mode=OneWay}"  />
 					</StackPanel>
 				</DataTemplate>
 			</ListView.ItemTemplate>

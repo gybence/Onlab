@@ -10,11 +10,17 @@
     mc:Ignorable="d"
 	prism:ViewModelLocator.AutoWireViewModel="True" >
 
-	<StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-		<WebView Width="1024" Height="768" Source="{x:Bind ViewModel.ArticleLink}" x:Name="MyWebView">
+	<Grid Width="Auto" Height="Auto" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+		<WebView Source="{x:Bind ViewModel.ArticleLink}" x:Name="MyWebView">
 			
 		</WebView>
 		
-	</StackPanel>
+	</Grid>
 
 </prism:SessionStateAwarePage>

@@ -1,5 +1,4 @@
-﻿using Microsoft.SyndicationFeed;
-using Microsoft.SyndicationFeed.Rss;
+﻿
 using Prism.Commands;
 using Prism.Windows.Mvvm;
 using Prism.Windows.Navigation;

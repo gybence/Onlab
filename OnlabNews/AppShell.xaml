@@ -56,7 +56,7 @@
                              Margin="12,0"/>
 		</NavigationView.PaneFooter>-->
 
-		<Frame x:Name="ContentFrame" Margin="24">
+		<Frame HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="ContentFrame" Margin="24">
 			<Frame.ContentTransitions>
 				<TransitionCollection>
 					<NavigationThemeTransition/>

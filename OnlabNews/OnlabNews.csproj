@@ -105,6 +105,8 @@
     <Compile Include="Extensions\MenuItems.cs" />
     <Compile Include="Extensions\NavProperties.cs" />
     <Compile Include="Extensions\NavViewEx.cs" />
+    <Compile Include="Models\RssItem.cs" />
+    <Compile Include="Models\User.cs" />
     <Compile Include="ViewModels\ArticleItem.cs" />
     <Compile Include="Models\ItemDataSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -150,9 +152,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.0.6</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.SyndicationFeed.ReaderWriter">
-      <Version>1.0.2</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>10.0.3</Version>
