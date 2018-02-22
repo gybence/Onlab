@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using Prism.Commands;
 using Windows.Web.Syndication;
 using OnlabNews.Models;
+using DataAccessLibrary;
 
 namespace OnlabNews.ViewModels
 {

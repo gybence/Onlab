@@ -11,6 +11,7 @@ using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Resources;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using DataAccessLibrary;
 
 namespace OnlabNews
 {
@@ -20,6 +21,7 @@ namespace OnlabNews
         public App()
         {
             this.InitializeComponent();
+			DataAccess.InitializeDatabase();
 			//using (var db = new AppContext())
 			//{
 			//	try { db.Database.Migrate(); }
