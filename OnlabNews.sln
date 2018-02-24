@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlabNews", "OnlabNews\OnlabNews.csproj", "{5BED0A5B-22E3-48F3-8706-D27496283592}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccessLibrary", "DataAccessLibrary\DataAccessLibrary.csproj", "{AC55B72D-DE80-40EE-9381-C21C9901F8FB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccessLibrary", "DataAccessLibrary\DataAccessLibrary.csproj", "{68AC2140-2095-4C4C-90E6-25C77400AE88}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,22 +39,22 @@ Global
 		{5BED0A5B-22E3-48F3-8706-D27496283592}.Release|x86.ActiveCfg = Release|x86
 		{5BED0A5B-22E3-48F3-8706-D27496283592}.Release|x86.Build.0 = Release|x86
 		{5BED0A5B-22E3-48F3-8706-D27496283592}.Release|x86.Deploy.0 = Release|x86
-		{AC55B72D-DE80-40EE-9381-C21C9901F8FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AC55B72D-DE80-40EE-9381-C21C9901F8FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AC55B72D-DE80-40EE-9381-C21C9901F8FB}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{AC55B72D-DE80-40EE-9381-C21C9901F8FB}.Debug|ARM.Build.0 = Debug|Any CPU
-		{AC55B72D-DE80-40EE-9381-C21C9901F8FB}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{AC55B72D-DE80-40EE-9381-C21C9901F8FB}.Debug|x64.Build.0 = Debug|Any CPU
-		{AC55B72D-DE80-40EE-9381-C21C9901F8FB}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{AC55B72D-DE80-40EE-9381-C21C9901F8FB}.Debug|x86.Build.0 = Debug|Any CPU
-		{AC55B72D-DE80-40EE-9381-C21C9901F8FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AC55B72D-DE80-40EE-9381-C21C9901F8FB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AC55B72D-DE80-40EE-9381-C21C9901F8FB}.Release|ARM.ActiveCfg = Release|Any CPU
-		{AC55B72D-DE80-40EE-9381-C21C9901F8FB}.Release|ARM.Build.0 = Release|Any CPU
-		{AC55B72D-DE80-40EE-9381-C21C9901F8FB}.Release|x64.ActiveCfg = Release|Any CPU
-		{AC55B72D-DE80-40EE-9381-C21C9901F8FB}.Release|x64.Build.0 = Release|Any CPU
-		{AC55B72D-DE80-40EE-9381-C21C9901F8FB}.Release|x86.ActiveCfg = Release|Any CPU
-		{AC55B72D-DE80-40EE-9381-C21C9901F8FB}.Release|x86.Build.0 = Release|Any CPU
+		{68AC2140-2095-4C4C-90E6-25C77400AE88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68AC2140-2095-4C4C-90E6-25C77400AE88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68AC2140-2095-4C4C-90E6-25C77400AE88}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{68AC2140-2095-4C4C-90E6-25C77400AE88}.Debug|ARM.Build.0 = Debug|Any CPU
+		{68AC2140-2095-4C4C-90E6-25C77400AE88}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{68AC2140-2095-4C4C-90E6-25C77400AE88}.Debug|x64.Build.0 = Debug|Any CPU
+		{68AC2140-2095-4C4C-90E6-25C77400AE88}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{68AC2140-2095-4C4C-90E6-25C77400AE88}.Debug|x86.Build.0 = Debug|Any CPU
+		{68AC2140-2095-4C4C-90E6-25C77400AE88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68AC2140-2095-4C4C-90E6-25C77400AE88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68AC2140-2095-4C4C-90E6-25C77400AE88}.Release|ARM.ActiveCfg = Release|Any CPU
+		{68AC2140-2095-4C4C-90E6-25C77400AE88}.Release|ARM.Build.0 = Release|Any CPU
+		{68AC2140-2095-4C4C-90E6-25C77400AE88}.Release|x64.ActiveCfg = Release|Any CPU
+		{68AC2140-2095-4C4C-90E6-25C77400AE88}.Release|x64.Build.0 = Release|Any CPU
+		{68AC2140-2095-4C4C-90E6-25C77400AE88}.Release|x86.ActiveCfg = Release|Any CPU
+		{68AC2140-2095-4C4C-90E6-25C77400AE88}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

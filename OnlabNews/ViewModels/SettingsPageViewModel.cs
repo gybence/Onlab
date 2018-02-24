@@ -10,6 +10,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using OnlabNews.Views;
+using DataAccessLibrary;
+using DataAccessLibrary.Model;
+using System.Collections.ObjectModel;
 
 namespace OnlabNews.ViewModels
 {
@@ -18,6 +21,12 @@ namespace OnlabNews.ViewModels
 		#region properties
 
 		INavigationService _navigationService;
+
+		string _userNameText;
+		public string UserNameText { get { return _userNameText; } set { _userNameText = value; RaisePropertyChanged(); } }
+
+		ObservableCollection<User> _users = new ObservableCollection<User>();
+		public ObservableCollection<User> Users { get => _users; set => _users = value; }
 
 		string _customText;
 		public string CustomText { get => _customText; set { SetProperty(ref _customText, value); } }
@@ -33,55 +42,26 @@ namespace OnlabNews.ViewModels
 			{
 				_navigationService.Navigate("Main", null);
 			});
-		//	XmlReaderSettings settings = new XmlReaderSettings
-		//	{
-		//		IgnoreWhitespace = true,
-		//		IgnoreComments = true
-		//	};
-		//	XmlReader reader = XmlReader.Create("file.xml", settings);
-		//	var feedReader = new RssFeedReader(reader);
-		//	OtherOnClick = new DelegateCommand(async () =>
-		//	{
-		//		Bsd = "default text";
-			
-		//		while (await feedReader.Read())
-		//		{
-		//			switch (feedReader.ElementType)
-		//			{
-		//				// Read category
-		//				case SyndicationElementType.Category:
-		//					ISyndicationCategory category = await feedReader.ReadCategory();
-		//					break;
+			using (var db = new AppDbContext())
+			{
+				foreach (User u in db.Users.ToList())
+					Users.Add(u);
+			}
+		}
 
-		//				// Read Image
-		//				case SyndicationElementType.Image:
-		//					ISyndicationImage image = await feedReader.ReadImage();
-		//					Bsd = image.Url.OriginalString;
-		//					break;
+		public void OnClick()
+		{
+			using (var db = new AppDbContext())
+			{
+				var x = new User { UserName = UserNameText ?? "asd" };
+				db.Users.Add(x);
+				db.SaveChanges();
 
-		//				// Read Item
-		//				case SyndicationElementType.Item:
-		//					ISyndicationItem item = await feedReader.ReadItem();
-		//					break;
+				Users.Clear();
+				foreach (User u in db.Users.ToList())
+					Users.Add(u);
+			}
 
-		//				// Read link
-		//				case SyndicationElementType.Link:
-		//					ISyndicationLink link = await feedReader.ReadLink();
-		//					//Bsd = link.Uri.OriginalString;
-		//					break;
-
-		//				// Read Person
-		//				case SyndicationElementType.Person:
-		//					ISyndicationPerson person = await feedReader.ReadPerson();
-		//					break;
-
-		//				// Read content
-		//				default:
-		//					ISyndicationContent content = await feedReader.ReadContent();
-		//					break;
-		//			}
-		//		}
-		//	});
 		}
 
 		public override void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)

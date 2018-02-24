@@ -9,7 +9,7 @@ using System.Collections.ObjectModel;
 using Prism.Commands;
 using Windows.Web.Syndication;
 using OnlabNews.Models;
-using DataAccessLibrary;
+
 
 namespace OnlabNews.ViewModels
 {
@@ -33,31 +33,13 @@ namespace OnlabNews.ViewModels
 
 		public void OnClick()
 		{
-			//_navigationService.Navigate("Feed", null);
-
-			//using (var ctx = new AppContext())
-			//{
-			//	var user = new User() { UserName="Dummyboii"};
-
-			//	ctx.Users.Add(user);
-			//	try
-			//	{
-			//		ctx.SaveChanges();
-			//	}catch(Exception e)
-			//	{
-			//	}
-			//}
-
+			_navigationService.Navigate("Feed", null);
 		}
+
+
 		public override void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)
 		{
 			base.OnNavigatedTo(e, viewModelState);
 		}
-		public override void OnNavigatingFrom(NavigatingFromEventArgs e, Dictionary<string, object> viewModelState, bool suspending)
-		{
-			base.OnNavigatingFrom(e, viewModelState, suspending);
-		}
-
-
 	}
 }

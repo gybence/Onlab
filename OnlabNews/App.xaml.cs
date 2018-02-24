@@ -1,4 +1,5 @@
-﻿using OnlabNews.Views;
+﻿
+using OnlabNews.Views;
 using Prism.Mvvm;
 using Prism.Unity.Windows;
 using Prism.Windows.AppModel;
@@ -12,6 +13,7 @@ using Windows.ApplicationModel.Resources;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using DataAccessLibrary;
+using Microsoft.EntityFrameworkCore;
 
 namespace OnlabNews
 {
@@ -21,15 +23,17 @@ namespace OnlabNews
         public App()
         {
             this.InitializeComponent();
-			DataAccess.InitializeDatabase();
-			//using (var db = new AppContext())
-			//{
-			//	try { db.Database.Migrate(); }
-			//	catch (Exception ex)
-			//	{
-			//		// do something
-			//	}
-			//}
+			using (var db = new AppDbContext())
+			{
+				try
+				{
+					db.Database.Migrate();
+				}
+				catch (Exception ex)
+				{
+					// do something
+				}
+			}
 		}
 
 		#region prism

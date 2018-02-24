@@ -9,11 +9,25 @@
     mc:Ignorable="d"
 	prism:ViewModelLocator.AutoWireViewModel="True" >
 
-	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+	<!--<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
 		<TextBlock HorizontalAlignment="Left" Margin="441,159,0,0" Text="{x:Bind ViewModel.CustomText, Mode=OneWay}" VerticalAlignment="Top"/>
 		<Button Command="{x:Bind ViewModel.SettingsButtonOnClick}" Content="Button" HorizontalAlignment="Left" Margin="519,258,0,0" VerticalAlignment="Top"/>
 
+	</Grid>-->
+	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+		<StackPanel>
+			<TextBox Text="{x:Bind ViewModel.UserNameText, Mode=TwoWay}"></TextBox>
+			<Button Click="{x:Bind ViewModel.OnClick}">Add</Button>
+			<ListView Name="Users" 
+							  ItemsSource="{x:Bind ViewModel.Users, Mode=OneWay}" 
+>
+				<ListView.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding UserName}" />
+					</DataTemplate>
+				</ListView.ItemTemplate>
+			</ListView>
+		</StackPanel>
 	</Grid>
-	
 </prism:SessionStateAwarePage>

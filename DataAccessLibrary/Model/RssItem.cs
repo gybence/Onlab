@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OnlabNews.Models
+namespace DataAccessLibrary.Model
 {
 	public class RssItem
 	{
