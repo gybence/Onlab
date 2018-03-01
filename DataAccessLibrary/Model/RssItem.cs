@@ -8,13 +8,10 @@ namespace DataAccessLibrary.Model
 {
 	public class RssItem
 	{
-		public int RssItemID { get; set; }
+		public int ID { get; set; }
 		public string Name { get; set; }
 		public string Uri { get; set; }
 
-		public int UserID { get; set; }
-		public User User { get; set; }
-
-		//public ICollection<User> Users { get; set; }
+		public ICollection<Follow> Follows { get; set; }
 	}
 }

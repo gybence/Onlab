@@ -16,7 +16,6 @@ namespace OnlabNews.ViewModels
 
 		private INavigationService _navigationService;
 
-
 		string _articleLink;
 		public string ArticleLink { get => _articleLink; set { SetProperty(ref _articleLink, value); } }
 

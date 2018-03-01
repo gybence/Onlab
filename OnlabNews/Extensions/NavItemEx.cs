@@ -18,6 +18,7 @@ namespace OnlabNews.Extensions
 	public class NavItemHeaderEx 
 	{
 		public string Text { get; set; }
+		//TODO: header text opacity indulaskor
 		//public int Opacity { get; set; } = 0;
 	}
 	public class NavItemSeparatorEx { }

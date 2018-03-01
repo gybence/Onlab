@@ -102,9 +102,10 @@
       <DependentUpon>AppShell.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\NavConverter.cs" />
-    <Compile Include="Extensions\MenuItems.cs" />
+    <Compile Include="Extensions\NavItemEx.cs" />
     <Compile Include="Extensions\NavProperties.cs" />
-    <Compile Include="Extensions\NavViewEx.cs" />
+    <Compile Include="Models\Settings.cs" />
+    <Compile Include="ViewModels\NavViewEx.cs" />
     <Compile Include="ViewModels\ArticleItem.cs" />
     <Compile Include="Models\ItemDataSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -157,9 +158,6 @@
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.0.6</Version>
     </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>10.0.3</Version>
-    </PackageReference>
     <PackageReference Include="Prism.Unity.Windows">
       <Version>7.0.0.336-pre</Version>
     </PackageReference>
@@ -171,6 +169,11 @@
     <Page Include="AppShell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Templates\DataTemplates.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Page>
     <Page Include="Views\ArticlePage.xaml">
       <SubType>Designer</SubType>

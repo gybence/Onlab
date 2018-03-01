@@ -37,7 +37,8 @@ namespace OnlabNews.Extensions
 						//Navigate(_frame, i.GetValue(NavProperties.PageTypeProperty) as Type);
 						_navigationService.Navigate(i.Tag.ToString(), null);
 						base.SelectedItem = value;
-						//_frame.BackStack.Clear();
+						if(i.Tag.ToString().Equals("Main"))
+							_frame.BackStack.Clear();
 					}
 				}
 				UpdateBackButton();

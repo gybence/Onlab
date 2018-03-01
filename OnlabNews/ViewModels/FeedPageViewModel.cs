@@ -19,20 +19,9 @@ namespace OnlabNews.ViewModels
 
 		INavigationService _navigationService;
 
-		ArticleItem _pickedArticle;
-		public ArticleItem PickedArticle { get => _pickedArticle; set { SetProperty(ref _pickedArticle, value); } }
-
-
-		ObservableCollection<string> _items = new ObservableCollection<string>();
-		public ObservableCollection<string> Items { get => _items; set => _items = value; }
-
-		public DelegateCommand OnClickCommand { get; private set; }
-		//public DelegateCommand ArticleClickCommand { get; private set; }
-
 		public ItemDataSource ItemDataSource
 		{
 			get { return ItemDataSource.Instance; }
-			set { }
 		}
 
 		#endregion
@@ -40,14 +29,6 @@ namespace OnlabNews.ViewModels
 		public FeedPageViewModel(INavigationService navigationService)
 		{
 			_navigationService = navigationService;
-
-			OnClickCommand = new DelegateCommand(() => OnClick());
-			//ArticleClickCommand = new DelegateCommand(() => ArticleClick());
-		}
-
-		public void OnClick()
-		{
-			PickedArticle = ItemDataSource.Instance.ArticleCollection[1];
 		}
 
 		public void ArticleClick(object sender, ItemClickEventArgs e)

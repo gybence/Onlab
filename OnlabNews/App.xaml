@@ -11,5 +11,11 @@
               BackgroundSource="Backdrop" TintColor="Yellow" TintOpacity=".6"/>
 		<AcrylicBrush x:Key="NavigationViewExpandedPaneBackground"
               BackgroundSource="HostBackdrop" TintColor="Orange" TintOpacity=".8"/>-->
+
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="Templates\DataTemplates.xaml"/>
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
 	</prismUnity:PrismUnityApplication.Resources>
 </prismUnity:PrismUnityApplication>

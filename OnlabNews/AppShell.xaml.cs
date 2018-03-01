@@ -26,7 +26,7 @@ namespace OnlabNews
 			{
 				new NavItemEx { Text = "Home", Symbol="Home", Tag="Main", PageType = typeof(MainPage), IsStartPage=true},	
 				new NavItemSeparatorEx(),
-				new NavItemHeaderEx {Text="Main pages"},
+				new NavItemHeaderEx {Text="Pages"},
 				new NavItemEx { Text = "Feed page", Symbol="List",Tag="Feed", PageType = typeof(FeedPage)},
 				new NavItemEx { Text = "Article page", Symbol="Document",  Tag="Article", PageType = typeof(ArticlePage)},
 				new NavItemEx { Text = "Dummy page", Symbol="Emoji", Tag="Settings", PageType = typeof(SettingsPage)},
@@ -39,85 +39,7 @@ namespace OnlabNews
 
 		public void SetContentFrame(Frame frame, INavigationService service)
 		{
-			//rootSplitView.Content = frame;
 			NavView.Setup(frame, service);
 		}
 	}
 }
-
-/*
-   private void NavView_Loaded(object sender, RoutedEventArgs e)
-		{
-			
-			// you can also add items in code behind
-			//NavView.MenuItems.Add(new NavigationViewItemSeparator());
-			//NavView.MenuItems.Add(new NavigationViewItem()
-			//{ Content = "My content", Icon = new SymbolIcon(Symbol.Folder), Tag = "content" });
-			
-			// set the initial SelectedItem 
-			//foreach (NavigationViewItemBase item in NavView.MenuItems)
-			//{
-			//	if (item is NavigationViewItem && item.Tag.ToString() == "home")
-			//	{
-			//		NavView.SelectedItem = item;
-			//		break;
-			//	}
-			//}
-		}
-
-		private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
-		{
-
-			if (args.IsSettingsInvoked)
-			{
-				ContentFrame.Navigate(typeof(SettingsPage));
-			}
-			else
-			{
-				// find NavigationViewItem with Content that equals InvokedItem
-				var item = sender.MenuItems.OfType<NavigationViewItem>().First(x => (string)x.Content == (string)args.InvokedItem);
-				NavView_Navigate(item as NavigationViewItem);
-
-			}
-		}
-
-		private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
-		{
-			if (args.IsSettingsSelected)
-			{
-				ContentFrame.Navigate(typeof(SettingsPage));
-			}
-			else
-			{
-				NavigationViewItem item = args.SelectedItem as NavigationViewItem;
-				NavView_Navigate(item);
-			}
-		}
-
-		private void NavView_Navigate(NavigationViewItem item)
-		{
-			switch (item.Tag)
-			{
-				case "home":
-					ContentFrame.Navigate(typeof(MainPage));
-					break;
-
-				case "feed":
-					//ContentFrame.Navigate(typeof(FeedPage));
-					break;
-
-				case "article":
-					ContentFrame.Navigate(typeof(ArticlePage));
-					break;
-
-				case "dummy":
-					ContentFrame.Navigate(typeof(SettingsPage));
-					break;
-
-				//case "content":
-				//	ContentFrame.Navigate(typeof(SettingsPage));
-				//	break;
-			}
-		}
-
-	*/

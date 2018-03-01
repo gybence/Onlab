@@ -1,5 +1,4 @@
-﻿
-using OnlabNews.Views;
+﻿using OnlabNews.Views;
 using Prism.Mvvm;
 using Prism.Unity.Windows;
 using Prism.Windows.AppModel;
@@ -14,6 +13,8 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using DataAccessLibrary;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using DataAccessLibrary.Model;
 
 namespace OnlabNews
 {
@@ -21,21 +22,12 @@ namespace OnlabNews
 	sealed partial class App : PrismUnityApplication
 	{
         public App()
-        {
-            this.InitializeComponent();
-			using (var db = new AppDbContext())
-			{
-				try
-				{
-					db.Database.Migrate();
-				}
-				catch (Exception ex)
-				{
-					// do something
-				}
-			}
+		{ 
+			InitializeDataBase();
+            this.InitializeComponent();			
 		}
 
+	
 		#region prism
 		protected override UIElement CreateShell(Frame rootFrame)
 		{
@@ -65,9 +57,38 @@ namespace OnlabNews
 			return base.OnInitializeAsync(args);
 		}
 
-
-
 		#endregion
 
-    }
+		private void InitializeDataBase()
+		{
+			using (var db = new AppDbContext())
+			{
+				try
+				{
+					db.Database.Migrate();
+
+					if (!db.Users.Any())
+					{
+						db.Users.Add(new User { Name = "Default" });
+						db.SaveChanges();
+					}
+					if (!db.RssItems.Any())
+					{
+						db.RssItems.Add(new RssItem { Name = "Index", Uri = "https://index.hu/24ora/rss" });
+						db.SaveChanges();
+					}
+					if (!db.Follows.Any())
+					{
+						db.Follows.Add(new Follow { UserID = 1, RssItemID = 1 });
+						db.SaveChanges();
+					}
+				}
+				catch(Exception e)
+				{
+					System.Diagnostics.Debug.WriteLine(e.InnerException.Message);
+					System.Diagnostics.Debugger.Break();
+				}
+			}
+		}
+	}
 }

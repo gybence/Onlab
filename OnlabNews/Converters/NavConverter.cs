@@ -51,12 +51,10 @@ namespace OnlabNews.Converters
 			return new NavigationViewItemHeader { Content = item.Text/*, Opacity = item.Opacity*/};
 		}
 
-
 		NavigationViewItemSeparator ToItem(NavItemSeparatorEx item)
 		{
 			return new NavigationViewItemSeparator { };
 		}
-
 
 		public object ConvertBack(object value, Type targetType, object parameter, string language)
 		{

@@ -10,8 +10,8 @@ using System;
 namespace DataAccessLibrary.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20180224013108_MyFirstMigration")]
-    partial class MyFirstMigration
+    [Migration("20180228165542_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -19,40 +19,59 @@ namespace DataAccessLibrary.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.0.1-rtm-125");
 
+            modelBuilder.Entity("DataAccessLibrary.Model.Follow", b =>
+                {
+                    b.Property<int>("FollowID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("RssItemID");
+
+                    b.Property<int>("UserID");
+
+                    b.HasKey("FollowID");
+
+                    b.HasIndex("RssItemID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Follows");
+                });
+
             modelBuilder.Entity("DataAccessLibrary.Model.RssItem", b =>
                 {
-                    b.Property<int>("RssItemID")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Name");
 
                     b.Property<string>("Uri");
 
-                    b.Property<int>("UserID");
-
-                    b.HasKey("RssItemID");
-
-                    b.HasIndex("UserID");
+                    b.HasKey("ID");
 
                     b.ToTable("RssItems");
                 });
 
             modelBuilder.Entity("DataAccessLibrary.Model.User", b =>
                 {
-                    b.Property<int>("UserID")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("UserName");
+                    b.Property<string>("Name");
 
-                    b.HasKey("UserID");
+                    b.HasKey("ID");
 
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("DataAccessLibrary.Model.RssItem", b =>
+            modelBuilder.Entity("DataAccessLibrary.Model.Follow", b =>
                 {
+                    b.HasOne("DataAccessLibrary.Model.RssItem", "RssItem")
+                        .WithMany("Follows")
+                        .HasForeignKey("RssItemID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("DataAccessLibrary.Model.User", "User")
-                        .WithMany("RssItems")
+                        .WithMany("Follows")
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

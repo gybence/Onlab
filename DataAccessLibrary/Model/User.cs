@@ -8,9 +8,9 @@ namespace DataAccessLibrary.Model
 {
 	public class User
 	{
-		public int UserID { get; set; }
-		public string UserName { get; set; }
+		public int ID { get; set; }
+		public string Name { get; set; }
 
-		public ICollection<RssItem> RssItems { get; set; }
+		public ICollection<Follow> Follows { get; set; }
 	}
 }

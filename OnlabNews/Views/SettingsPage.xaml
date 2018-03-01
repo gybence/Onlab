@@ -9,25 +9,49 @@
     mc:Ignorable="d"
 	prism:ViewModelLocator.AutoWireViewModel="True" >
 
-	<!--<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
-		<TextBlock HorizontalAlignment="Left" Margin="441,159,0,0" Text="{x:Bind ViewModel.CustomText, Mode=OneWay}" VerticalAlignment="Top"/>
-		<Button Command="{x:Bind ViewModel.SettingsButtonOnClick}" Content="Button" HorizontalAlignment="Left" Margin="519,258,0,0" VerticalAlignment="Top"/>
-
-	</Grid>-->
+	
 	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-		<StackPanel>
-			<TextBox Text="{x:Bind ViewModel.UserNameText, Mode=TwoWay}"></TextBox>
-			<Button Click="{x:Bind ViewModel.OnClick}">Add</Button>
-			<ListView Name="Users" 
-							  ItemsSource="{x:Bind ViewModel.Users, Mode=OneWay}" 
->
-				<ListView.ItemTemplate>
-					<DataTemplate>
-						<TextBlock Text="{Binding UserName}" />
-					</DataTemplate>
-				</ListView.ItemTemplate>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition MinWidth="500"/>
+			<ColumnDefinition MinWidth="200"/>
+		</Grid.ColumnDefinitions>
+		<Grid Grid.Column="0" Width="500" Height="Auto" VerticalAlignment="Top" HorizontalAlignment="Left">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="Auto"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+
+			<TextBlock Margin="10,5" Grid.Row="0" Text="User" FontSize="25" Grid.ColumnSpan="2"/>
+
+			<TextBlock Margin="5,5,0,3" Grid.Row="1" Text="Name" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+			<TextBox Margin="5,5,5,3" Grid.Row="1"  Grid.ColumnSpan="2" Grid.Column="1" Text="{x:Bind ViewModel.NameToLoadText, Mode=TwoWay}"></TextBox>
+			<Button Margin="0,5,5,3" Grid.Row="1"  HorizontalAlignment="Stretch" Grid.Column="3" Click="{x:Bind ViewModel.LoadButtonClickAsync}">Load</Button>
+
+			<TextBlock Margin="5,3,0,5" Grid.Row="2" Text="Feed" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+			<TextBox Margin="5,3,2.5,5"  Grid.ColumnSpan="1" Grid.Row="2" Grid.Column="1" Text="{x:Bind ViewModel.FeedNameText, Mode=TwoWay}"></TextBox>
+			<TextBox Margin="2.5,3,5,5"  Grid.ColumnSpan="1" Grid.Row="2" Grid.Column="2" Text="{x:Bind ViewModel.FeedUriText, Mode=TwoWay}"></TextBox>
+			<Button Margin="0,3,5,5"  Grid.Row="2" Grid.Column="3" Click="{x:Bind ViewModel.SubButtonClickAsync}">Subscribe</Button>
+
+			<TextBlock Margin="10,5" Grid.Row="3" Text="Subscriptions" FontSize="25" Grid.ColumnSpan="2"/>
+
+			<ListView Grid.Row="4" Grid.ColumnSpan="4" Name="Items" 
+							  ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
+							ItemTemplate="{StaticResource SubscriptionListItemTemplate}">
 			</ListView>
+		</Grid>
+		<StackPanel HorizontalAlignment="Left" Width="200" Grid.Column="1">
+			<TextBlock Text="New user name:"/>
+			<TextBox Text="{x:Bind ViewModel.UserNameText, Mode=TwoWay}"></TextBox>
+			<Button Click="{x:Bind ViewModel.AddNewUserButtonClickAsync}">Add</Button>
 		</StackPanel>
 	</Grid>
 </prism:SessionStateAwarePage>

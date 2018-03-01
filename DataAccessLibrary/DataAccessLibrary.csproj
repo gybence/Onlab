@@ -7,12 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.1" />
+    <Compile Remove="Migrations\20180228164904_AddRelationships.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Model\" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.1" />
   </ItemGroup>
 
 </Project>
