@@ -4,13 +4,13 @@ using System.Text;
 
 namespace DataAccessLibrary.Model
 {
-    public class Follow
+    public class Subscription
     {
-		public int FollowID { get; set; }
+		public int SubscriptionID { get; set; }
 		public int UserID { get; set; }
-		public int RssItemID { get; set; }
+		public int RssFeedID { get; set; }
 
 		public User User { get; set; }
-		public RssItem RssItem { get; set; }
+		public RssFeed RssFeed { get; set; }
 	}
 }

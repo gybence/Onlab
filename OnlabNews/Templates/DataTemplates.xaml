@@ -1,9 +1,52 @@
 ﻿<ResourceDictionary
+	x:Class="OnlabNews.Templates.DataTemplates"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:OnlabNews.Templates">
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:local="using:OnlabNews.Templates"
+	xmlns:vm="using:OnlabNews.ViewModels">
+
+
+	<DataTemplate x:Key="ArticlesCvsHeaderTemplate">
+		<TextBlock Text="{Binding Key}"/>
+	</DataTemplate>
+	<DataTemplate x:Key="ZoomedOutArticleGridViewItemTemplate">
+		<TextBlock Text="{Binding Group.Key}" FontSize="50"/>
+	</DataTemplate>
+
+	<DataTemplate x:Key="ZoomedInArticleListViewItemTemplate" x:DataType="vm:ArticleItem">
+		<StackPanel Margin="0 5 5 5" Height="20">
+			<TextBlock Foreground="Gray" Margin="5 0"  TextTrimming="CharacterEllipsis" Text="{x:Bind Title, Mode=OneWay}"/>
+		</StackPanel>
+	</DataTemplate>
+
+	
+	<DataTemplate x:Key="NavigationViewHeaderTemplate">
+		<Grid Margin="24,10,0,0">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+			<TextBlock Style="{StaticResource TitleTextBlockStyle}"
+                           FontSize="28"
+                           VerticalAlignment="Center"
+                           Text="{Binding}"/>
+			<CommandBar Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
+                            DefaultLabelPosition="Right"
+                            Background="{ThemeResource SystemControlBackgroundAltHighBrush}">
+				<AppBarButton Label="Refresh" Icon="Refresh"/>
+				<AppBarButton x:Name="ShareButton" Label="Share" Icon="Share"/>
+			</CommandBar>
+		</Grid>
+	</DataTemplate>
+
 
 	<DataTemplate x:Key="SubscriptionListItemTemplate">
-		<TextBlock Text="{Binding Uri }" />
+		<TextBlock Text="{Binding Uri}" />
 	</DataTemplate>
+
 </ResourceDictionary>

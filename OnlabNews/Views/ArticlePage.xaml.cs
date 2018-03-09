@@ -1,4 +1,5 @@
-﻿using OnlabNews.ViewModels;
+﻿using OnlabNews.Extensions;
+using OnlabNews.ViewModels;
 using Prism.Windows.Mvvm;
 using System;
 using System.Collections.Generic;
@@ -24,16 +25,17 @@ namespace OnlabNews.Views
 	/// </summary>
 	public sealed partial class ArticlePage : SessionStateAwarePage
 	{
-		public ArticlePageViewModel ViewModel
-		{
-			get
-			{
-				return DataContext as ArticlePageViewModel;
-			}
-		}
+		//public ArticlePageViewModel ViewModel
+		//{
+		//	get
+		//	{
+		//		return DataContext as ArticlePageViewModel;
+		//	}
+		//}
 		public ArticlePage()
 		{
 			this.InitializeComponent();
+			this.SetValue(NavProperties.HeaderProperty, "Article");
 		}
 	}
 }

@@ -4,30 +4,51 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:OnlabNews.Views"
 	xmlns:prism ="using:Prism.Windows.Mvvm"
-	xmlns:vm="using:OnlabNews.ViewModels"
+	xmlns:m="using:OnlabNews.Models"
+	xmlns:ext="using:OnlabNews.Extensions"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
 	NavigationCacheMode="Enabled"
+	xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Interactions="using:Microsoft.Xaml.Interactions.Core"
 	prism:ViewModelLocator.AutoWireViewModel="True">
 	
+	<prism:SessionStateAwarePage.Resources>
+		<CollectionViewSource  x:Key="ArticlesCvs" x:Name="ArticlesCvs" IsSourceGrouped="True" Source="{x:Bind ViewModel.GroupedArticles, Mode=OneWay}"/>
+	</prism:SessionStateAwarePage.Resources>
+
 	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-		<!--<TextBlock Width="300" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,100" Text="{x:Bind ViewModel.PickedArticle.Uri, Mode=OneWay}"/>
-		<Button Command="{x:Bind ViewModel.OnClickCommand}" Content="Button" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,200"/>
-		<Button Command="{x:Bind ViewModel.ArticleClickCommand}" Content="Button" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,250"/>-->
+		<SemanticZoom>
 
-		<ListView IsItemClickEnabled="True" SelectionMode="None" x:Name="ArticleList"
-							 ItemClick="{x:Bind ViewModel.ArticleClick}"
-							  ItemsSource="{x:Bind ViewModel.ItemDataSource.ArticleCollection, Mode=OneWay}" 
+			<SemanticZoom.ZoomedInView>
+				<ListView IsItemClickEnabled="True" SelectionMode="Single" x:Name="ZoomedInArticleList" 
+					  ItemsSource="{Binding Source={StaticResource ArticlesCvs}}"
+					  ItemTemplate="{StaticResource ZoomedInArticleListViewItemTemplate}"
+					  >
+					<ListView.GroupStyle>
+						<GroupStyle HidesIfEmpty="False" HeaderTemplate="{StaticResource ArticlesCvsHeaderTemplate}" />
+					</ListView.GroupStyle>
+					<!--ext:ItemClickCommand.Command="{x:Bind ViewModel.OnItemClickCommand}"-->
+					
+					<Interactivity:Interaction.Behaviors>
+						<!--ListView-ben SelectionMode-t be kell kapcsolni ...-->
+						<Interactions:EventTriggerBehavior EventName="SelectionChanged">
+							<Interactions:InvokeCommandAction 
+							Command="{Binding OnItemClickCommand}" 
+							CommandParameter="{Binding ElementName=ZoomedInArticleList, Path=SelectedItem}"/>
+						</Interactions:EventTriggerBehavior>
+					</Interactivity:Interaction.Behaviors>
+				</ListView>
+			</SemanticZoom.ZoomedInView>
 
-							 >
-			<ListView.ItemTemplate>
-				<DataTemplate x:DataType="vm:ArticleItem">
-					<StackPanel Margin="5 5 5 5" Height="20">
-						<TextBlock Foreground="Gray" Margin="5 0"  TextTrimming="CharacterEllipsis" Text="{x:Bind Title, Mode=OneWay}"  />
-					</StackPanel>
-				</DataTemplate>
-			</ListView.ItemTemplate>
-		</ListView>
+			<SemanticZoom.ZoomedOutView>
+				<GridView IsItemClickEnabled="True" x:Name="ZoomedOutArticleList" 
+					  ItemsSource="{x:Bind ArticlesCvs.View.CollectionGroups}"
+					  ItemTemplate="{StaticResource ZoomedOutArticleGridViewItemTemplate}"
+					  >
+				</GridView>
+
+			</SemanticZoom.ZoomedOutView>
+		</SemanticZoom>
 	</Grid>
 </prism:SessionStateAwarePage>

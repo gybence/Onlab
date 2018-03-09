@@ -28,7 +28,7 @@ namespace OnlabNews.ViewModels
 			_navigationService = navigationService;
 			OnClickCommand = new DelegateCommand(() => OnClick());
 
-			Task.Run(ItemDataSource.Instance.QueryArticles);
+			
 		}
 
 		public void OnClick()

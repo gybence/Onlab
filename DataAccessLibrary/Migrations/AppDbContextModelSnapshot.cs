@@ -18,25 +18,7 @@ namespace DataAccessLibrary.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.0.1-rtm-125");
 
-            modelBuilder.Entity("DataAccessLibrary.Model.Follow", b =>
-                {
-                    b.Property<int>("FollowID")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("RssItemID");
-
-                    b.Property<int>("UserID");
-
-                    b.HasKey("FollowID");
-
-                    b.HasIndex("RssItemID");
-
-                    b.HasIndex("UserID");
-
-                    b.ToTable("Follows");
-                });
-
-            modelBuilder.Entity("DataAccessLibrary.Model.RssItem", b =>
+            modelBuilder.Entity("DataAccessLibrary.Model.RssFeed", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd();
@@ -47,7 +29,25 @@ namespace DataAccessLibrary.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("RssItems");
+                    b.ToTable("RssFeeds");
+                });
+
+            modelBuilder.Entity("DataAccessLibrary.Model.Subscription", b =>
+                {
+                    b.Property<int>("SubscriptionID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("RssFeedID");
+
+                    b.Property<int>("UserID");
+
+                    b.HasKey("SubscriptionID");
+
+                    b.HasIndex("RssFeedID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Subscriptions");
                 });
 
             modelBuilder.Entity("DataAccessLibrary.Model.User", b =>
@@ -62,15 +62,15 @@ namespace DataAccessLibrary.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("DataAccessLibrary.Model.Follow", b =>
+            modelBuilder.Entity("DataAccessLibrary.Model.Subscription", b =>
                 {
-                    b.HasOne("DataAccessLibrary.Model.RssItem", "RssItem")
-                        .WithMany("Follows")
-                        .HasForeignKey("RssItemID")
+                    b.HasOne("DataAccessLibrary.Model.RssFeed", "RssFeed")
+                        .WithMany("Subscriptions")
+                        .HasForeignKey("RssFeedID")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("DataAccessLibrary.Model.User", "User")
-                        .WithMany("Follows")
+                        .WithMany("Subscriptions")
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

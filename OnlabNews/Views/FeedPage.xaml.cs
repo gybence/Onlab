@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Prism.Windows.Mvvm;
 using OnlabNews.ViewModels;
+using OnlabNews.Extensions;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -30,10 +31,12 @@ namespace OnlabNews.Views
 			{
 				return DataContext as FeedPageViewModel;
 			}
+			
 		}
 		public FeedPage()
 		{
 			this.InitializeComponent();
+			this.SetValue(NavProperties.HeaderProperty, "Feeds");
 		}
 	}
 }

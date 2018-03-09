@@ -16,6 +16,7 @@ namespace OnlabNews
 	/// </summary>
 	public sealed partial class AppShell : Page
 	{
+		public string Asd { get; set; } = "lol";
 
 		ObservableCollection<object> _menuItems;
 		public ObservableCollection<object> MenuItems { get => _menuItems; set => _menuItems = value; }
@@ -24,12 +25,12 @@ namespace OnlabNews
 		{
 			MenuItems = new ObservableCollection<object>
 			{
-				new NavItemEx { Text = "Home", Symbol="Home", Tag="Main", PageType = typeof(MainPage), IsStartPage=true},	
+				new NavItemEx { Content = "Home", Symbol="Home", PageToken="Main", PageType = typeof(MainPage), IsStartPage=true},	
 				new NavItemSeparatorEx(),
-				new NavItemHeaderEx {Text="Pages"},
-				new NavItemEx { Text = "Feed page", Symbol="List",Tag="Feed", PageType = typeof(FeedPage)},
-				new NavItemEx { Text = "Article page", Symbol="Document",  Tag="Article", PageType = typeof(ArticlePage)},
-				new NavItemEx { Text = "Dummy page", Symbol="Emoji", Tag="Settings", PageType = typeof(SettingsPage)},
+				new NavItemHeaderEx {Text="Pages", /*Opacity=0*/},
+				new NavItemEx { Content = "Feed page", Symbol="List",PageToken="Feed", PageType = typeof(FeedPage)},
+				new NavItemEx { Content = "Article page", Symbol="Document",  PageToken="Article", PageType = typeof(ArticlePage)},
+				new NavItemEx { Content = "Dummy page", Symbol="Emoji", PageToken="Settings", PageType = typeof(SettingsPage)},
 				//new NavItemSeparatorEx(),
 				//new NavItemEx { Text = "My content", Symbol="Folder", Tag="content", PageType = typeof(MainPage)},
 			};

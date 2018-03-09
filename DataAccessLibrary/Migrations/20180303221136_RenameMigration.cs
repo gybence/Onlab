@@ -4,12 +4,12 @@ using System.Collections.Generic;
 
 namespace DataAccessLibrary.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class RenameMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "RssItems",
+                name: "RssFeeds",
                 columns: table => new
                 {
                     ID = table.Column<int>(nullable: false)
@@ -19,7 +19,7 @@ namespace DataAccessLibrary.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RssItems", x => x.ID);
+                    table.PrimaryKey("PK_RssFeeds", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -36,25 +36,25 @@ namespace DataAccessLibrary.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Follows",
+                name: "Subscriptions",
                 columns: table => new
                 {
-                    FollowID = table.Column<int>(nullable: false)
+                    SubscriptionID = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    RssItemID = table.Column<int>(nullable: false),
+                    RssFeedID = table.Column<int>(nullable: false),
                     UserID = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Follows", x => x.FollowID);
+                    table.PrimaryKey("PK_Subscriptions", x => x.SubscriptionID);
                     table.ForeignKey(
-                        name: "FK_Follows_RssItems_RssItemID",
-                        column: x => x.RssItemID,
-                        principalTable: "RssItems",
+                        name: "FK_Subscriptions_RssFeeds_RssFeedID",
+                        column: x => x.RssFeedID,
+                        principalTable: "RssFeeds",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Follows_Users_UserID",
+                        name: "FK_Subscriptions_Users_UserID",
                         column: x => x.UserID,
                         principalTable: "Users",
                         principalColumn: "ID",
@@ -62,23 +62,23 @@ namespace DataAccessLibrary.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Follows_RssItemID",
-                table: "Follows",
-                column: "RssItemID");
+                name: "IX_Subscriptions_RssFeedID",
+                table: "Subscriptions",
+                column: "RssFeedID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Follows_UserID",
-                table: "Follows",
+                name: "IX_Subscriptions_UserID",
+                table: "Subscriptions",
                 column: "UserID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Follows");
+                name: "Subscriptions");
 
             migrationBuilder.DropTable(
-                name: "RssItems");
+                name: "RssFeeds");
 
             migrationBuilder.DropTable(
                 name: "Users");

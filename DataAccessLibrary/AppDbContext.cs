@@ -9,9 +9,9 @@ namespace DataAccessLibrary
 	public class AppDbContext : DbContext
 	{
 		public DbSet<User> Users { get; set; }
-		public DbSet<RssItem> RssItems { get; set; }
+		public DbSet<RssFeed> RssFeeds { get; set; }
 
-		public DbSet<Follow> Follows { get; set; }
+		public DbSet<Subscription> Subscriptions { get; set; }
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
@@ -19,7 +19,7 @@ namespace DataAccessLibrary
 		}
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
-			//TODO: code-first
+			//TODO: code-first, fluent
 			//modelBuilder.Entity<User>().Property(t => t.UserName).IsRequired();
 		}
 	}

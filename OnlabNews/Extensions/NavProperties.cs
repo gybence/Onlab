@@ -26,5 +26,22 @@ namespace OnlabNews.Extensions
 		public static readonly DependencyProperty IsStartPageProperty =
 			DependencyProperty.RegisterAttached("IsStartPage", typeof(bool),
 				typeof(NavProperties), new PropertyMetadata(false));
+
+
+		public static string GetPageToken(NavigationViewItem obj)
+			=> (string)obj.GetValue(PageTokenProperty);
+		public static void SetPageToken(NavigationViewItem obj, string value)
+			=> obj.SetValue(PageTokenProperty, value);
+		public static readonly DependencyProperty PageTokenProperty =
+			DependencyProperty.RegisterAttached("PageToken", typeof(string),
+				typeof(NavProperties), new PropertyMetadata(null));
+
+		public static string GetHeader(Page obj)
+			=> (string)obj.GetValue(HeaderProperty);
+		public static void SetHeader(Page obj, string value)
+			=> obj.SetValue(HeaderProperty, value);
+		public static readonly DependencyProperty HeaderProperty =
+			DependencyProperty.RegisterAttached("Header", typeof(string),
+				typeof(NavProperties), new PropertyMetadata(null));
 	}
 }

@@ -15,21 +15,22 @@ using System.Collections.ObjectModel;
 using OnlabNews.Models;
 using Microsoft.EntityFrameworkCore;
 using Windows.UI.Core;
+using OnlabNews.Services.SettingsServices;
+using OnlabNews.Services.DataSourceServices;
 
 namespace OnlabNews.ViewModels
 {
     public class SettingsPageViewModel : ViewModelBase
     {
+		
 		#region properties
 
 		INavigationService _navigationService;
-
+		private IArticleDataSourceService _articleDataSource;
+		private ISettingsService _settingsService;
 		private CoreDispatcher dispatcher;
 
-		public Settings Settings
-		{
-			get { return Settings.Instance; }
-		}
+		
 
 		string _nameToLoadText;
 		public string NameToLoadText { get { return _nameToLoadText; } set { SetProperty(ref _nameToLoadText, value); } }
@@ -43,20 +44,22 @@ namespace OnlabNews.ViewModels
 		string _userNameText;
 		public string UserNameText { get { return _userNameText; } set { SetProperty(ref _userNameText, value); } }
 
-		ObservableCollection<RssItem> _items = new ObservableCollection<RssItem>();
-		public ObservableCollection<RssItem> Items { get => _items; set { SetProperty(ref _items, value); } }
+		ObservableCollection<RssFeed> _items = new ObservableCollection<RssFeed>();
+		public ObservableCollection<RssFeed> Items { get => _items; set { SetProperty(ref _items, value); } }
 
 		#endregion
 
-		public SettingsPageViewModel(INavigationService navigationService) 
+		public SettingsPageViewModel(INavigationService navigationService, ISettingsService settingsService, IArticleDataSourceService dataSourceService)
 		{
+			_articleDataSource = dataSourceService;
+			_settingsService = settingsService;
 			_navigationService = navigationService;
 			dispatcher = Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher;
-			NameToLoadText = Settings.ActiveUser.Name;
+			NameToLoadText = _settingsService.ActiveUser.Name;
 			GetItems();
 		}
 
-		public async Task AddNewUserButtonClickAsync()
+		public void AddNewUserButtonClick()
 		{
 			using (var db = new AppDbContext())
 			{
@@ -69,27 +72,22 @@ namespace OnlabNews.ViewModels
 						userToLoad = new User { Name = UserNameText };
 						db.Users.Add(userToLoad);
 						db.SaveChanges();
-						Settings.ActiveUser = userToLoad;
+						_settingsService.ActiveUser = userToLoad;
 						NameToLoadText = UserNameText;
 						GetItems();
-						//TODO: nem biztos hogy ezt itt kene 1
-						await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
-						{
-							await ItemDataSource.Instance.QueryArticles();
-						});
+
 					}
 				}
 				catch (Exception e)
 				{
-					System.Diagnostics.Debug.WriteLine(e.InnerException.Message);
 					System.Diagnostics.Debugger.Break();
 				}
 			}
 		}
 
-		public async Task LoadButtonClickAsync()
+		public void LoadButtonClick()
 		{
-			if (!string.Equals(NameToLoadText, Settings.ActiveUser.Name))
+			if (!string.Equals(NameToLoadText, _settingsService.ActiveUser.Name))
 			{
 				using (var db = new AppDbContext())
 				{
@@ -98,25 +96,20 @@ namespace OnlabNews.ViewModels
 						var userToLoad = db.Users.SingleOrDefault(u => u.Name == NameToLoadText);
 						if (userToLoad != null)
 						{
-							Settings.ActiveUser = userToLoad;
+							_settingsService.ActiveUser = userToLoad;
 							GetItems();
-							//TODO: nem biztos hogy ezt itt kene 2
-							await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
-							{
-								await ItemDataSource.Instance.QueryArticles();
-							});
+
 						}
 					}
-					catch(Exception e)
+					catch (Exception e)
 					{
-						System.Diagnostics.Debug.WriteLine(e.InnerException.Message);
 						System.Diagnostics.Debugger.Break();
 					}
 				}
 			}
 		}
 
-		public async Task SubButtonClickAsync()
+		public void SubButtonClick()
 		{
 			//UriStrings.Add("https://index.hu/24ora/rss/");
 			//UriStrings.Add("https://444.hu/feed");
@@ -130,23 +123,16 @@ namespace OnlabNews.ViewModels
 					using (var db = new AppDbContext())
 					{
 						//TODO: ha mar letezik ne adjuk hozza 
-						var rssItem = new RssItem { ID = db.RssItems.Last().ID + 1 /*lol*/, Name = FeedNameText, Uri = FeedUriText };
-						db.RssItems.Add(rssItem);
-						db.Follows.Add(new Follow { UserID = Settings.ActiveUser.ID, RssItemID = rssItem.ID });
+						var rssItem = new RssFeed { ID = db.RssFeeds.Last().ID + 1 /*lol*/, Name = FeedNameText, Uri = FeedUriText };
+						db.RssFeeds.Add(rssItem);
+						db.Subscriptions.Add(new Subscription { UserID = _settingsService.ActiveUser.ID, RssFeedID = rssItem.ID });
 						db.SaveChanges();
-
-						//TODO: nem biztos hogy ezt itt kene 3
-						await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
-						{
-							await ItemDataSource.Instance.QueryArticles();
-						});
-
 						GetItems();
 
 					}
-				}catch(Exception e)
+				}
+				catch (Exception e)
 				{
-					System.Diagnostics.Debug.WriteLine(e.InnerException.Message);
 					System.Diagnostics.Debugger.Break();
 				}
 			}
@@ -158,11 +144,11 @@ namespace OnlabNews.ViewModels
 			using (var db = new AppDbContext())
 			{
 
-				var follows = db.Follows.Where(f => f.UserID == Settings.ActiveUser.ID).Include(x => x.RssItem).ToList();
+				var subs = db.Subscriptions.Where(f => f.UserID == _settingsService.ActiveUser.ID).Include(x => x.RssFeed).ToList();
 
-				foreach (Follow f in follows)
+				foreach (Subscription f in subs)
 				{
-					Items.Add(f.RssItem);
+					Items.Add(f.RssFeed);
 				}
 
 			}

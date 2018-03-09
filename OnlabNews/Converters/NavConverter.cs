@@ -35,20 +35,20 @@ namespace OnlabNews.Converters
 
 		NavigationViewItem ToItem(NavItemEx item)
 		{
-			NavigationViewItem x =  new NavigationViewItem
+			NavigationViewItem navItem =  new NavigationViewItem
 			{
-				Content = item.Text,
-				Tag = item.Tag,
+				Content = item.Content,			
 				Icon =new SymbolIcon { Symbol = (Symbol)Enum.Parse(typeof(Symbol),item.Symbol)}
 			};
-			x.SetValue(NavProperties.PageTypeProperty, item.PageType);
-			x.SetValue(NavProperties.IsStartPageProperty, item.IsStartPage);
-			return x;
+			navItem.SetValue(NavProperties.PageTokenProperty, item.PageToken);
+			navItem.SetValue(NavProperties.PageTypeProperty, item.PageType);
+			navItem.SetValue(NavProperties.IsStartPageProperty, item.IsStartPage);
+			return navItem;
 		}
 
 		NavigationViewItemHeader ToItem(NavItemHeaderEx item)
 		{
-			return new NavigationViewItemHeader { Content = item.Text/*, Opacity = item.Opacity*/};
+			return new NavigationViewItemHeader {Content = item.Text, /*Opacity=item.Opacity*/};
 		}
 
 		NavigationViewItemSeparator ToItem(NavItemSeparatorEx item)

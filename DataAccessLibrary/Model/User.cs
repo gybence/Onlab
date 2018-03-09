@@ -11,6 +11,6 @@ namespace DataAccessLibrary.Model
 		public int ID { get; set; }
 		public string Name { get; set; }
 
-		public ICollection<Follow> Follows { get; set; }
+		public ICollection<Subscription> Subscriptions { get; set; }
 	}
 }

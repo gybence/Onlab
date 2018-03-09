@@ -9,35 +9,37 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Web.Syndication;
 using OnlabNews.Models;
-using Windows.UI.Xaml.Controls;
+using OnlabNews.Services.DataSourceServices;
 
 namespace OnlabNews.ViewModels
 {
 	public class FeedPageViewModel : ViewModelBase
 	{
+
 		#region properties
 
+		private IArticleDataSourceService _articleDataSource;
 		INavigationService _navigationService;
 
-		public ItemDataSource ItemDataSource
-		{
-			get { return ItemDataSource.Instance; }
-		}
+		public DelegateCommand<object> OnItemClickCommand { get; private set; }
 
+		public ObservableCollection<MutableGrouping<char, ArticleItem>> GroupedArticles { get { return _articleDataSource.GroupedArticles; } }
+		
 		#endregion
 
-		public FeedPageViewModel(INavigationService navigationService)
+		public FeedPageViewModel(INavigationService navigationService, IArticleDataSourceService dataSourceService)
 		{
+			_articleDataSource = dataSourceService;
 			_navigationService = navigationService;
+			OnItemClickCommand = new DelegateCommand<object>(OnClickNavigate);
+			
 		}
 
-		public void ArticleClick(object sender, ItemClickEventArgs e)
+		private void OnClickNavigate(object clickedItem)
 		{
-			var item = e.ClickedItem;
-			_navigationService.Navigate("Article", item);
-			//_navigationService.Navigate("Settings",null);
+			_navigationService.Navigate("Article", clickedItem);
+			
 		}
-
 
 		public override void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)
 		{

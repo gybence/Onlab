@@ -10,16 +10,14 @@ namespace OnlabNews.Extensions
 	public class NavItemEx
 	{
 		public string Symbol { get; set; }
-		public string Text { get; set; }
-		public string Tag { get; set; }
+		public string Content { get; set; }
+		public string PageToken { get; set; }
 		public Type PageType { get; set; }
 		public bool IsStartPage { get; set; } = false;
 	}
 	public class NavItemHeaderEx 
 	{
 		public string Text { get; set; }
-		//TODO: header text opacity indulaskor
-		//public int Opacity { get; set; } = 0;
 	}
 	public class NavItemSeparatorEx { }
 }

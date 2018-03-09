@@ -15,6 +15,10 @@ using DataAccessLibrary;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using DataAccessLibrary.Model;
+using OnlabNews.ViewModels;
+using OnlabNews.Services.SettingsServices;
+using Unity.Lifetime;
+using OnlabNews.Services.DataSourceServices;
 
 namespace OnlabNews
 {
@@ -52,6 +56,9 @@ namespace OnlabNews
 		protected override Task OnInitializeAsync(IActivatedEventArgs args)
 		{
 			Container.RegisterInstance<INavigationService>(NavigationService);
+			Container.RegisterType<ISettingsService, SettingsService>(new ContainerControlledLifetimeManager());
+			Container.RegisterType<IArticleDataSourceService, ArticleDataSource>(new ContainerControlledLifetimeManager());
+
 			//Container.RegisterInstance<IResourceLoader>(new ResourceLoaderAdapter(new ResourceLoader()));
 
 			return base.OnInitializeAsync(args);
@@ -72,20 +79,19 @@ namespace OnlabNews
 						db.Users.Add(new User { Name = "Default" });
 						db.SaveChanges();
 					}
-					if (!db.RssItems.Any())
+					if (!db.RssFeeds.Any())
 					{
-						db.RssItems.Add(new RssItem { Name = "Index", Uri = "https://index.hu/24ora/rss" });
+						db.RssFeeds.Add(new RssFeed { Name = "Index", Uri = "https://index.hu/24ora/rss" });
 						db.SaveChanges();
 					}
-					if (!db.Follows.Any())
+					if (!db.Subscriptions.Any())
 					{
-						db.Follows.Add(new Follow { UserID = 1, RssItemID = 1 });
+						db.Subscriptions.Add(new Subscription { UserID = 1, RssFeedID = 1 });
 						db.SaveChanges();
 					}
 				}
 				catch(Exception e)
 				{
-					System.Diagnostics.Debug.WriteLine(e.InnerException.Message);
 					System.Diagnostics.Debugger.Break();
 				}
 			}

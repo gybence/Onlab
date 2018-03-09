@@ -6,13 +6,21 @@
     xmlns:local="using:OnlabNews.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Interactions="using:Microsoft.Xaml.Interactions.Core"
     mc:Ignorable="d"
-	NavigationCacheMode="Enabled"
+	
 	prism:ViewModelLocator.AutoWireViewModel="True">
-
+	<!--NavigationCacheMode="Enabled"-->
 	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 		<TextBlock HorizontalAlignment="Left" Margin="232,66,0,0" Text="MainPage" TextWrapping="Wrap" VerticalAlignment="Top"/>
-		<Button Content="Button" HorizontalAlignment="Left" Margin="238,98,0,0" VerticalAlignment="Top"  Command="{x:Bind ViewModel.OnClickCommand}" />
+		<Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="238,98,0,0" VerticalAlignment="Top">
+			<Interactivity:Interaction.Behaviors>
+				<Interactions:EventTriggerBehavior EventName="Click" SourceObject="{Binding ElementName=button}">
+					<Interactions:NavigateToPageAction TargetPage="OnlabNews.Views.FeedPage"/>
+				</Interactions:EventTriggerBehavior>
+			</Interactivity:Interaction.Behaviors>
+
+		</Button>
 	</Grid>
 	
 </prism:SessionStateAwarePage>

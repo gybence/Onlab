@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:OnlabNews"
 	xmlns:views="using:OnlabNews.Views"
-	xmlns:ext="using:OnlabNews.Extensions"
+	xmlns:cont="using:OnlabNews.Controls"
 	xmlns:conv="using:OnlabNews.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -16,15 +16,13 @@
 	<!--ItemInvoked="NavView_ItemInvoked"
                     SelectionChanged="NavView_SelectionChanged"
 					Loaded="NavView_Loaded"-->
-	<ext:NavViewEx x:Name="NavView"       
+	<cont:NavViewEx x:Name="NavView"       
                     Canvas.ZIndex="0"
 				    MenuItemsSource="{x:Bind MenuItems, Converter={StaticResource NavConverter}}"
-				    SettingsPageType="views:SettingsPage"
-				   >
+					SettingsPageType="views:SettingsPage"
+					>
 	
-		<NavigationView.AutoSuggestBox>
-			<AutoSuggestBox x:Name="ASB" QueryIcon="Find"/>
-		</NavigationView.AutoSuggestBox>
+		<!--HeaderTemplate="{StaticResource NavigationViewHeaderTemplate}"-->
 
 		<NavigationView.HeaderTemplate>
 			<DataTemplate>
@@ -36,35 +34,35 @@
 					<TextBlock Style="{StaticResource TitleTextBlockStyle}"
                            FontSize="28"
                            VerticalAlignment="Center"
-                           Text="Welcome"/>
+                           Text="{Binding}"/>
 					<CommandBar Grid.Column="1"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Top"
                             DefaultLabelPosition="Right"
                             Background="{ThemeResource SystemControlBackgroundAltHighBrush}">
 						<AppBarButton Label="Refresh" Icon="Refresh"/>
-						<AppBarButton Label="Import" Icon="Import"/>
+						<!--Label="{Binding Content.Content.ViewModel.ArticleLink, ElementName=NavView}"-->
+						<!--TODO: click={binding viewmodel.click} valahogy es akkor mindig az adott VMhez lesz kotve magatol?-->
+						<!--es nem kell foglalkozzon azzal h mi a viewmodel.click meg h letezi ke-->
+						<AppBarButton x:Name="ShareButton" Label="Share" Icon="Share"/>
 					</CommandBar>
 				</Grid>
 			</DataTemplate>
 		</NavigationView.HeaderTemplate>
-
+		
+		
+		<NavigationView.AutoSuggestBox>
+			<AutoSuggestBox x:Name="ASB" QueryIcon="Find"/>
+		</NavigationView.AutoSuggestBox>
+		
 		<!--<NavigationView.PaneFooter>
 			<HyperlinkButton x:Name="MoreInfoBtn"
                              Content="More info"
                              Click="More_Click"
                              Margin="12,0"/>
 		</NavigationView.PaneFooter>-->
-
-		<Frame HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="ContentFrame" Margin="24">
-			<Frame.ContentTransitions>
-				<TransitionCollection>
-					<NavigationThemeTransition/>
-				</TransitionCollection>
-			</Frame.ContentTransitions>
-		</Frame>
-
-	</ext:NavViewEx>
+		
+	</cont:NavViewEx>
 
 </Page>
 
