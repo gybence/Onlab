@@ -17,12 +17,14 @@ using Microsoft.EntityFrameworkCore;
 using Windows.UI.Core;
 using OnlabNews.Services.SettingsServices;
 using OnlabNews.Services.DataSourceServices;
+using Microsoft.Toolkit.Uwp.Services.Facebook;
+using System.Globalization;
 
 namespace OnlabNews.ViewModels
 {
-    public class SettingsPageViewModel : ViewModelBase
-    {
-		
+	public class SettingsPageViewModel : ViewModelBase
+	{
+
 		#region properties
 
 		INavigationService _navigationService;
@@ -30,10 +32,6 @@ namespace OnlabNews.ViewModels
 		private ISettingsService _settingsService;
 		private CoreDispatcher dispatcher;
 
-		
-
-		string _nameToLoadText;
-		public string NameToLoadText { get { return _nameToLoadText; } set { SetProperty(ref _nameToLoadText, value); } }
 
 		string _feedNameText;
 		public string FeedNameText { get { return _feedNameText; } set { SetProperty(ref _feedNameText, value); } }
@@ -55,56 +53,43 @@ namespace OnlabNews.ViewModels
 			_settingsService = settingsService;
 			_navigationService = navigationService;
 			dispatcher = Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher;
-			NameToLoadText = _settingsService.ActiveUser.Name;
+			UserNameText = _settingsService.ActiveUser.Name;
 			GetItems();
+			
 		}
 
+		
+
+
+		#region button click handlers
 		public void AddNewUserButtonClick()
 		{
+			if (UserNameText.Equals(_settingsService.ActiveUser.Name))
+				return;
+
 			using (var db = new AppDbContext())
 			{
-				try
-				{
-					var userToLoad = db.Users.SingleOrDefault(u => u.Name == UserNameText);
+				User newUser = new User { Name = UserNameText };
+				db.Users.Add(newUser);
+				db.SaveChanges();
+				_settingsService.ActiveUser = newUser;
 
-					if (userToLoad == null)
-					{
-						userToLoad = new User { Name = UserNameText };
-						db.Users.Add(userToLoad);
-						db.SaveChanges();
-						_settingsService.ActiveUser = userToLoad;
-						NameToLoadText = UserNameText;
-						GetItems();
-
-					}
-				}
-				catch (Exception e)
-				{
-					System.Diagnostics.Debugger.Break();
-				}
+				GetItems();
 			}
 		}
 
 		public void LoadButtonClick()
 		{
-			if (!string.Equals(NameToLoadText, _settingsService.ActiveUser.Name))
-			{
-				using (var db = new AppDbContext())
-				{
-					try
-					{
-						var userToLoad = db.Users.SingleOrDefault(u => u.Name == NameToLoadText);
-						if (userToLoad != null)
-						{
-							_settingsService.ActiveUser = userToLoad;
-							GetItems();
+			if (UserNameText.Equals(_settingsService.ActiveUser.Name))
+				return;
 
-						}
-					}
-					catch (Exception e)
-					{
-						System.Diagnostics.Debugger.Break();
-					}
+			using (var db = new AppDbContext())
+			{		
+				var userToLoad = db.Users.SingleOrDefault(u => u.Name == UserNameText);
+				if (userToLoad != null)
+				{
+					_settingsService.ActiveUser = userToLoad;
+					GetItems();
 				}
 			}
 		}
@@ -118,22 +103,14 @@ namespace OnlabNews.ViewModels
 
 			if (!string.IsNullOrEmpty(FeedNameText) && !string.IsNullOrEmpty(FeedUriText))
 			{
-				try
+				using (var db = new AppDbContext())
 				{
-					using (var db = new AppDbContext())
-					{
-						//TODO: ha mar letezik ne adjuk hozza 
-						var rssItem = new RssFeed { ID = db.RssFeeds.Last().ID + 1 /*lol*/, Name = FeedNameText, Uri = FeedUriText };
-						db.RssFeeds.Add(rssItem);
-						db.Subscriptions.Add(new Subscription { UserID = _settingsService.ActiveUser.ID, RssFeedID = rssItem.ID });
-						db.SaveChanges();
-						GetItems();
-
-					}
-				}
-				catch (Exception e)
-				{
-					System.Diagnostics.Debugger.Break();
+					//TODO: ha mar letezik ne adjuk hozza 
+					var rssItem = new RssFeed { ID = db.RssFeeds.Last().ID + 1 /*lol*/, Name = FeedNameText, Uri = FeedUriText };
+					db.RssFeeds.Add(rssItem);
+					db.Subscriptions.Add(new Subscription { UserID = _settingsService.ActiveUser.ID, RssFeedID = rssItem.ID });
+					db.SaveChanges();
+					GetItems();
 				}
 			}
 		}
@@ -143,16 +120,13 @@ namespace OnlabNews.ViewModels
 			Items.Clear();
 			using (var db = new AppDbContext())
 			{
-
 				var subs = db.Subscriptions.Where(f => f.UserID == _settingsService.ActiveUser.ID).Include(x => x.RssFeed).ToList();
-
 				foreach (Subscription f in subs)
-				{
 					Items.Add(f.RssFeed);
-				}
-
 			}
 		}
+
+		#endregion
 
 		public override void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)
 		{

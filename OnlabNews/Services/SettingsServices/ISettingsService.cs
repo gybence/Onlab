@@ -15,5 +15,6 @@ namespace OnlabNews.Services.SettingsServices
 		
 		event StatusUpdateHandler OnUpdateStatus;
 		User ActiveUser { get; set; }
+		string FacebookGraphiAppID { get;}
 	}
 }

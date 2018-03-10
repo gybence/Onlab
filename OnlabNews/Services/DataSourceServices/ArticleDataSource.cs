@@ -37,6 +37,7 @@ namespace OnlabNews.Services.DataSourceServices
 
 			//Settings.Instance.PropertyChanged += QueryArticles;
 			Task.Run(QueryArticles);
+
 			_settingsService.OnUpdateStatus += QueryArticles;
 		}
 

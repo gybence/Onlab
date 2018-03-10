@@ -18,37 +18,59 @@
 	</prism:SessionStateAwarePage.Resources>
 
 	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-		<SemanticZoom>
-
-			<SemanticZoom.ZoomedInView>
-				<ListView IsItemClickEnabled="True" SelectionMode="Single" x:Name="ZoomedInArticleList" 
+		<Pivot>
+			<PivotItem Header="Syndication">
+				<SemanticZoom>
+					<SemanticZoom.ZoomedInView>
+						<ListView IsItemClickEnabled="True" SelectionMode="Single" x:Name="ZoomedInArticleList" 
 					  ItemsSource="{Binding Source={StaticResource ArticlesCvs}}"
 					  ItemTemplate="{StaticResource ZoomedInArticleListViewItemTemplate}"
 					  >
-					<ListView.GroupStyle>
-						<GroupStyle HidesIfEmpty="False" HeaderTemplate="{StaticResource ArticlesCvsHeaderTemplate}" />
-					</ListView.GroupStyle>
-					<!--ext:ItemClickCommand.Command="{x:Bind ViewModel.OnItemClickCommand}"-->
-					
-					<Interactivity:Interaction.Behaviors>
-						<!--ListView-ben SelectionMode-t be kell kapcsolni ...-->
-						<Interactions:EventTriggerBehavior EventName="SelectionChanged">
-							<Interactions:InvokeCommandAction 
+							<ListView.GroupStyle>
+								<GroupStyle HidesIfEmpty="False" HeaderTemplate="{StaticResource ArticlesCvsHeaderTemplate}" />
+							</ListView.GroupStyle>
+							<!--ext:ItemClickCommand.Command="{x:Bind ViewModel.OnItemClickCommand}"-->
+
+							<Interactivity:Interaction.Behaviors>
+								<!--ListView-ben SelectionMode-t be kell kapcsolni ...-->
+								<Interactions:EventTriggerBehavior EventName="SelectionChanged">
+									<Interactions:InvokeCommandAction 
 							Command="{Binding OnItemClickCommand}" 
 							CommandParameter="{Binding ElementName=ZoomedInArticleList, Path=SelectedItem}"/>
-						</Interactions:EventTriggerBehavior>
-					</Interactivity:Interaction.Behaviors>
-				</ListView>
-			</SemanticZoom.ZoomedInView>
+								</Interactions:EventTriggerBehavior>
+							</Interactivity:Interaction.Behaviors>
+						</ListView>
+					</SemanticZoom.ZoomedInView>
 
-			<SemanticZoom.ZoomedOutView>
-				<GridView IsItemClickEnabled="True" x:Name="ZoomedOutArticleList" 
+					<SemanticZoom.ZoomedOutView>
+						<GridView IsItemClickEnabled="True" x:Name="ZoomedOutArticleList" 
 					  ItemsSource="{x:Bind ArticlesCvs.View.CollectionGroups}"
 					  ItemTemplate="{StaticResource ZoomedOutArticleGridViewItemTemplate}"
 					  >
-				</GridView>
+						</GridView>
 
-			</SemanticZoom.ZoomedOutView>
-		</SemanticZoom>
+					</SemanticZoom.ZoomedOutView>
+				</SemanticZoom>
+
+			</PivotItem>
+
+
+			<PivotItem Header="Facebook">
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+					<ListView Grid.Column="0" Grid.Row="0" Name="FbList"
+						ItemsSource="{x:Bind ViewModel.Fbcollection, Mode=OneWay}">
+					</ListView>
+				</Grid>
+
+
+			</PivotItem>
+		</Pivot>
+		
 	</Grid>
 </prism:SessionStateAwarePage>
