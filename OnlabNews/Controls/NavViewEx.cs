@@ -64,13 +64,13 @@ namespace OnlabNews.Controls
 		public void Setup(Frame frame, INavigationService service)
 		{
 			//frame.Margin = new Thickness(24);
-			frame.Margin = new Thickness(24, 24, 0, 24);
+			//frame.Margin = new Thickness(24, 24, 0, 24);
 			Content = _frame = frame;
 			_navigationService = service;
 			_frame.Navigated += Frame_Navigated; //navigacio navview nelkul
 			ItemInvoked += NavViewEx_ItemInvoked; //navigacio navview menu itemre kattintassal 
 			Loaded += NavViewEx_Loaded;
-			DisplayModeChanged += MyDisplayModeChanged;
+			//DisplayModeChanged += MyDisplayModeChanged;
 			//SystemNavigationManager.GetForCurrentView().BackRequested += ShellPage_BackRequested;
 		
 
@@ -175,9 +175,9 @@ namespace OnlabNews.Controls
 		private void MyDisplayModeChanged(NavigationView sender, NavigationViewDisplayModeChangedEventArgs e)
 		{
 			if (DisplayMode == NavigationViewDisplayMode.Minimal)
-				_frame.Margin = new Thickness(12, 12, 0, 12);
+				_frame.Margin = new Thickness(12, 12, 0, 0);
 			else
-				_frame.Margin = new Thickness(24, 24, 0, 24);
+				_frame.Margin = new Thickness(24, 24, 0, 0);
 		}
 	}
 }

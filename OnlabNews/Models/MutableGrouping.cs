@@ -84,7 +84,15 @@ namespace OnlabNews.Models
 
 		public int CompareTo(object obj)
 		{
-			return string.Compare(Key.ToString(), (obj as MutableGrouping<TKey,TElement>).Key.ToString());
+			//return string.Compare(Key.ToString(), .ToString());
+			int x = int.Parse(Key.ToString());
+			int y = int.Parse((obj as MutableGrouping<TKey, TElement>).Key.ToString());
+
+			if ( x > y)
+				return 1;
+			if (x < y)
+				return -1;
+			else return 0;
 		}
 		
 	}

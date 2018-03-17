@@ -19,6 +19,7 @@ using OnlabNews.Services.SettingsServices;
 using OnlabNews.Services.DataSourceServices;
 using Microsoft.Toolkit.Uwp.Services.Facebook;
 using System.Globalization;
+using OnlabNews.Services.FacebookServices;
 
 namespace OnlabNews.ViewModels
 {
@@ -30,6 +31,7 @@ namespace OnlabNews.ViewModels
 		INavigationService _navigationService;
 		private IArticleDataSourceService _articleDataSource;
 		private ISettingsService _settingsService;
+		private IFacebookGraphService _facebookGraphService;
 		private CoreDispatcher dispatcher;
 
 
@@ -47,18 +49,18 @@ namespace OnlabNews.ViewModels
 
 		#endregion
 
-		public SettingsPageViewModel(INavigationService navigationService, ISettingsService settingsService, IArticleDataSourceService dataSourceService)
+		public SettingsPageViewModel(INavigationService navigationService, ISettingsService settingsService, IArticleDataSourceService dataSourceService, IFacebookGraphService facebookService)
 		{
 			_articleDataSource = dataSourceService;
 			_settingsService = settingsService;
 			_navigationService = navigationService;
+			_facebookGraphService = facebookService;
+
+
 			dispatcher = Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher;
 			UserNameText = _settingsService.ActiveUser.Name;
-			GetItems();
-			
+			GetItems();	
 		}
-
-		
 
 
 		#region button click handlers
@@ -127,6 +129,17 @@ namespace OnlabNews.ViewModels
 		}
 
 		#endregion
+
+		public async void FacebookLoginButtonClick()
+		{
+			if (_facebookGraphService.FacebookServiceInstance.LoggedUser == null)
+			{
+				await _facebookGraphService.FacebookServiceInstance.LoginAsync();
+				_facebookGraphService.LoadFacebookPosts();
+			}
+			else
+				await _facebookGraphService.FacebookServiceInstance.LogoutAsync();
+		}
 
 		public override void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)
 		{

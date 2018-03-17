@@ -1,16 +1,12 @@
 ﻿using Prism.Commands;
 using Prism.Windows.Mvvm;
 using Prism.Windows.Navigation;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Web.Syndication;
 using OnlabNews.Models;
 using OnlabNews.Services.DataSourceServices;
 using Microsoft.Toolkit.Uwp.Services.Facebook;
+using OnlabNews.Services.FacebookServices;
 
 namespace OnlabNews.ViewModels
 {
@@ -20,46 +16,24 @@ namespace OnlabNews.ViewModels
 		#region properties
 
 		private IArticleDataSourceService _articleDataSource;
-		INavigationService _navigationService;
+		private INavigationService _navigationService;
+		private IFacebookGraphService _facebookGraphService;
 
 		public DelegateCommand<object> OnItemClickCommand { get; private set; }
 
-		public ObservableCollection<MutableGrouping<char, ArticleItem>> GroupedArticles { get { return _articleDataSource.GroupedArticles; } }
-
-		ObservableCollection<string> _fbCollection = new ObservableCollection<string>();
-		public ObservableCollection<string> Fbcollection { get { return _fbCollection; } set { SetProperty(ref _fbCollection, value); } }
+		public ObservableCollection<MutableGrouping<int, ArticleItem>> GroupedArticles { get { return _articleDataSource.GroupedArticles; } }
+		public RangeObservableCollection<FacebookPost> FacebookPosts { get { return _facebookGraphService.FacebookPosts; } }
 
 		#endregion
 
-		public FeedPageViewModel(INavigationService navigationService, IArticleDataSourceService dataSourceService)
+		public FeedPageViewModel(INavigationService navigationService, IArticleDataSourceService dataSourceService, IFacebookGraphService facebookGraphService)
 		{
 			_articleDataSource = dataSourceService;
 			_navigationService = navigationService;
+			_facebookGraphService = facebookGraphService;
 			OnItemClickCommand = new DelegateCommand<object>(OnClickNavigate);
-
-			LoadFaceBookInfo();
+			_facebookGraphService.LoadFacebookPosts();
 		}
-
-		#region facebook
-
-		private async void LoadFaceBookInfo()
-		{
-			if (!await FacebookService.Instance.LoginAsync())
-				return;
-
-			var items = await FacebookService.Instance.RequestAsync(FacebookDataConfig.MyFeed, 10);
-			Fbcollection = new ObservableCollection<string>();
-
-			foreach (var i in items)
-			{
-				var fbItem = i.Message;
-				Fbcollection.Add(fbItem);
-			}
-			await FacebookService.Instance.LogoutAsync();
-		}
-
-		#endregion
-
 
 		private void OnClickNavigate(object clickedItem)
 		{

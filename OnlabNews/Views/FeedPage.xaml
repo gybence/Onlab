@@ -5,7 +5,7 @@
     xmlns:local="using:OnlabNews.Views"
 	xmlns:prism ="using:Prism.Windows.Mvvm"
 	xmlns:m="using:OnlabNews.Models"
-	xmlns:ext="using:OnlabNews.Extensions"
+	xmlns:conv="using:OnlabNews.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -19,43 +19,51 @@
 
 	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 		<Pivot>
-			<PivotItem Header="Syndication">
+			<PivotItem Margin="0" Header="RSS">
 				<SemanticZoom>
 					<SemanticZoom.ZoomedInView>
-						<ListView IsItemClickEnabled="True" SelectionMode="Single" x:Name="ZoomedInArticleList" 
-					  ItemsSource="{Binding Source={StaticResource ArticlesCvs}}"
-					  ItemTemplate="{StaticResource ZoomedInArticleListViewItemTemplate}"
-					  >
-							<ListView.GroupStyle>
+						<GridView IsItemClickEnabled="True" SelectionMode="Single" x:Name="ZoomedInArticleGrid" 
+								  ItemsPanel="{StaticResource ZoomedInArticleGridViewItemsPanelTemplate}" 
+								  ItemContainerStyle="{StaticResource ZoomedInArticleGridItemContainerStyle}" 
+								  ItemsSource="{Binding Source={StaticResource ArticlesCvs}}" 
+								  ItemTemplate="{StaticResource ZoomedInArticleGridViewItemTemplate}"
+								  >
+							<GridView.GroupStyle>
 								<GroupStyle HidesIfEmpty="False" HeaderTemplate="{StaticResource ArticlesCvsHeaderTemplate}" />
-							</ListView.GroupStyle>
+							</GridView.GroupStyle>
 							<!--ext:ItemClickCommand.Command="{x:Bind ViewModel.OnItemClickCommand}"-->
-
 							<Interactivity:Interaction.Behaviors>
 								<!--ListView-ben SelectionMode-t be kell kapcsolni ...-->
 								<Interactions:EventTriggerBehavior EventName="SelectionChanged">
 									<Interactions:InvokeCommandAction 
-							Command="{Binding OnItemClickCommand}" 
-							CommandParameter="{Binding ElementName=ZoomedInArticleList, Path=SelectedItem}"/>
+										Command="{Binding OnItemClickCommand}" 
+										CommandParameter="{Binding ElementName=ZoomedInArticleGrid, Path=SelectedItem}"/>
 								</Interactions:EventTriggerBehavior>
 							</Interactivity:Interaction.Behaviors>
-						</ListView>
+						</GridView>
 					</SemanticZoom.ZoomedInView>
 
 					<SemanticZoom.ZoomedOutView>
-						<GridView IsItemClickEnabled="True" x:Name="ZoomedOutArticleList" 
-					  ItemsSource="{x:Bind ArticlesCvs.View.CollectionGroups}"
-					  ItemTemplate="{StaticResource ZoomedOutArticleGridViewItemTemplate}"
-					  >
+						<GridView IsItemClickEnabled="True" x:Name="ZoomedOutArticleGrid" 
+								  ItemsSource="{x:Bind ArticlesCvs.View.CollectionGroups}"
+								  ItemTemplate="{StaticResource ZoomedOutArticleGridViewItemTemplate}"
+								  VerticalAlignment="Center"
+								  HorizontalAlignment="Center"
+								  >
+						
+							<GridView.ItemsPanel>
+								<ItemsPanelTemplate>
+									<ItemsWrapGrid Orientation="Horizontal" MaximumRowsOrColumns="6"/>
+								</ItemsPanelTemplate>
+							</GridView.ItemsPanel>
 						</GridView>
-
 					</SemanticZoom.ZoomedOutView>
 				</SemanticZoom>
 
 			</PivotItem>
 
 
-			<PivotItem Header="Facebook">
+			<PivotItem Margin="0" Header="Facebook">
 				<Grid>
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition/>
@@ -64,7 +72,8 @@
 						<RowDefinition/>
 					</Grid.RowDefinitions>
 					<ListView Grid.Column="0" Grid.Row="0" Name="FbList"
-						ItemsSource="{x:Bind ViewModel.Fbcollection, Mode=OneWay}">
+							  ItemsSource="{x:Bind ViewModel.FacebookPosts, Mode=OneWay}"
+							  ItemTemplate="{StaticResource FacebookPostListViewItemTemplate}">
 					</ListView>
 				</Grid>
 

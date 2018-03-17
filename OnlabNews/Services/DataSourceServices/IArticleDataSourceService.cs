@@ -11,7 +11,7 @@ namespace OnlabNews.Services.DataSourceServices
 {
     public interface IArticleDataSourceService
     {
-		ObservableCollection<MutableGrouping<char, ArticleItem>> GroupedArticles { get; set; }
+		ObservableCollection<MutableGrouping<int, ArticleItem>> GroupedArticles { get; set; }
 		Task QueryArticles();
 	}
 }

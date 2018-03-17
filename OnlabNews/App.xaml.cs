@@ -1,24 +1,19 @@
-﻿using OnlabNews.Views;
-using Prism.Mvvm;
-using Prism.Unity.Windows;
-using Prism.Windows.AppModel;
+﻿using Prism.Unity.Windows;
 using Prism.Windows.Navigation;
 using System;
 using System.Threading.Tasks;
 using Unity;
-using Unity.Resolution;
 using Windows.ApplicationModel.Activation;
-using Windows.ApplicationModel.Resources;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using DataAccessLibrary;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using DataAccessLibrary.Model;
-using OnlabNews.ViewModels;
 using OnlabNews.Services.SettingsServices;
 using Unity.Lifetime;
 using OnlabNews.Services.DataSourceServices;
+using OnlabNews.Services.FacebookServices;
 
 namespace OnlabNews
 {
@@ -57,8 +52,8 @@ namespace OnlabNews
 		{
 			Container.RegisterInstance<INavigationService>(NavigationService);
 			Container.RegisterType<ISettingsService, SettingsService>(new ContainerControlledLifetimeManager());
-			Container.RegisterType<IArticleDataSourceService, ArticleDataSource>(new ContainerControlledLifetimeManager());
-
+			Container.RegisterType<IArticleDataSourceService, ArticleDataSourceService>(new ContainerControlledLifetimeManager());
+			Container.RegisterType<IFacebookGraphService, FacebookGraphService>(new ContainerControlledLifetimeManager());
 			//Container.RegisterInstance<IResourceLoader>(new ResourceLoaderAdapter(new ResourceLoader()));
 
 			return base.OnInitializeAsync(args);

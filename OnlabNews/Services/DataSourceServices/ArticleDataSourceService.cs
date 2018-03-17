@@ -14,23 +14,24 @@ using Windows.Web.Syndication;
 using OnlabNews.Services.SettingsServices;
 using OnlabNews.Models;
 using OnlabNews.Extensions;
+using OnlabNews.Helpers;
 
 namespace OnlabNews.Services.DataSourceServices
 {
-	public class ArticleDataSource : IArticleDataSourceService
+	public class ArticleDataSourceService : IArticleDataSourceService
 	{
 		#region properties
 
 		private ISettingsService _settingsService;
 
-		ObservableCollection<MutableGrouping<char, ArticleItem>> _groupedArticles = new ObservableCollection<MutableGrouping<char, ArticleItem>>();
-		public ObservableCollection<MutableGrouping<char, ArticleItem>> GroupedArticles { get { return _groupedArticles; } set { _groupedArticles = value; } }
+		ObservableCollection<MutableGrouping<int, ArticleItem>> _groupedArticles = new ObservableCollection<MutableGrouping<int, ArticleItem>>();
+		public ObservableCollection<MutableGrouping<int, ArticleItem>> GroupedArticles { get { return _groupedArticles; } set { _groupedArticles = value; } }
 
 		CoreDispatcher dispatcher;
 
 		#endregion
 
-		public ArticleDataSource(ISettingsService settingsService)
+		public ArticleDataSourceService(ISettingsService settingsService)
 		{
 			_settingsService = settingsService;
 			dispatcher = Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher;
@@ -54,18 +55,32 @@ namespace OnlabNews.Services.DataSourceServices
 				{
 					Uri uri = new Uri(f.RssFeed.Uri);
 					SyndicationFeed feed = await client.RetrieveFeedAsync(uri);
-
+					
 					List<ArticleItem> list = new List<ArticleItem>();
 
 					foreach (SyndicationItem item in feed.Items)
 					{
-						string itemTitle = item.Title == null ? "No title" : item.Title.Text;
-						string itemLink = item.Links == null ? "No link" : item.Links.FirstOrDefault().Uri.ToString();
-						
-						list.Add(new ArticleItem { Title = itemTitle, Uri = itemLink, Key = itemTitle.First() });
-					}
+						try
+						{
+							string itemTitle = item.Title == null ? "No title" : item.Title.Text;
+							string itemLink = item.Links == null ? "No link" : item.Links.FirstOrDefault().Uri.ToString();
+							var published = item.PublishedDate.LocalDateTime;
 
-					//list.Sort();
+
+							var itemElementExtensions = item.ElementExtensions.ToList();
+							string itemImageUri = itemElementExtensions.FirstOrDefault(x => x.NodeName == "thumbnail") == null ? "ms-appx:///Assets/StoreLogo.png" :
+													itemElementExtensions.ToList().FirstOrDefault(x => x.NodeName == "thumbnail").AttributeExtensions.ToList().FirstOrDefault(y => y.Name == "url") == null ? "ms-appx:///Assets/StoreLogo.png" :
+														itemElementExtensions.ToList().FirstOrDefault(x => x.NodeName == "thumbnail").AttributeExtensions.ToList().FirstOrDefault(y => y.Name == "url").Value;
+
+							var time = DateTime.Now - published;
+							list.Add(new ArticleItem { Title = itemTitle, Uri = itemLink, ImageUri = itemImageUri, Published = published, Key = time.Hours});
+						}
+						catch
+						{
+					
+						}
+							
+					}
 					await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
 					{
 						MakeGroups(list);
@@ -76,6 +91,7 @@ namespace OnlabNews.Services.DataSourceServices
 
 		private void MakeGroups(List<ArticleItem> articles)
 		{
+			articles.Sort();
 			var groups = from c in articles
 						 group c by c.Key;
 
@@ -84,11 +100,11 @@ namespace OnlabNews.Services.DataSourceServices
 				var existing = GroupedArticles.FirstOrDefault(e => e.Key == g.Key);
 				if (existing != null)
 				{
-					existing.AddToGrouping(g);
+					existing.InsertToGrouping(g);
 				}
 				else
 				{
-					var mutableGroup = new MutableGrouping<char, ArticleItem>(g);
+					var mutableGroup = new MutableGrouping<int, ArticleItem>(g);
 					//GroupedArticles.Add(mutableGroup);
 					GroupedArticles.BinaryInsert(mutableGroup);
 				}

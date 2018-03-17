@@ -6,33 +6,55 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     xmlns:local="using:OnlabNews.Templates"
-	xmlns:vm="using:OnlabNews.ViewModels">
+	xmlns:vm="using:OnlabNews.ViewModels"
+	xmlns:conv="using:OnlabNews.Converters">
 
+	<conv:UriToBitmapImageConverter x:Key="UriToBitmapImageConverter"/>
+
+	
+
+	<DataTemplate x:Key="FacebookPostListViewItemTemplate">
+		<TextBlock Text="{Binding Message}"/>
+	</DataTemplate>
 
 	<DataTemplate x:Key="ArticlesCvsHeaderTemplate">
-		<TextBlock Text="{Binding Key}"/>
+		<StackPanel>
+			<TextBlock Text="{Binding Key}"/>
+		</StackPanel>
 	</DataTemplate>
+	
+
 	<DataTemplate x:Key="ZoomedOutArticleGridViewItemTemplate">
-		<TextBlock Text="{Binding Group.Key}" FontSize="50"/>
+		<StackPanel Width="100" Height="80">
+			<TextBlock HorizontalAlignment="Center" Text="{Binding Group.Key}" FontSize="50"/>
+		</StackPanel>
 	</DataTemplate>
 
-	<DataTemplate x:Key="ZoomedInArticleListViewItemTemplate" x:DataType="vm:ArticleItem">
-		<StackPanel Margin="0 5 5 5" Height="20">
-			<TextBlock Foreground="Gray" Margin="5 0"  TextTrimming="CharacterEllipsis" Text="{x:Bind Title, Mode=OneWay}"/>
+	<ItemsPanelTemplate x:Key="ZoomedInArticleGridViewItemsPanelTemplate">
+		<ItemsWrapGrid MaximumRowsOrColumns="2" Orientation="Horizontal"/>
+	</ItemsPanelTemplate>
+	
+	<DataTemplate x:Key="ZoomedInArticleGridViewItemTemplate" x:DataType="vm:ArticleItem">
+		<StackPanel Width="500" Height="400">
+			<TextBlock Height="20" Margin="10" Text="{x:Bind Published, Mode=OneWay}"/>
+			<Image Stretch="Fill" Margin="10,0" HorizontalAlignment="Center" Height="270"  
+				   Source="{x:Bind ImageUri, Converter={StaticResource UriToBitmapImageConverter}, Mode=OneWay}" />
+			<TextBlock Margin="10" TextWrapping="WrapWholeWords" Height="70" Style="{StaticResource TitleTextBlockStyle}" 
+					   Foreground="Black" TextTrimming="CharacterEllipsis" Text="{x:Bind Title, Mode=OneWay}"/>
 		</StackPanel>
 	</DataTemplate>
 
 	
 	<DataTemplate x:Key="NavigationViewHeaderTemplate">
-		<Grid Margin="24,10,0,0">
+		<Grid>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition/>
 			</Grid.ColumnDefinitions>
-			<TextBlock Style="{StaticResource TitleTextBlockStyle}"
-                           FontSize="28"
+			<TextBlock Style="{StaticResource TitleTextBlockStyle}"                
                            VerticalAlignment="Center"
-                           Text="{Binding}"/>
+                           Text="{Binding}"
+						   FontSize="28"/>
 			<CommandBar Grid.Column="1"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Top"

@@ -21,7 +21,7 @@ namespace OnlabNews.ViewModels
 			set
 			{
 				_title = value;
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(_title)));
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Title)));
 			}
 		}
 
@@ -32,24 +32,46 @@ namespace OnlabNews.ViewModels
 			set
 			{
 				_uri = value;
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(_uri)));
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Uri)));
 			}
 		}
 
-		char _key;
-		public char Key { get => _key;
+		string _imageUri;
+		public string ImageUri { get => _imageUri;
 			set
-			{	
-				if (Char.IsPunctuation(value))
-					_key = '&';
-				else if (Char.IsNumber(value))
-					_key = '#';
-				else
-					_key = Char.ToUpper(value);
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(_key)));
+			{
+				_imageUri = value;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ImageUri)));
+			}
+		}
+		
+
+
+		int _key;
+		public int Key { get => _key;
+			set
+			{
+				//if (Char.IsPunctuation(value))
+				//	_key = '&';
+				//else if (Char.IsNumber(value))
+				//	_key = '#';
+				//else
+				//	_key = Char.ToUpper(value);
+				_key = value;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Key)));
 			}
 		}
 
+		DateTime _published;
+		public DateTime Published
+		{
+			get => _published;
+			set
+			{
+				_published = value;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Published)));
+			}
+		}
 		#endregion
 
 		public ArticleItem()
@@ -59,7 +81,8 @@ namespace OnlabNews.ViewModels
 
 		public int CompareTo(object obj)
 		{
-			return string.Compare(Title, (obj as ArticleItem).Title);
+			//return string.Compare(Title, (obj as ArticleItem).Title);
+			return DateTime.Compare((obj as ArticleItem).Published, Published);
 		}
 	}
 }

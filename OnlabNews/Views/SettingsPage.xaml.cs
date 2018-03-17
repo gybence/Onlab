@@ -37,6 +37,6 @@ namespace OnlabNews.Views
 			
             this.InitializeComponent();
 			this.SetValue(NavProperties.HeaderProperty, "Settings");
-		}
-    }
+		}	
+	}
 }

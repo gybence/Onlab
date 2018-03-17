@@ -102,6 +102,7 @@
       <DependentUpon>AppShell.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\NavConverter.cs" />
+    <Compile Include="Converters\UriToBitmapImageConverter.cs" />
     <Compile Include="Extensions\BinaryInsertExtensions.cs" />
     <Compile Include="Extensions\ItemClickCommand.cs" />
     <Compile Include="Extensions\NavItemEx.cs" />
@@ -109,12 +110,14 @@
     <Compile Include="Models\MutableGrouping.cs" />
     <Compile Include="Models\RangeObservableCollection.cs" />
     <Compile Include="Services\DataSourceServices\IArticleDataSourceService.cs" />
+    <Compile Include="Services\FacebookServices\FacebookGraphService.cs" />
+    <Compile Include="Services\FacebookServices\IFacebookGraphService.cs" />
     <Compile Include="Services\SettingsServices\SettingsService.cs" />
     <Compile Include="Controls\NavViewEx.cs" />
     <Compile Include="Services\SettingsServices\ISettingsService.cs" />
     <Compile Include="Templates\DataTemplates.cs" />
     <Compile Include="ViewModels\ArticleItem.cs" />
-    <Compile Include="Services\DataSourceServices\ArticleDataSource.cs" />
+    <Compile Include="Services\DataSourceServices\ArticleDataSourceService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\ArticlePageViewModel.cs" />
     <Compile Include="ViewModels\FeedPageViewModel.cs" />
@@ -183,6 +186,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="AppShell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\Styles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -17,6 +17,7 @@
 			<ResourceDictionary.MergedDictionaries>
 				<!--<ResourceDictionary Source="Templates\DataTemplates.xaml"/>-->
 				<templates:DataTemplates/> <!--https://stackoverflow.com/questions/40657684/xbind-in-resource-dictionary-doesnt-work-->
+				<ResourceDictionary Source="Styles\Styles.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</prismUnity:PrismUnityApplication.Resources>

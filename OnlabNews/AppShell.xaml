@@ -19,37 +19,9 @@
 	<cont:NavViewEx x:Name="NavView"       
                     Canvas.ZIndex="0"
 				    MenuItemsSource="{x:Bind MenuItems, Converter={StaticResource NavConverter}}"
+					HeaderTemplate="{StaticResource NavigationViewHeaderTemplate}"
 					SettingsPageType="views:SettingsPage"
 					>
-	
-		<!--HeaderTemplate="{StaticResource NavigationViewHeaderTemplate}"-->
-
-		<NavigationView.HeaderTemplate>
-			<DataTemplate>
-				<Grid Margin="24,10,0,0">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition/>
-					</Grid.ColumnDefinitions>
-					<TextBlock Style="{StaticResource TitleTextBlockStyle}"
-                           FontSize="28"
-                           VerticalAlignment="Center"
-                           Text="{Binding}"/>
-					<CommandBar Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Top"
-                            DefaultLabelPosition="Right"
-                            Background="{ThemeResource SystemControlBackgroundAltHighBrush}">
-						<AppBarButton Label="Refresh" Icon="Refresh"/>
-						<!--Label="{Binding Content.Content.ViewModel.ArticleLink, ElementName=NavView}"-->
-						<!--TODO: click={binding viewmodel.click} valahogy es akkor mindig az adott VMhez lesz kotve magatol?-->
-						<!--es nem kell foglalkozzon azzal h mi a viewmodel.click meg h letezi ke-->
-						<AppBarButton x:Name="ShareButton" Label="Share" Icon="Share"/>
-					</CommandBar>
-				</Grid>
-			</DataTemplate>
-		</NavigationView.HeaderTemplate>
-		
 		
 		<NavigationView.AutoSuggestBox>
 			<AutoSuggestBox x:Name="ASB" QueryIcon="Find"/>

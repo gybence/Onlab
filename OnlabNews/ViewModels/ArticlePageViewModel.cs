@@ -32,5 +32,10 @@ namespace OnlabNews.ViewModels
 			base.OnNavigatedTo(e, viewModelState);
 			
 		}
+
+		private void ShareButton_Click(object sender, EventArgs e)
+		{
+
+		}
 	}
 }
