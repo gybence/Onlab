@@ -14,7 +14,8 @@ using Windows.Web.Syndication;
 using OnlabNews.Services.SettingsServices;
 using OnlabNews.Models;
 using OnlabNews.Extensions;
-using OnlabNews.Helpers;
+using System.Threading;
+using System.Net;
 
 namespace OnlabNews.Services.DataSourceServices
 {
@@ -36,14 +37,21 @@ namespace OnlabNews.Services.DataSourceServices
 			_settingsService = settingsService;
 			dispatcher = Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher;
 
-			//Settings.Instance.PropertyChanged += QueryArticles;
-			Task.Run(QueryArticles);
 
+			Task.Run( ()=> QueryArticles(_settingsService.Cts.Token), _settingsService.Cts.Token);
+
+			//Settings.Instance.PropertyChanged += QueryArticles;
 			_settingsService.OnUpdateStatus += QueryArticles;
 		}
 
-		public async Task QueryArticles()
+		public async Task QueryArticles(CancellationToken ct)
 		{
+			//if (cts != null)
+			//	cts.Cancel();
+			//cts = new CancellationTokenSource();
+			//var ct = cts.Token;
+			
+
 			if (GroupedArticles.Count != 0)
 				GroupedArticles.Clear();
 
@@ -55,7 +63,12 @@ namespace OnlabNews.Services.DataSourceServices
 				{
 					Uri uri = new Uri(f.RssFeed.Uri);
 					SyndicationFeed feed = await client.RetrieveFeedAsync(uri);
-					
+					if (ct.IsCancellationRequested)
+					{
+						//_settingsService.ActiveUser = db.Users.ToList().SingleOrDefault(u => u.Name.Equals("reddit"));
+						System.Diagnostics.Debug.WriteLine("cancellation: before going through list");
+						return;
+					}
 					List<ArticleItem> list = new List<ArticleItem>();
 
 					foreach (SyndicationItem item in feed.Items)
@@ -73,7 +86,9 @@ namespace OnlabNews.Services.DataSourceServices
 														itemElementExtensions.ToList().FirstOrDefault(x => x.NodeName == "thumbnail").AttributeExtensions.ToList().FirstOrDefault(y => y.Name == "url").Value;
 
 							var time = DateTime.Now - published;
-							list.Add(new ArticleItem { Title = itemTitle, Uri = itemLink, ImageUri = itemImageUri, Published = published, Key = time.Hours});
+
+
+							list.Add(new ArticleItem { Title = itemTitle, Uri = itemLink, ImageUri = itemImageUri, Published = published, Key = time.Hours > 24 ? 24 : time.Hours});
 						}
 						catch
 						{
@@ -85,6 +100,11 @@ namespace OnlabNews.Services.DataSourceServices
 					{
 						MakeGroups(list);
 					});
+					if (ct.IsCancellationRequested)
+					{
+						System.Diagnostics.Debug.WriteLine("cancellation: at MakeGroups()");
+						return;
+					}
 				}
 			}
 		}

@@ -3,6 +3,7 @@ using OnlabNews.ViewModels;
 using Prism.Windows.Mvvm;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -32,17 +33,18 @@ namespace OnlabNews.Views
 			{
 				return DataContext as MainPageViewModel;
 			}
-			//set { DataContext = value; }
+			private set { DataContext = value; }
 		}
 		public MainPage()
 		{
 			this.InitializeComponent();
+
 			this.SetValue(NavProperties.HeaderProperty, "Welcome");
-			//this.Unloaded += (sender, e) =>
-			//{
-			//	Bindings.StopTracking();
-			//	ViewModel = null;
-			//};
+
+			this.Unloaded += (sender, e) =>
+			{
+				ViewModel = null;
+			};
 		}
 	}
 }

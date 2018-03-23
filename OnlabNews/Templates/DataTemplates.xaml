@@ -55,13 +55,13 @@
                            VerticalAlignment="Center"
                            Text="{Binding}"
 						   FontSize="28"/>
-			<CommandBar Grid.Column="1"
+			<CommandBar Grid.Column="1" x:Name="asdasddasdas" 
                             HorizontalAlignment="Right"
                             VerticalAlignment="Top"
                             DefaultLabelPosition="Right"
                             Background="{ThemeResource SystemControlBackgroundAltHighBrush}">
-				<AppBarButton Label="Refresh" Icon="Refresh"/>
-				<AppBarButton x:Name="ShareButton" Label="Share" Icon="Share"/>
+				<!--<AppBarButton Label="Refresh" Icon="Refresh"/>
+				<AppBarButton x:Name="ShareButton" Label="Share" Icon="Share"/>-->
 			</CommandBar>
 		</Grid>
 	</DataTemplate>

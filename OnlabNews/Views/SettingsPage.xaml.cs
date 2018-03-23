@@ -31,6 +31,7 @@ namespace OnlabNews.Views
 			{
 				return DataContext as SettingsPageViewModel;
 			}
+			private set { DataContext = value; }
 		}
 		public SettingsPage()
         {

@@ -9,7 +9,7 @@ using System.Collections.ObjectModel;
 using Prism.Commands;
 using Windows.Web.Syndication;
 using OnlabNews.Models;
-
+using Microsoft.Toolkit.Uwp.Notifications;
 
 namespace OnlabNews.ViewModels
 {

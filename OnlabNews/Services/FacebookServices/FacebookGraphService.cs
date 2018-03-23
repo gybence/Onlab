@@ -28,7 +28,7 @@ namespace OnlabNews.Services.FacebookServices
 		{
 			//string sid = WebAuthenticationBroker.GetCurrentApplicationCallbackUri().ToString();
 			// s-1-15-2-1291395493-3554770388-778744270-2668246442-3724028671-978716057-529478274
-			FacebookService.Instance.Initialize(FacebookGraphAppID);
+			FacebookService.Instance.Initialize(FacebookGraphAppID,FacebookPermissions.UserLikes);
 			//LoadFaceBookInfo();
 		}
 
@@ -37,6 +37,7 @@ namespace OnlabNews.Services.FacebookServices
 			if (FacebookService.Instance.LoggedUser != null)
 			{
 				var items = await FacebookService.Instance.RequestAsync(FacebookDataConfig.MyFeed, 10);
+				
 				FacebookPosts.AddRange(items);
 			}
 		}

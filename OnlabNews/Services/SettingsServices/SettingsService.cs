@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using DataAccessLibrary;
 using DataAccessLibrary.Model;
@@ -11,7 +12,7 @@ using Windows.Security.Authentication.Web;
 
 namespace OnlabNews.Services.SettingsServices
 {
-	public class SettingsService: ISettingsService, INotifyPropertyChanged
+	public class SettingsService: ISettingsService
 	{
 		#region properties
 
@@ -23,19 +24,30 @@ namespace OnlabNews.Services.SettingsServices
 			get => _activeUser;
 			set
 			{
-				_activeUser = value;
-				OnUpdateStatus?.Invoke();
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ActiveUser)));
+				if(_activeUser != value)
+				{
+					_activeUser = value;
+
+					_cts.Cancel();
+					_cts.Dispose();
+					_cts = new CancellationTokenSource();
+
+					OnUpdateStatus?.Invoke(_cts.Token);
+					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ActiveUser)));
+				}
 			}
 		}
 
-		
+		public CancellationTokenSource Cts { get => _cts;}
+
+		CancellationTokenSource _cts;
 	
 
 		#endregion
 
 		public SettingsService()
 		{
+			_cts = new CancellationTokenSource();
 			using (var db = new AppDbContext())
 			{
 				//TODO: ne a default hanem a legutobb hasznalt legyen

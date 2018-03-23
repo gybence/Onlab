@@ -20,7 +20,7 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
-		<WebView Source="{Binding ArticleLink}">
+		<WebView Source="{Binding Article.Uri}">
 			
 		</WebView>
 		</Grid>

@@ -3,6 +3,7 @@ using OnlabNews.ViewModels;
 using Prism.Windows.Mvvm;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -25,17 +26,35 @@ namespace OnlabNews.Views
 	/// </summary>
 	public sealed partial class ArticlePage : SessionStateAwarePage
 	{
-		//public ArticlePageViewModel ViewModel
-		//{
-		//	get
-		//	{
-		//		return DataContext as ArticlePageViewModel;
-		//	}
-		//}
+		public ArticlePageViewModel ViewModel
+		{
+			get
+			{
+				return DataContext as ArticlePageViewModel;
+			}
+			private set { DataContext = value; }
+		}
 		public ArticlePage()
 		{
 			this.InitializeComponent();
+
 			this.SetValue(NavProperties.HeaderProperty, "Article");
+
+			var headerButtons = new ObservableCollection<object>();
+			var shareButton = new AppBarButton
+			{
+				Label = "Share",
+				Icon = new SymbolIcon { Symbol = (Symbol)Enum.Parse(typeof(Symbol), "Share") },
+				Command = ViewModel.ShareButtonCommand
+			};
+	
+			headerButtons.Add(shareButton);
+			SetValue(NavProperties.HeaderCommandsProperty, headerButtons);
+
+			this.Unloaded += (sender, e) =>
+			{
+				ViewModel = null;
+			};
 		}
 	}
 }

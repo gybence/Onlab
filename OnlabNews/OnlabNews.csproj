@@ -107,6 +107,7 @@
     <Compile Include="Extensions\ItemClickCommand.cs" />
     <Compile Include="Extensions\NavItemEx.cs" />
     <Compile Include="Extensions\NavProperties.cs" />
+    <Compile Include="Helpers\XamlUtilities.cs" />
     <Compile Include="Models\MutableGrouping.cs" />
     <Compile Include="Models\RangeObservableCollection.cs" />
     <Compile Include="Services\DataSourceServices\IArticleDataSourceService.cs" />

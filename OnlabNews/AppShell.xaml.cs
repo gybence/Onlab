@@ -15,9 +15,7 @@ namespace OnlabNews
 	/// An empty page that can be used on its own or navigated to within a Frame.
 	/// </summary>
 	public sealed partial class AppShell : Page
-	{
-		public string Asd { get; set; } = "lol";
-
+	{ 
 		ObservableCollection<object> _menuItems;
 		public ObservableCollection<object> MenuItems { get => _menuItems; set => _menuItems = value; }
 

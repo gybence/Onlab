@@ -9,6 +9,9 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using OnlabNews.Extensions;
+using OnlabNews.Helpers;
+using System.Collections.ObjectModel;
+using System.Threading;
 
 namespace OnlabNews.Controls
 {
@@ -48,7 +51,8 @@ namespace OnlabNews.Controls
 					}
 				}
 				UpdateBackButton();
-				UpdateHeader();
+				UpdatePaneHeadersVisibility(this,null);
+				UpdatePageHeaderContent();
 			}
 			get { return base.SelectedItem; }
 		}
@@ -56,11 +60,7 @@ namespace OnlabNews.Controls
 		#endregion
 
 
-		public NavViewEx()
-		{
-		}
-
-
+		public NavViewEx(){}
 		public void Setup(Frame frame, INavigationService service)
 		{
 			//frame.Margin = new Thickness(24);
@@ -71,22 +71,22 @@ namespace OnlabNews.Controls
 			ItemInvoked += NavViewEx_ItemInvoked; //navigacio navview menu itemre kattintassal 
 			Loaded += NavViewEx_Loaded;
 			//DisplayModeChanged += MyDisplayModeChanged;
-			//SystemNavigationManager.GetForCurrentView().BackRequested += ShellPage_BackRequested;
 		
-
-			RegisterPropertyChangedCallback(IsPaneOpenProperty, IsPaneOpenChanged);
-			
+			RegisterPropertyChangedCallback(IsPaneOpenProperty, UpdatePaneHeadersVisibility);	
 		}
-		
-			private void NavViewEx_Loaded(object sender, RoutedEventArgs e)
+
+
+		#region event subscriptions
+
+		private void NavViewEx_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (FindStart() is NavigationViewItem i && i != null)
 			{
 				_navigationService.Navigate(i.GetValue(NavProperties.PageTokenProperty).ToString(),null);
 			}
-			IsPaneOpenChanged(this, null);
 			UpdateBackButton();
-			UpdateHeader();
+			UpdatePaneHeadersVisibility(this, null);
+			UpdatePageHeaderContent();
 		}
 
 		private void NavViewEx_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
@@ -106,14 +106,18 @@ namespace OnlabNews.Controls
 				SelectedItem = Find(e.SourcePageType) ?? base.SelectedItem;
 		}
 
+		//We recommend 12px margins for your content area when NavigationView is in Minimal mode and 24px margins otherwise.
+		private void ChangeMarginThickness(NavigationView sender, NavigationViewDisplayModeChangedEventArgs e)
+		{
+			if (DisplayMode == NavigationViewDisplayMode.Minimal)
+				_frame.Margin = new Thickness(12, 12, 0, 0);
+			else
+				_frame.Margin = new Thickness(24, 24, 0, 0);
+		}
 
-		//private void ShellPage_BackRequested(object sender, BackRequestedEventArgs e)
-		//{
+		#endregion
 
-		//	if (_navigationService.CanGoBack())
-		//		_navigationService.GoBack();
-		//}
-
+		#region find functions
 
 		NavigationViewItem FindStart()
 			  => MenuItems.OfType<NavigationViewItem>()
@@ -129,22 +133,13 @@ namespace OnlabNews.Controls
 		  => MenuItems.OfType<NavigationViewItem>()
 			.SingleOrDefault(x => type.Equals(x.GetValue(NavProperties.PageTypeProperty)));
 
+		#endregion
 
-		//public virtual void Navigate(Frame frame, Type type)
-		//  => frame.Navigate(type); 
-
-
-		private void UpdateBackButton()
-		{
-			SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-			  (_navigationService.CanGoBack()) ? AppViewBackButtonVisibility.Visible
-				: AppViewBackButtonVisibility.Collapsed;
-		}
+		#region paneheader and back button
 
 		public enum HeaderBehaviors { Hide, Remove, None }
-
 		public HeaderBehaviors HeaderBehavior { get; set; } = HeaderBehaviors.Remove;
-		private void IsPaneOpenChanged(DependencyObject sender, DependencyProperty dp)
+		private void UpdatePaneHeadersVisibility(DependencyObject sender, DependencyProperty dp)
 		{
 			foreach (var item in MenuItems.OfType<NavigationViewItemHeader>())
 			{
@@ -163,21 +158,99 @@ namespace OnlabNews.Controls
 			}
 		}
 
-		private void UpdateHeader()
+		private void UpdateBackButton()
 		{
-			if (_frame.Content is Page p && p.GetValue(NavProperties.HeaderProperty) is string s && !string.IsNullOrEmpty(s))
-			{
-				Header = s;
-			}
+			SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+			  (_navigationService.CanGoBack()) ? AppViewBackButtonVisibility.Visible
+				: AppViewBackButtonVisibility.Collapsed;
 		}
 
-		//We recommend 12px margins for your content area when NavigationView is in Minimal mode and 24px margins otherwise.
-		private void MyDisplayModeChanged(NavigationView sender, NavigationViewDisplayModeChangedEventArgs e)
+		#endregion
+
+		#region pageheader content
+
+		private static SemaphoreSlim _updatePageHeaderSemaphore = new SemaphoreSlim(1, 1);
+		private void UpdatePageHeaderContent()
 		{
-			if (DisplayMode == NavigationViewDisplayMode.Minimal)
-				_frame.Margin = new Thickness(12, 12, 0, 0);
-			else
-				_frame.Margin = new Thickness(24, 24, 0, 0);
+			_updatePageHeaderSemaphore.Wait();
+
+			try
+			{
+				if (_frame.Content is Page page)
+				{
+					if (page.GetValue(NavProperties.HeaderProperty) is string headerText && !Equals(Header, headerText))
+					{
+						Header = headerText;
+					}
+
+
+					if (!(page.GetValue(NavProperties.HeaderCommandsProperty) is ObservableCollection<object> headerCommands) || !(headerCommands.Any()))
+					{
+						localClearPageHeaderCommands();
+					}
+					else{
+						localUpdatePageHeaderCommands(headerCommands);
+					}
+				}
+			}
+			finally
+			{
+				_updatePageHeaderSemaphore.Release();
+			}
+
+			#region local functions
+
+			void localClearPageHeaderCommands()
+			{
+				if (!localTryGetCommandBar(out var bar))
+				{
+					return;
+				}
+
+				bar.PrimaryCommands.Clear();
+			}
+
+			bool localTryGetCommandBar(out CommandBar bar)
+			{
+				var children = XamlUtilities.RecurseChildren(this);
+				var bars = children
+					.OfType<CommandBar>();
+				if (!bars.Any())
+				{
+					bar = default(CommandBar);
+					return false;
+				}
+				bar = bars.First();
+				return true;
+			}
+
+			void localUpdatePageHeaderCommands(ObservableCollection<object> headerCommands)
+			{
+				if (!localTryGetCommandBar(out var bar))
+				{
+					return;
+				}
+
+				var previous = bar.PrimaryCommands
+					.OfType<DependencyObject>()
+					.Where(x => x.GetValue(NavProperties.PageHeaderCommandDynamicItemProperty) is bool value && value);
+
+				foreach (var command in previous.OfType<ICommandBarElement>().ToArray())
+				{
+					bar.PrimaryCommands.Remove(command);
+				}
+
+				foreach (var command in headerCommands.Reverse().OfType<DependencyObject>().ToArray())
+				{
+					command.SetValue(NavProperties.PageHeaderCommandDynamicItemProperty, true);
+					bar.PrimaryCommands.Insert(0, command as ICommandBarElement);
+				}
+			}
+			#endregion
 		}
+
+		#endregion
+
+
 	}
 }

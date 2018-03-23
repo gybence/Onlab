@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,6 +43,38 @@ namespace OnlabNews.Extensions
 			=> obj.SetValue(HeaderProperty, value);
 		public static readonly DependencyProperty HeaderProperty =
 			DependencyProperty.RegisterAttached("Header", typeof(string),
+				typeof(NavProperties), new PropertyMetadata(null));
+
+		internal static bool GetPageHeaderCommandDynamicItem(DependencyObject obj)
+		   => (bool)obj.GetValue(PageHeaderCommandDynamicItemProperty);
+		internal static void SetPageHeaderCommandDynamicItem(DependencyObject obj, bool value)
+			=> obj.SetValue(PageHeaderCommandDynamicItemProperty, value);
+#pragma warning disable IDE1006 // Naming Styles
+		internal static readonly DependencyProperty PageHeaderCommandDynamicItemProperty =
+#pragma warning disable IDE1006 // Naming Styles
+			DependencyProperty.RegisterAttached("PageHeaderCommandDynamicItem", typeof(bool),
+				typeof(NavProperties), new PropertyMetadata(false));
+
+
+
+		public static ObservableCollection<object> GetHeaderCommands(Page obj)
+		{
+			var value = (ObservableCollection<object>)obj.GetValue(HeaderCommandsProperty);
+			if (value == null)
+			{
+				SetHeaderCommands(obj, value = new ObservableCollection<object>());
+				value.CollectionChanged += (s, e) =>
+				{
+					// TODO
+				};
+			}
+			return value;
+		}
+		public static void SetHeaderCommands(Page obj, ObservableCollection<object> value)
+			=> obj.SetValue(HeaderCommandsProperty, value);
+		public static readonly DependencyProperty HeaderCommandsProperty =
+			DependencyProperty.RegisterAttached("HeaderCommands",
+				typeof(ObservableCollection<object>),
 				typeof(NavProperties), new PropertyMetadata(null));
 	}
 }

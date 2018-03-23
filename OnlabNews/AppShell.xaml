@@ -13,41 +13,25 @@
 	<Page.Resources>
 		<conv:NavConverter x:Key="NavConverter"/>
 	</Page.Resources>
-	<!--ItemInvoked="NavView_ItemInvoked"
-                    SelectionChanged="NavView_SelectionChanged"
-					Loaded="NavView_Loaded"-->
+
 	<cont:NavViewEx x:Name="NavView"       
                     Canvas.ZIndex="0"
 				    MenuItemsSource="{x:Bind MenuItems, Converter={StaticResource NavConverter}}"
 					HeaderTemplate="{StaticResource NavigationViewHeaderTemplate}"
 					SettingsPageType="views:SettingsPage"
 					>
-		
+
 		<NavigationView.AutoSuggestBox>
 			<AutoSuggestBox x:Name="ASB" QueryIcon="Find"/>
 		</NavigationView.AutoSuggestBox>
-		
+
 		<!--<NavigationView.PaneFooter>
 			<HyperlinkButton x:Name="MoreInfoBtn"
                              Content="More info"
                              Click="More_Click"
                              Margin="12,0"/>
 		</NavigationView.PaneFooter>-->
-		
+
 	</cont:NavViewEx>
 
 </Page>
-
-
-<!--<NavigationView.MenuItems>
-			<NavigationViewItem x:Uid="HomeNavItem" Content="Home" Tag="home" ext:NavProperties.PageType="views:MainPage">
-				<NavigationViewItem.Icon>
-					<FontIcon Glyph="&#xE10F;"/>
-				</NavigationViewItem.Icon>
-			</NavigationViewItem>
-			<NavigationViewItemSeparator/>
-			<NavigationViewItemHeader Content="Main pages"/>
-			<NavigationViewItem x:Uid="AppsNavItem" Icon="AllApps" Content="Apps" Tag="apps" ext:NavProperties.PageType="views:FeedPage"/>
-			<NavigationViewItem x:Uid="GamesNavItem" Icon="Video" Content="Games" Tag="games" ext:NavProperties.PageType="views:ArticlePage"/>
-			<NavigationViewItem x:Uid="MusicNavItem" Icon="Audio" Content="Music" Tag="music" ext:NavProperties.PageType="views:SettingsPage"/>
-		</NavigationView.MenuItems>-->

@@ -35,7 +35,7 @@ namespace OnlabNews.ViewModels
 			_facebookGraphService.LoadFacebookPosts();
 		}
 
-		private void OnClickNavigate(object clickedItem)
+		public void OnClickNavigate(object clickedItem)
 		{
 			_navigationService.Navigate("Article", clickedItem);	
 		}
