@@ -107,11 +107,17 @@ namespace OnlabNews.ViewModels
 			{
 				using (var db = new AppDbContext())
 				{
-					//TODO: ha mar letezik ne adjuk hozza 
-					var rssItem = new RssFeed { ID = db.RssFeeds.Last().ID + 1 /*lol*/, Name = FeedNameText, Uri = FeedUriText };
-					db.RssFeeds.Add(rssItem);
+					var rssItem = db.RssFeeds.SingleOrDefault(f => f.Uri == FeedUriText);
+					if(rssItem == null)
+					{
+						rssItem = new RssFeed { ID = db.RssFeeds.Last().ID + 1 /*lol*/, Name = FeedNameText, Uri = FeedUriText };
+						db.RssFeeds.Add(rssItem);
+					}
+				
 					db.Subscriptions.Add(new Subscription { UserID = _settingsService.ActiveUser.ID, RssFeedID = rssItem.ID });
 					db.SaveChanges();
+
+					//TODO: itt is meg kene hivni a queryarticles-t hogy letoltsuk az uj rss-t amit hozzadtunk
 					GetItems();
 				}
 			}
@@ -134,7 +140,9 @@ namespace OnlabNews.ViewModels
 		{
 			if (_facebookGraphService.FacebookServiceInstance.LoggedUser == null)
 			{
+				//TOTO: lefut de megse lep be
 				await _facebookGraphService.FacebookServiceInstance.LoginAsync();
+
 				_facebookGraphService.LoadFacebookPosts();
 			}
 			else

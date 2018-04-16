@@ -21,7 +21,7 @@ namespace OnlabNews.ViewModels
 
 		public DelegateCommand<object> OnItemClickCommand { get; private set; }
 
-		public ObservableCollection<MutableGrouping<int, ArticleItem>> GroupedArticles { get { return _articleDataSource.GroupedArticles; } }
+		public RangeObservableCollection<MutableGrouping<int, ArticleItem>> GroupedArticles { get { return _articleDataSource.GroupedArticles; } }
 		public RangeObservableCollection<FacebookPost> FacebookPosts { get { return _facebookGraphService.FacebookPosts; } }
 
 		#endregion

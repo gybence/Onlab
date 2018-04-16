@@ -72,6 +72,18 @@ namespace OnlabNews.ViewModels
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Published)));
 			}
 		}
+
+		string _sourceFeedName;
+		public string SourceFeedName
+		{
+			get { return _sourceFeedName; }
+			set
+			{
+				_sourceFeedName = value;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SourceFeedName)));
+			}
+		}
+
 		#endregion
 
 		public ArticleItem()

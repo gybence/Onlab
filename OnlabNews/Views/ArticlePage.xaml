@@ -10,10 +10,10 @@
     mc:Ignorable="d"
 	prism:ViewModelLocator.AutoWireViewModel="True" >
 
-	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-		<Grid Width="Auto" Height="Auto" >
-			
-		
+	<Grid Width="Auto" Height="Auto" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+
+
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*"/>
 		</Grid.ColumnDefinitions>
@@ -21,9 +21,8 @@
 			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
 		<WebView Source="{Binding Article.Uri}">
-			
+
 		</WebView>
-		</Grid>
 	</Grid>
 
 </prism:SessionStateAwarePage>

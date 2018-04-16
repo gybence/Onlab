@@ -15,26 +15,37 @@
 	
 	<prism:SessionStateAwarePage.Resources>
 		<CollectionViewSource  x:Key="ArticlesCvs" x:Name="ArticlesCvs" IsSourceGrouped="True" Source="{x:Bind ViewModel.GroupedArticles, Mode=OneWay}"/>
+		<ControlTemplate x:Name="ScrollViewerScrollBarlessTemplate" TargetType="ScrollViewer">
+			<Grid Background="{TemplateBinding Background}">
+				<ScrollContentPresenter x:Name="ScrollContentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Margin="{TemplateBinding Padding}"/>
+			</Grid>
+		</ControlTemplate>
+		<ControlTemplate x:Name="ScrollViewerScrollBarlessTemplate1" TargetType="ScrollViewer">
+			<Grid Background="{TemplateBinding Background}">
+				<ScrollContentPresenter x:Name="ScrollContentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Margin="{TemplateBinding Padding}"/>
+			</Grid>
+		</ControlTemplate>
+		
 	</prism:SessionStateAwarePage.Resources>
 
 	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-		<Pivot>
-			<PivotItem Margin="0" Header="RSS">
+		<Pivot Style="{StaticResource PivotWithoutMarginStyle}">
+			<PivotItem Header="RSS">
 				<SemanticZoom>
 					<SemanticZoom.ZoomedInView>
-						<GridView IsItemClickEnabled="True" SelectionMode="Single" x:Name="ZoomedInArticleGrid" 
+						<GridView IsItemClickEnabled="True" x:Name="ZoomedInArticleGrid" 
 								  ItemsPanel="{StaticResource ZoomedInArticleGridViewItemsPanelTemplate}" 
 								  ItemContainerStyle="{StaticResource ZoomedInArticleGridItemContainerStyle}" 
 								  ItemsSource="{Binding Source={StaticResource ArticlesCvs}}" 
 								  ItemTemplate="{StaticResource ZoomedInArticleGridViewItemTemplate}"
+								 
 								  >
 							<GridView.GroupStyle>
 								<GroupStyle HidesIfEmpty="False" HeaderTemplate="{StaticResource ArticlesCvsHeaderTemplate}" />
 							</GridView.GroupStyle>
 							<!--ext:ItemClickCommand.Command="{x:Bind ViewModel.OnItemClickCommand}"-->
 							<Interactivity:Interaction.Behaviors>
-								<!--ListView-ben SelectionMode-t be kell kapcsolni ...-->
-								<Interactions:EventTriggerBehavior EventName="SelectionChanged">
+								<Interactions:EventTriggerBehavior EventName="Tapped">
 									<Interactions:InvokeCommandAction 
 										Command="{Binding OnItemClickCommand}" 
 										CommandParameter="{Binding ElementName=ZoomedInArticleGrid, Path=SelectedItem}"/>
