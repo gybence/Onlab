@@ -78,7 +78,7 @@ namespace OnlabNews.Models
 
 		public bool Equals(MutableGrouping<TKey, TElement> other)
 		{
-			return char.Equals(this.Key, other.Key);
+			return int.Equals(this.Key, other.Key);
 		}
 
 

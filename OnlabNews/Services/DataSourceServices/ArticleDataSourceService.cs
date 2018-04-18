@@ -14,11 +14,15 @@ using Windows.Web.Syndication;
 using OnlabNews.Services.SettingsServices;
 using OnlabNews.Models;
 using OnlabNews.Extensions;
+using OnlabNews.Helpers;
 using System.Threading;
 using System.Net;
 using Microsoft.Toolkit.Uwp.Notifications;
 using Windows.UI.Notifications;
 using System.ComponentModel;
+using System.ServiceModel.Dispatcher;
+using Windows.ApplicationModel.Background;
+using Windows.Foundation.Collections;
 
 namespace OnlabNews.Services.DataSourceServices
 {
@@ -33,6 +37,8 @@ namespace OnlabNews.Services.DataSourceServices
 
 		CoreDispatcher dispatcher;
 
+		ApplicationTrigger trigger = null;
+
 		#endregion
 
 		public ArticleDataSourceService(ISettingsService settingsService)
@@ -44,8 +50,37 @@ namespace OnlabNews.Services.DataSourceServices
 			Task.Run(() => QueryArticles(_settingsService.Cts.Token), _settingsService.Cts.Token);
 
 			_settingsService.OnUpdateStatus += QueryArticles;
+
+			trigger = new ApplicationTrigger();
+			var task = RegisterBackgroundTask("Tasks.TileUpdaterBackgroundTask",
+											  "Tile Updater Background Task",
+											  trigger);
+
+		}
+		public BackgroundTaskRegistration RegisterBackgroundTask(String taskEntryPoint, String name, IBackgroundTrigger trigger, IBackgroundCondition condition = null)
+		{
+			var builder = new BackgroundTaskBuilder();
+
+			builder.Name = name;
+			builder.TaskEntryPoint = taskEntryPoint;
+			builder.SetTrigger(trigger);
+
+
+			BackgroundTaskRegistration task = builder.Register();
+			task.Progress += new BackgroundTaskProgressEventHandler(OnProgress);
+			task.Completed += new BackgroundTaskCompletedEventHandler(OnCompleted);
+			return task;
+		}
+	
+		private void OnProgress(IBackgroundTaskRegistration task, BackgroundTaskProgressEventArgs args)
+		{
+			System.Diagnostics.Debug.WriteLine("------			onprogress " + args.Progress);
 		}
 
+		private void OnCompleted(IBackgroundTaskRegistration task, BackgroundTaskCompletedEventArgs args)
+		{
+			
+		}
 		public async Task QueryArticles(CancellationToken ct)
 		{
 			try
@@ -59,24 +94,19 @@ namespace OnlabNews.Services.DataSourceServices
 					client.SetRequestHeader("User-Agent", "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)");
 					foreach (Subscription f in db.Subscriptions.Where(u => u.UserID == _settingsService.ActiveUser.ID).Include(r => r.RssFeed).ToList())
 					{
+						ct.ThrowIfCancellationRequested();
 						Uri uri = new Uri(f.RssFeed.Uri);
 						SyndicationFeed feed = await client.RetrieveFeedAsync(uri);
-						ct.ThrowIfCancellationRequested();
-						//if (ct.IsCancellationRequested)
-						//{
-						//	//_settingsService.ActiveUser = db.Users.ToList().SingleOrDefault(u => u.Name.Equals("reddit"));
-						//	System.Diagnostics.Debug.WriteLine("cancellation: before going through list");
-						//	return;
-						//}
+						
 						List<ArticleItem> list = new List<ArticleItem>();
 
 						foreach (SyndicationItem item in feed.Items)
 						{
+							ct.ThrowIfCancellationRequested();
+
 							string itemTitle = item.Title == null ? "No title" : item.Title.Text;
 							string itemLink = item.Links == null ? "No link" : item.Links.FirstOrDefault().Uri.ToString();
 							var published = item.PublishedDate.LocalDateTime;
-							//feed.Links.ToList()[0].Uri.ToString() //"https://index.hu/24ora/"
-							//feed.Title.Text //"Index - 24óra"
 
 							//TODO: csak BBC-hez mukodik, lehet mindnek kulon meg kell csinalni?
 							var itemElementExtensions = item.ElementExtensions.ToList();
@@ -96,27 +126,39 @@ namespace OnlabNews.Services.DataSourceServices
 								Key = time.Days > 1 ? 24 : time.Hours
 							});
 						}
+						
 						await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
 						{
 							MakeGroups(list);
 						});
-						ct.ThrowIfCancellationRequested();
-						//if (ct.IsCancellationRequested)
-						//{
-						//	System.Diagnostics.Debug.WriteLine("cancellation: at MakeGroups()");
-						//	return;
-						//}
 					}
 				}
-				UpdateTile();
+
+				ct.ThrowIfCancellationRequested();
+				await StartTileUpdaterBackgroundTask();
 			}
-			catch(OperationCanceledException)
+			catch (OperationCanceledException)
 			{
 
 			}
 			finally
 			{
 				//handle when task is cancelled
+				System.Diagnostics.Debug.WriteLine("-- QueryArticles cancelled! --");
+			}
+		}
+
+		private async Task StartTileUpdaterBackgroundTask()
+		{
+			if (GroupedArticles.Count != 0)
+			{
+				var firstArticle = GroupedArticles[0][0];
+				ValueSet set = new ValueSet
+				{
+					{ "SourceFeedName", firstArticle.SourceFeedName },
+					{ "Title", firstArticle.Title }
+				};
+				var result = await trigger.RequestAsync(set);
 			}
 		}
 
@@ -141,92 +183,5 @@ namespace OnlabNews.Services.DataSourceServices
 				}
 			}
 		}
-
-
-
-		// https://docs.microsoft.com/en-us/windows/uwp/design/shell/tiles-and-notifications/chaseable-tile-notifications#what-to-do-with-a-chaseable-tile-notifications 
-		private void UpdateTile()
-		{
-			if(GroupedArticles.Count != 0)
-			{
-				var firstArticle = GroupedArticles[0][0];
-		
-				string source = firstArticle.SourceFeedName;
-				string title = firstArticle.Title;
-				//string body = "asd";
-
-
-				// Construct the tile content
-				TileContent content = new TileContent()
-				{
-					Visual = new TileVisual()
-					{
-						TileMedium = new TileBinding()
-						{
-							Content = new TileBindingContentAdaptive()
-							{
-								Children =
-								{
-									new AdaptiveText()
-									{
-										Text = source
-									},
-
-									new AdaptiveText()
-									{
-										Text = title,
-										HintStyle = AdaptiveTextStyle.CaptionSubtle,
-										HintWrap = true
-									},
-
-									//new AdaptiveText()
-									//{
-									//	Text = body,
-									//	HintStyle = AdaptiveTextStyle.CaptionSubtle
-									//}
-								}
-							},
-						},
-
-						TileWide = new TileBinding()
-						{
-							Content = new TileBindingContentAdaptive()
-							{
-								Children =
-								{
-									new AdaptiveText()
-									{
-										Text = source,
-										HintStyle = AdaptiveTextStyle.Subtitle
-									},
-
-									new AdaptiveText()
-									{
-										Text = title,
-										HintStyle = AdaptiveTextStyle.CaptionSubtle,
-										HintWrap = true
-									},
-
-									//new AdaptiveText()
-									//{
-									//	Text = body,
-									//	HintStyle = AdaptiveTextStyle.CaptionSubtle
-									//}
-								}
-							},
-						}
-					}
-				};
-
-
-				// Then create the tile notification
-				var notification = new TileNotification(content.GetXml());
-				notification.ExpirationTime = DateTimeOffset.UtcNow.AddMinutes(1);
-
-				// And send the notification
-				TileUpdateManager.CreateTileUpdaterForApplication().Update(notification);
-			}
-		}
-
 	}
 }

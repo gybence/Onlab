@@ -14,6 +14,7 @@ using OnlabNews.Services.SettingsServices;
 using Unity.Lifetime;
 using OnlabNews.Services.DataSourceServices;
 using OnlabNews.Services.FacebookServices;
+using Windows.ApplicationModel.Background;
 
 namespace OnlabNews
 {
@@ -23,6 +24,7 @@ namespace OnlabNews
         public App()
 		{ 
 			InitializeDataBase();
+			
             this.InitializeComponent();			
 		}
 
@@ -40,8 +42,6 @@ namespace OnlabNews
 
 		protected override Task OnLaunchApplicationAsync(LaunchActivatedEventArgs args)
 		{
-			//NavigationService.Navigate("Main", null);
-
 			Window.Current.Activate();
 
 			return Task.FromResult<object>(null);
@@ -85,7 +85,7 @@ namespace OnlabNews
 						db.SaveChanges();
 					}
 				}
-				catch(Exception e)
+				catch
 				{
 					System.Diagnostics.Debugger.Break();
 				}
