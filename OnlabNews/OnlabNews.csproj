@@ -166,6 +166,9 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
       <Version>2.0.1</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory">
+      <Version>2.28.3</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.0.8</Version>
     </PackageReference>

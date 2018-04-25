@@ -51,11 +51,11 @@ namespace OnlabNews
 		protected override Task OnInitializeAsync(IActivatedEventArgs args)
 		{
 			Container.RegisterInstance<INavigationService>(NavigationService);
-			Container.RegisterType<ISettingsService, SettingsService>(new ContainerControlledLifetimeManager());
-			Container.RegisterType<IArticleDataSourceService, ArticleDataSourceService>(new ContainerControlledLifetimeManager());
+			Container.RegisterInstance<ISettingsService>(new SettingsService(), new ContainerControlledLifetimeManager());
+			Container.RegisterInstance<IArticleDataSourceService>(new ArticleDataSourceService(Container.Resolve<ISettingsService>()), new ContainerControlledLifetimeManager());
 			Container.RegisterType<IFacebookGraphService, FacebookGraphService>(new ContainerControlledLifetimeManager());
 			//Container.RegisterInstance<IResourceLoader>(new ResourceLoaderAdapter(new ResourceLoader()));
-
+			
 			return base.OnInitializeAsync(args);
 		}
 
@@ -71,12 +71,12 @@ namespace OnlabNews
 
 					if (!db.Users.Any())
 					{
-						db.Users.Add(new User { Name = "Default" });
+						db.Users.Add(new User { Name = "Default", LastLoggedIn = true });
 						db.SaveChanges();
 					}
 					if (!db.RssFeeds.Any())
 					{
-						db.RssFeeds.Add(new RssFeed { Name = "Index", Uri = "https://index.hu/24ora/rss" });
+						db.RssFeeds.Add(new RssFeed { Name = "444", Uri = "https://444.hu/feed" });
 						db.SaveChanges();
 					}
 					if (!db.Subscriptions.Any())
@@ -91,5 +91,9 @@ namespace OnlabNews
 				}
 			}
 		}
+
+
+
+
 	}
 }

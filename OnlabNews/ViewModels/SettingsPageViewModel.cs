@@ -44,8 +44,8 @@ namespace OnlabNews.ViewModels
 		string _userNameText;
 		public string UserNameText { get { return _userNameText; } set { SetProperty(ref _userNameText, value); } }
 
-		ObservableCollection<RssFeed> _items = new ObservableCollection<RssFeed>();
-		public ObservableCollection<RssFeed> Items { get => _items; set { SetProperty(ref _items, value); } }
+		ObservableCollection<DataAccessLibrary.Model.RssFeed> _items = new ObservableCollection<RssFeed>();
+		public ObservableCollection<DataAccessLibrary.Model.RssFeed> Items { get => _items; set { SetProperty(ref _items, value); } }
 
 		#endregion
 
@@ -69,15 +69,25 @@ namespace OnlabNews.ViewModels
 			if (UserNameText.Equals(_settingsService.ActiveUser.Name))
 				return;
 
+			User newUser;
 			using (var db = new AppDbContext())
 			{
-				User newUser = new User { Name = UserNameText };
-				db.Users.Add(newUser);
-				db.SaveChanges();
-				_settingsService.ActiveUser = newUser;
+				newUser = db.Users.SingleOrDefault(u => u.Name == UserNameText);
 
-				GetItems();
+				if(newUser == null)
+				{
+					var currentUser = db.Users.SingleOrDefault(u => u.LastLoggedIn == true);
+						currentUser.LastLoggedIn = false;
+
+					newUser = new User { Name = UserNameText, LastLoggedIn = true };
+					db.Users.Add(newUser);
+					db.SaveChanges();
+
+				
+				}
 			}
+			_settingsService.ActiveUser = newUser;
+			GetItems();
 		}
 
 		public void LoadButtonClick()
@@ -85,15 +95,26 @@ namespace OnlabNews.ViewModels
 			if (UserNameText.Equals(_settingsService.ActiveUser.Name))
 				return;
 
+			User userToLoad;
 			using (var db = new AppDbContext())
-			{		
-				var userToLoad = db.Users.SingleOrDefault(u => u.Name == UserNameText);
-				if (userToLoad != null)
+			{
+				userToLoad = db.Users.SingleOrDefault(u => u.Name == UserNameText);
+
+				if (userToLoad == null)
+					return;
+				else
 				{
-					_settingsService.ActiveUser = userToLoad;
-					GetItems();
+					var currentUser = db.Users.SingleOrDefault(u => u.LastLoggedIn == true);
+						currentUser.LastLoggedIn = false;
+
+					userToLoad.LastLoggedIn = true;
+					db.SaveChanges();
+
+				
 				}
 			}
+			_settingsService.ActiveUser = userToLoad;
+			GetItems();
 		}
 
 		public void SubButtonClick()

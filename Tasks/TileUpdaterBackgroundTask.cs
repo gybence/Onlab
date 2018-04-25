@@ -3,40 +3,71 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Background;
+using Windows.Storage;
 using Windows.UI.Notifications;
+using Windows.Web.Syndication;
 
 namespace Tasks
 {
-	public sealed class TileUpdaterBackgroundTask: IBackgroundTask
+	public sealed class TileUpdaterBackgroundTask : IBackgroundTask
 	{
-		public void Run(IBackgroundTaskInstance taskInstance)
+		BackgroundTaskDeferral _deferral;
+		public async void Run(IBackgroundTaskInstance taskInstance)
 		{
-			var vmi = (taskInstance.TriggerDetails as ApplicationTriggerDetails).Arguments;
-			//taskInstance.Canceled += OnCanceled;
-			var nemtom = vmi.Values.ToList();
-			UpdateTile(nemtom[0].ToString(), nemtom[1].ToString());
+			_deferral = taskInstance.GetDeferral();
+			try
+			{
+				//ha volt frissen letoltve hir akkor inkabb azt hasznaljuk majd
+				var localSettings = ApplicationData.Current.LocalSettings;
+				var age = (int) localSettings.Values["age"];
+				
+				if (age < 1)                                                        //ha kevesebb mint 1 oraja toltotte le a hireket az app akkor meg hasznalhato
+				{                                                                   //mert hatha csak most kerult utemezesre a task.
+					string source = localSettings.Values["source"].ToString();      //ugye legalabb 15 percet kell varni amig futhat es meg utana ki tudja mennyit
+					string title = localSettings.Values["title"].ToString();
+
+					UpdateTile(source, title);
+				}
+				else
+				{
+					RssFeedGetter rfg = new RssFeedGetter();
+					await rfg.QueryArticlesAsync();
+					IList<SyndicationItem> items = new List<SyndicationItem>();
+					foreach (SyndicationFeed f in rfg.Result)
+					{
+						f.Items[0].Source = f;
+						items.Add(f.Items[0]);
+					}
+					items.OrderBy(i => i.PublishedDate);
+					if (items.Count > 0)
+						UpdateTile(items[0].Source.Title.Text ?? "asd", items[0].Title.Text);
+				}
+			}
+			catch
+			{
+
+			}
+			_deferral.Complete();
 		}
 
 
 		// https://docs.microsoft.com/en-us/windows/uwp/design/shell/tiles-and-notifications/chaseable-tile-notifications#what-to-do-with-a-chaseable-tile-notifications 
-		private void UpdateTile(string title, string source)
+		private void UpdateTile(string source, string title)
 		{
-			//if (GroupedArticles.Count != 0)
+			TileUpdateManager.CreateTileUpdaterForApplication().Clear();
+
+			TileContent content = new TileContent()
 			{
-				
-				// Construct the tile content
-				TileContent content = new TileContent()
+				Visual = new TileVisual()
 				{
-					Visual = new TileVisual()
+					TileMedium = new TileBinding()
 					{
-						TileMedium = new TileBinding()
+						Branding = TileBranding.NameAndLogo,
+						Content = new TileBindingContentAdaptive()
 						{
-							Content = new TileBindingContentAdaptive()
-							{
-								Children =
+							Children =
 								{
 									new AdaptiveText()
 									{
@@ -48,27 +79,23 @@ namespace Tasks
 										Text = title,
 										HintStyle = AdaptiveTextStyle.CaptionSubtle,
 										HintWrap = true
-									},
-
-									//new AdaptiveText()
-									//{
-									//	Text = body,
-									//	HintStyle = AdaptiveTextStyle.CaptionSubtle
-									//}
+									}
 								}
-							},
 						},
+					},
 
-						TileWide = new TileBinding()
+					TileWide = new TileBinding()
+					{
+						Branding = TileBranding.NameAndLogo,
+						Content = new TileBindingContentAdaptive()
 						{
-							Content = new TileBindingContentAdaptive()
-							{
-								Children =
+							Children =
 								{
 									new AdaptiveText()
 									{
 										Text = source,
 										HintStyle = AdaptiveTextStyle.Subtitle
+
 									},
 
 									new AdaptiveText()
@@ -76,27 +103,17 @@ namespace Tasks
 										Text = title,
 										HintStyle = AdaptiveTextStyle.CaptionSubtle,
 										HintWrap = true
-									},
-
-									//new AdaptiveText()
-									//{
-									//	Text = body,
-									//	HintStyle = AdaptiveTextStyle.CaptionSubtle
-									//}
+									}
 								}
-							},
-						}
+						},
 					}
-				};
+				}
+			};
 
+			var notification = new TileNotification(content.GetXml());
+			notification.ExpirationTime = DateTimeOffset.UtcNow.AddMinutes(5);
+			TileUpdateManager.CreateTileUpdaterForApplication().Update(notification);
 
-				// Then create the tile notification
-				var notification = new TileNotification(content.GetXml());
-				notification.ExpirationTime = DateTimeOffset.UtcNow.AddMinutes(1);
-
-				// And send the notification
-				TileUpdateManager.CreateTileUpdaterForApplication().Update(notification);
-			}
 		}
 	}
 }

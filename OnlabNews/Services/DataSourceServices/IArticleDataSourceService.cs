@@ -13,6 +13,6 @@ namespace OnlabNews.Services.DataSourceServices
     public interface IArticleDataSourceService
     {
 		RangeObservableCollection<MutableGrouping<int, ArticleItem>> GroupedArticles { get; set; }
-		Task QueryArticles(CancellationToken ct);
+		Task QueryArticlesAsync(CancellationToken ct);
 	}
 }

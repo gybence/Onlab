@@ -10,6 +10,7 @@ namespace DataAccessLibrary.Model
 	{
 		public int ID { get; set; }
 		public string Name { get; set; }
+		public bool LastLoggedIn { get; set; }
 
 		public ICollection<Subscription> Subscriptions { get; set; }
 	}

@@ -51,7 +51,7 @@ namespace OnlabNews.Services.SettingsServices
 			using (var db = new AppDbContext())
 			{
 				//TODO: ne a default hanem a legutobb hasznalt legyen
-				ActiveUser = db.Users.ToList().SingleOrDefault(u => u.Name.Equals("Default"));						
+				ActiveUser = db.Users.ToList().SingleOrDefault(u => u.LastLoggedIn == true);						
 			}
 		}
 	}

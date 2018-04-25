@@ -2,9 +2,13 @@
 
   <PropertyGroup>
 	<RuntimeFrameworkVersion>2.0.3</RuntimeFrameworkVersion> 
-	<TargetFrameworks>netcoreapp2.0;netstandard2.0</TargetFrameworks>
-	 <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+	<TargetFrameworks>netstandard2.0</TargetFrameworks>
+	<GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="database.db" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.0.1" />

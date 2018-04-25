@@ -23,6 +23,8 @@ using System.ComponentModel;
 using System.ServiceModel.Dispatcher;
 using Windows.ApplicationModel.Background;
 using Windows.Foundation.Collections;
+using Windows.Storage;
+using Tasks;
 
 namespace OnlabNews.Services.DataSourceServices
 {
@@ -31,91 +33,94 @@ namespace OnlabNews.Services.DataSourceServices
 		#region properties
 
 		private ISettingsService _settingsService;
-
-		RangeObservableCollection<MutableGrouping<int, ArticleItem>> _groupedArticles = new RangeObservableCollection<MutableGrouping<int, ArticleItem>>();
+		private RangeObservableCollection<MutableGrouping<int, ArticleItem>> _groupedArticles = new RangeObservableCollection<MutableGrouping<int, ArticleItem>>();
 		public RangeObservableCollection<MutableGrouping<int, ArticleItem>> GroupedArticles { get { return _groupedArticles; } set { _groupedArticles = value; } }
 
-		CoreDispatcher dispatcher;
+		private CoreDispatcher dispatcher;
+		private BackgroundTaskRegistration _registration;
 
-		ApplicationTrigger trigger = null;
-
+		
 		#endregion
 
 		public ArticleDataSourceService(ISettingsService settingsService)
 		{
 			_settingsService = settingsService;
-			dispatcher = Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher;
-			TileUpdateManager.CreateTileUpdaterForApplication().Clear();
-
-			Task.Run(() => QueryArticles(_settingsService.Cts.Token), _settingsService.Cts.Token);
-
-			_settingsService.OnUpdateStatus += QueryArticles;
-
-			trigger = new ApplicationTrigger();
-			var task = RegisterBackgroundTask("Tasks.TileUpdaterBackgroundTask",
-											  "Tile Updater Background Task",
-											  trigger);
-
-		}
-		public BackgroundTaskRegistration RegisterBackgroundTask(String taskEntryPoint, String name, IBackgroundTrigger trigger, IBackgroundCondition condition = null)
-		{
-			var builder = new BackgroundTaskBuilder();
-
-			builder.Name = name;
-			builder.TaskEntryPoint = taskEntryPoint;
-			builder.SetTrigger(trigger);
-
-
-			BackgroundTaskRegistration task = builder.Register();
-			task.Progress += new BackgroundTaskProgressEventHandler(OnProgress);
-			task.Completed += new BackgroundTaskCompletedEventHandler(OnCompleted);
-			return task;
-		}
-	
-		private void OnProgress(IBackgroundTaskRegistration task, BackgroundTaskProgressEventArgs args)
-		{
-			System.Diagnostics.Debug.WriteLine("------			onprogress " + args.Progress);
-		}
-
-		private void OnCompleted(IBackgroundTaskRegistration task, BackgroundTaskCompletedEventArgs args)
-		{
 			
+			dispatcher = Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher;
+
+			RegisterBackgroundTask("TimeTriggeredTileUpdaterBackgroundTask", "Tasks.TileUpdaterBackgroundTask", new TimeTrigger(15, false));
+			//RegisterBackgroundTask("ApplicationTriggeredTileUpdaterBackgroundTask", "Tasks.TileUpdaterBackgroundTask", new ApplicationTrigger());
+
+			Task.Run(() => QueryArticlesAsync(_settingsService.Cts.Token), _settingsService.Cts.Token);
+
+			_settingsService.OnUpdateStatus += QueryArticlesAsync;
+
 		}
-		public async Task QueryArticles(CancellationToken ct)
+
+		private async void RegisterBackgroundTask(string taskName, string taskEntryPoint, IBackgroundTrigger trigger)
+		{
+			//BackgroundExecutionManager.RemoveAccess();
+			var backgroundAccessStatus = await BackgroundExecutionManager.RequestAccessAsync();
+			if (backgroundAccessStatus == BackgroundAccessStatus.AlwaysAllowed ||
+				backgroundAccessStatus == BackgroundAccessStatus.AllowedSubjectToSystemPolicy)
+			{
+				bool registered = false;
+				foreach (var task in BackgroundTaskRegistration.AllTasks)
+				{
+					if (task.Value.Name == taskName)
+					{
+						//task.Value.Unregister(true);
+						registered = true;
+					}
+				}
+				if (registered == false)
+				{
+					BackgroundTaskBuilder taskBuilder = new BackgroundTaskBuilder();
+					taskBuilder.Name = taskName;
+					taskBuilder.TaskEntryPoint = taskEntryPoint;
+					taskBuilder.SetTrigger(trigger);
+					_registration = taskBuilder.Register();
+					_registration.Completed += _registration_Completed;
+				}
+			}
+		}
+
+		private void _registration_Completed(BackgroundTaskRegistration sender, BackgroundTaskCompletedEventArgs args)
+		{
+
+		}
+
+		public async Task QueryArticlesAsync(CancellationToken ct)
 		{
 			try
 			{
 				if (GroupedArticles.Count != 0)
 					GroupedArticles.Clear();
 
-				using (var db = new AppDbContext())
+				RssFeedGetter rfg = new RssFeedGetter();
+				await rfg.QueryArticlesAsync();
+
+				List<ArticleItem> list = new List<ArticleItem>();
+				foreach (SyndicationFeed feed in rfg.Result)
 				{
-					SyndicationClient client = new SyndicationClient();
-					client.SetRequestHeader("User-Agent", "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)");
-					foreach (Subscription f in db.Subscriptions.Where(u => u.UserID == _settingsService.ActiveUser.ID).Include(r => r.RssFeed).ToList())
+					foreach (SyndicationItem item in feed.Items)
 					{
 						ct.ThrowIfCancellationRequested();
-						Uri uri = new Uri(f.RssFeed.Uri);
-						SyndicationFeed feed = await client.RetrieveFeedAsync(uri);
-						
-						List<ArticleItem> list = new List<ArticleItem>();
 
-						foreach (SyndicationItem item in feed.Items)
+						string itemTitle = item.Title == null ? "No title" : item.Title.Text;
+						string itemLink = item.Links == null ? "No link" : item.Links.FirstOrDefault().Uri.ToString();
+						var published = item.PublishedDate.LocalDateTime;
+
+						//TODO: csak BBC-hez mukodik, lehet mindnek kulon meg kell csinalni?
+						var itemElementExtensions = item.ElementExtensions.ToList();
+						string itemImageUri = itemElementExtensions.FirstOrDefault(x => x.NodeName == "thumbnail") == null ? "ms-appx:///Assets/StoreLogo.png" :
+												itemElementExtensions.ToList().FirstOrDefault(x => x.NodeName == "thumbnail").AttributeExtensions.ToList().FirstOrDefault(y => y.Name == "url") == null ? "ms-appx:///Assets/StoreLogo.png" :
+													itemElementExtensions.ToList().FirstOrDefault(x => x.NodeName == "thumbnail").AttributeExtensions.ToList().FirstOrDefault(y => y.Name == "url").Value;
+
+						var time = DateTime.Now - published;
+
+						if (time.TotalDays < 1)
 						{
-							ct.ThrowIfCancellationRequested();
-
-							string itemTitle = item.Title == null ? "No title" : item.Title.Text;
-							string itemLink = item.Links == null ? "No link" : item.Links.FirstOrDefault().Uri.ToString();
-							var published = item.PublishedDate.LocalDateTime;
-
-							//TODO: csak BBC-hez mukodik, lehet mindnek kulon meg kell csinalni?
-							var itemElementExtensions = item.ElementExtensions.ToList();
-							string itemImageUri = itemElementExtensions.FirstOrDefault(x => x.NodeName == "thumbnail") == null ? "ms-appx:///Assets/StoreLogo.png" :
-													itemElementExtensions.ToList().FirstOrDefault(x => x.NodeName == "thumbnail").AttributeExtensions.ToList().FirstOrDefault(y => y.Name == "url") == null ? "ms-appx:///Assets/StoreLogo.png" :
-														itemElementExtensions.ToList().FirstOrDefault(x => x.NodeName == "thumbnail").AttributeExtensions.ToList().FirstOrDefault(y => y.Name == "url").Value;
-
-							var time = DateTime.Now - published;
-
 							list.Add(new ArticleItem
 							{
 								Title = itemTitle,
@@ -123,44 +128,115 @@ namespace OnlabNews.Services.DataSourceServices
 								ImageUri = itemImageUri,
 								SourceFeedName = feed.Title.Text,
 								Published = published,
-								Key = time.Days > 1 ? 24 : time.Hours
+								Key = time.Hours
 							});
 						}
-						
-						await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
-						{
-							MakeGroups(list);
-						});
+
 					}
 				}
+				await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+				{
+					MakeGroups(list);
+				});
+
 
 				ct.ThrowIfCancellationRequested();
-				await StartTileUpdaterBackgroundTask();
+				PassTileDataToBackgroundTask();
+
 			}
 			catch (OperationCanceledException)
 			{
 
 			}
-			finally
-			{
-				//handle when task is cancelled
-				System.Diagnostics.Debug.WriteLine("-- QueryArticles cancelled! --");
-			}
 		}
 
-		private async Task StartTileUpdaterBackgroundTask()
+
+
+
+		//public async Task QueryArticlesAsync(CancellationToken ct)
+		//{
+		//	try
+		//	{
+		//		Tasks.Class1 class1 = new Tasks.Class1();
+		//		class1.QueryArticlesAsync();
+		//		IList<SyndicationItem> xlist = class1.List;
+
+		//		if (GroupedArticles.Count != 0)
+		//			GroupedArticles.Clear();
+
+		//		using (var db = new AppDbContext())
+		//		{
+		//			SyndicationClient client = new SyndicationClient();
+		//			client.SetRequestHeader("User-Agent", "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)");
+		//			foreach (Subscription f in db.Subscriptions.Where(u => u.UserID == _settingsService.ActiveUser.ID).Include(r => r.RssFeed).ToList())
+		//			{
+		//				ct.ThrowIfCancellationRequested();
+		//				Uri uri = new Uri(f.RssFeed.Uri);
+		//				//TODO: timeoutot lekezelni
+		//				SyndicationFeed feed = await client.RetrieveFeedAsync(uri);
+
+		//				List<ArticleItem> list = new List<ArticleItem>();
+
+		//				foreach (SyndicationItem item in feed.Items)
+		//				{
+		//					ct.ThrowIfCancellationRequested();
+
+		//					string itemTitle = item.Title == null ? "No title" : item.Title.Text;
+		//					string itemLink = item.Links == null ? "No link" : item.Links.FirstOrDefault().Uri.ToString();
+		//					var published = item.PublishedDate.LocalDateTime;
+
+		//					//TODO: csak BBC-hez mukodik, lehet mindnek kulon meg kell csinalni?
+		//					var itemElementExtensions = item.ElementExtensions.ToList();
+		//					string itemImageUri = itemElementExtensions.FirstOrDefault(x => x.NodeName == "thumbnail") == null ? "ms-appx:///Assets/StoreLogo.png" :
+		//											itemElementExtensions.ToList().FirstOrDefault(x => x.NodeName == "thumbnail").AttributeExtensions.ToList().FirstOrDefault(y => y.Name == "url") == null ? "ms-appx:///Assets/StoreLogo.png" :
+		//												itemElementExtensions.ToList().FirstOrDefault(x => x.NodeName == "thumbnail").AttributeExtensions.ToList().FirstOrDefault(y => y.Name == "url").Value;
+
+		//					var time = DateTime.Now - published;
+
+		//					if(time.TotalDays < 1)
+		//					{
+		//						list.Add(new ArticleItem
+		//						{
+		//							Title = itemTitle,
+		//							Uri = itemLink,
+		//							ImageUri = itemImageUri,
+		//							SourceFeedName = feed.Title.Text,
+		//							Published = published,
+		//							Key = time.Hours
+		//						});
+		//					}
+
+		//				}
+
+		//				await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+		//				{
+		//					MakeGroups(list);
+		//				});
+		//			}
+		//		}
+		//		ct.ThrowIfCancellationRequested();
+		//		PassTileDataToBackgroundTask();
+
+		//	}
+		//	catch (OperationCanceledException)
+		//	{
+
+		//	}
+		//}
+
+		private void PassTileDataToBackgroundTask()
 		{
 			if (GroupedArticles.Count != 0)
 			{
 				var firstArticle = GroupedArticles[0][0];
-				ValueSet set = new ValueSet
-				{
-					{ "SourceFeedName", firstArticle.SourceFeedName },
-					{ "Title", firstArticle.Title }
-				};
-				var result = await trigger.RequestAsync(set);
+				var localSettings = ApplicationData.Current.LocalSettings;
+				localSettings.Values["source"] = firstArticle.SourceFeedName;
+				localSettings.Values["title"] = firstArticle.Title;
+				var age = (DateTime.Now - firstArticle.Published);
+				localSettings.Values["age"] = age.Hours;
 			}
 		}
+
 
 		private void MakeGroups(List<ArticleItem> articles)
 		{
