@@ -48,49 +48,17 @@ namespace OnlabNews.Services.DataSourceServices
 			
 			dispatcher = Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher;
 
-			RegisterBackgroundTask("TimeTriggeredTileUpdaterBackgroundTask", "Tasks.TileUpdaterBackgroundTask", new TimeTrigger(15, false));
+			RegisterBackgroundTaskAsync("TimeTriggeredTileUpdaterBackgroundTask", "Tasks.TileUpdaterBackgroundTask", new TimeTrigger(15, false));
 			//RegisterBackgroundTask("ApplicationTriggeredTileUpdaterBackgroundTask", "Tasks.TileUpdaterBackgroundTask", new ApplicationTrigger());
 
-			Task.Run(() => QueryArticlesAsync(_settingsService.Cts.Token), _settingsService.Cts.Token);
+			Task.Run(() => CreateArticlesAsync(_settingsService.Cts.Token), _settingsService.Cts.Token);
 
-			_settingsService.OnUpdateStatus += QueryArticlesAsync;
-
-		}
-
-		private async void RegisterBackgroundTask(string taskName, string taskEntryPoint, IBackgroundTrigger trigger)
-		{
-			//BackgroundExecutionManager.RemoveAccess();
-			var backgroundAccessStatus = await BackgroundExecutionManager.RequestAccessAsync();
-			if (backgroundAccessStatus == BackgroundAccessStatus.AlwaysAllowed ||
-				backgroundAccessStatus == BackgroundAccessStatus.AllowedSubjectToSystemPolicy)
-			{
-				bool registered = false;
-				foreach (var task in BackgroundTaskRegistration.AllTasks)
-				{
-					if (task.Value.Name == taskName)
-					{
-						//task.Value.Unregister(true);
-						registered = true;
-					}
-				}
-				if (registered == false)
-				{
-					BackgroundTaskBuilder taskBuilder = new BackgroundTaskBuilder();
-					taskBuilder.Name = taskName;
-					taskBuilder.TaskEntryPoint = taskEntryPoint;
-					taskBuilder.SetTrigger(trigger);
-					_registration = taskBuilder.Register();
-					_registration.Completed += _registration_Completed;
-				}
-			}
-		}
-
-		private void _registration_Completed(BackgroundTaskRegistration sender, BackgroundTaskCompletedEventArgs args)
-		{
+			_settingsService.OnUpdateStatus += CreateArticlesAsync;
 
 		}
 
-		public async Task QueryArticlesAsync(CancellationToken ct)
+
+		public async Task CreateArticlesAsync(CancellationToken ct)
 		{
 			try
 			{
@@ -98,7 +66,7 @@ namespace OnlabNews.Services.DataSourceServices
 					GroupedArticles.Clear();
 
 				RssFeedGetter rfg = new RssFeedGetter();
-				await rfg.QueryArticlesAsync();
+				await rfg.DownloadFeedsAsync();
 
 				List<ArticleItem> list = new List<ArticleItem>();
 				foreach (SyndicationFeed feed in rfg.Result)
@@ -151,93 +119,6 @@ namespace OnlabNews.Services.DataSourceServices
 		}
 
 
-
-
-		//public async Task QueryArticlesAsync(CancellationToken ct)
-		//{
-		//	try
-		//	{
-		//		Tasks.Class1 class1 = new Tasks.Class1();
-		//		class1.QueryArticlesAsync();
-		//		IList<SyndicationItem> xlist = class1.List;
-
-		//		if (GroupedArticles.Count != 0)
-		//			GroupedArticles.Clear();
-
-		//		using (var db = new AppDbContext())
-		//		{
-		//			SyndicationClient client = new SyndicationClient();
-		//			client.SetRequestHeader("User-Agent", "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)");
-		//			foreach (Subscription f in db.Subscriptions.Where(u => u.UserID == _settingsService.ActiveUser.ID).Include(r => r.RssFeed).ToList())
-		//			{
-		//				ct.ThrowIfCancellationRequested();
-		//				Uri uri = new Uri(f.RssFeed.Uri);
-		//				//TODO: timeoutot lekezelni
-		//				SyndicationFeed feed = await client.RetrieveFeedAsync(uri);
-
-		//				List<ArticleItem> list = new List<ArticleItem>();
-
-		//				foreach (SyndicationItem item in feed.Items)
-		//				{
-		//					ct.ThrowIfCancellationRequested();
-
-		//					string itemTitle = item.Title == null ? "No title" : item.Title.Text;
-		//					string itemLink = item.Links == null ? "No link" : item.Links.FirstOrDefault().Uri.ToString();
-		//					var published = item.PublishedDate.LocalDateTime;
-
-		//					//TODO: csak BBC-hez mukodik, lehet mindnek kulon meg kell csinalni?
-		//					var itemElementExtensions = item.ElementExtensions.ToList();
-		//					string itemImageUri = itemElementExtensions.FirstOrDefault(x => x.NodeName == "thumbnail") == null ? "ms-appx:///Assets/StoreLogo.png" :
-		//											itemElementExtensions.ToList().FirstOrDefault(x => x.NodeName == "thumbnail").AttributeExtensions.ToList().FirstOrDefault(y => y.Name == "url") == null ? "ms-appx:///Assets/StoreLogo.png" :
-		//												itemElementExtensions.ToList().FirstOrDefault(x => x.NodeName == "thumbnail").AttributeExtensions.ToList().FirstOrDefault(y => y.Name == "url").Value;
-
-		//					var time = DateTime.Now - published;
-
-		//					if(time.TotalDays < 1)
-		//					{
-		//						list.Add(new ArticleItem
-		//						{
-		//							Title = itemTitle,
-		//							Uri = itemLink,
-		//							ImageUri = itemImageUri,
-		//							SourceFeedName = feed.Title.Text,
-		//							Published = published,
-		//							Key = time.Hours
-		//						});
-		//					}
-
-		//				}
-
-		//				await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
-		//				{
-		//					MakeGroups(list);
-		//				});
-		//			}
-		//		}
-		//		ct.ThrowIfCancellationRequested();
-		//		PassTileDataToBackgroundTask();
-
-		//	}
-		//	catch (OperationCanceledException)
-		//	{
-
-		//	}
-		//}
-
-		private void PassTileDataToBackgroundTask()
-		{
-			if (GroupedArticles.Count != 0)
-			{
-				var firstArticle = GroupedArticles[0][0];
-				var localSettings = ApplicationData.Current.LocalSettings;
-				localSettings.Values["source"] = firstArticle.SourceFeedName;
-				localSettings.Values["title"] = firstArticle.Title;
-				var age = (DateTime.Now - firstArticle.Published);
-				localSettings.Values["age"] = age.Hours;
-			}
-		}
-
-
 		private void MakeGroups(List<ArticleItem> articles)
 		{
 			articles.Sort();
@@ -259,5 +140,57 @@ namespace OnlabNews.Services.DataSourceServices
 				}
 			}
 		}
+
+
+		#region background task
+
+		private async void RegisterBackgroundTaskAsync(string taskName, string taskEntryPoint, IBackgroundTrigger trigger)
+		{
+			//BackgroundExecutionManager.RemoveAccess();
+			var backgroundAccessStatus = await BackgroundExecutionManager.RequestAccessAsync();
+			if (backgroundAccessStatus == BackgroundAccessStatus.AlwaysAllowed ||
+				backgroundAccessStatus == BackgroundAccessStatus.AllowedSubjectToSystemPolicy)
+			{
+				bool registered = false;
+				foreach (var task in BackgroundTaskRegistration.AllTasks)
+				{
+					if (task.Value.Name == taskName)
+					{
+						//task.Value.Unregister(true);
+						registered = true;
+					}
+				}
+				if (registered == false)
+				{
+					BackgroundTaskBuilder taskBuilder = new BackgroundTaskBuilder();
+					taskBuilder.Name = taskName;
+					taskBuilder.TaskEntryPoint = taskEntryPoint;
+					taskBuilder.SetTrigger(trigger);
+					_registration = taskBuilder.Register();
+					_registration.Completed += _registration_Completed;
+				}
+			}
+		}
+
+
+		private void _registration_Completed(BackgroundTaskRegistration sender, BackgroundTaskCompletedEventArgs args)
+		{
+
+		}
+
+		private void PassTileDataToBackgroundTask()
+		{
+			if (GroupedArticles.Count != 0)
+			{
+				var firstArticle = GroupedArticles[0][0];
+				var localSettings = ApplicationData.Current.LocalSettings;
+				localSettings.Values["source"] = firstArticle.SourceFeedName;
+				localSettings.Values["title"] = firstArticle.Title;
+				var age = (DateTime.Now - firstArticle.Published);
+				localSettings.Values["age"] = age.Hours;
+			}
+		}
+
+		#endregion
 	}
 }

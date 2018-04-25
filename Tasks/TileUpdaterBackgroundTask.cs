@@ -33,7 +33,7 @@ namespace Tasks
 				else
 				{
 					RssFeedGetter rfg = new RssFeedGetter();
-					await rfg.QueryArticlesAsync();
+					await rfg.DownloadFeedsAsync();
 					IList<SyndicationItem> items = new List<SyndicationItem>();
 					foreach (SyndicationFeed f in rfg.Result)
 					{

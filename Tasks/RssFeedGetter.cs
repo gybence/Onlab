@@ -18,7 +18,7 @@ namespace Tasks
 
 		public IList<SyndicationFeed> Result { get => _result; set => _result = value; }
 
-		public IAsyncAction QueryArticlesAsync()
+		public IAsyncAction DownloadFeedsAsync()
 		{
 			return Task.Run(async () =>
 			{
