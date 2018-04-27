@@ -15,20 +15,21 @@ using Unity.Lifetime;
 using OnlabNews.Services.DataSourceServices;
 using OnlabNews.Services.FacebookServices;
 using Windows.ApplicationModel.Background;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Collections.Generic;
 
 namespace OnlabNews
 {
 
 	sealed partial class App : PrismUnityApplication
 	{
-        public App()
+
+		public App()
 		{ 
-			InitializeDataBase();
-			
+			InitializeDataBase();	
             this.InitializeComponent();			
 		}
 
-	
 		#region prism
 		protected override UIElement CreateShell(Frame rootFrame)
 		{

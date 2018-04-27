@@ -47,6 +47,8 @@ namespace OnlabNews.ViewModels
 		ObservableCollection<DataAccessLibrary.Model.RssFeed> _items = new ObservableCollection<RssFeed>();
 		public ObservableCollection<DataAccessLibrary.Model.RssFeed> Items { get => _items; set { SetProperty(ref _items, value); } }
 
+		public DelegateCommand<object> OnSubscriptionItemClickCommand { get; private set; }
+
 		#endregion
 
 		public SettingsPageViewModel(INavigationService navigationService, ISettingsService settingsService, IArticleDataSourceService dataSourceService, IFacebookGraphService facebookService)
@@ -59,7 +61,33 @@ namespace OnlabNews.ViewModels
 
 			dispatcher = Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher;
 			UserNameText = _settingsService.ActiveUser.Name;
-			GetItems();	
+
+			OnSubscriptionItemClickCommand = new DelegateCommand<object>(OnSubscriptionItemClick);
+			GetItems();
+		}
+
+		private void OnSubscriptionItemClick(object obj)
+		{
+			var rssItem = obj as RssFeed;
+			using (var db = new AppDbContext())
+			{
+				var sub = db.Subscriptions.SingleOrDefault(s => s.UserID == _settingsService.ActiveUser.ID && s.RssFeedID == rssItem.ID);
+				if(sub == null)
+				{
+					sub = new Subscription { UserID = _settingsService.ActiveUser.ID, RssFeedID = rssItem.ID };
+					db.Subscriptions.Add(sub);
+					db.SaveChanges();
+					_settingsService.ActiveUser.Subscriptions.Add(sub);
+				}
+				else
+				{
+					db.Subscriptions.Remove(sub);
+					db.SaveChanges();
+					//TODO: valamiert hiaba iratkoztam fel a CollectionChanged eseményre, nem hivodik meg :/
+					_settingsService.ActiveUser.Subscriptions.Remove(sub);
+				}
+			}
+
 		}
 
 
@@ -82,12 +110,10 @@ namespace OnlabNews.ViewModels
 					newUser = new User { Name = UserNameText, LastLoggedIn = true };
 					db.Users.Add(newUser);
 					db.SaveChanges();
-
-				
 				}
 			}
 			_settingsService.ActiveUser = newUser;
-			GetItems();
+			//GetItems();
 		}
 
 		public void LoadButtonClick()
@@ -95,26 +121,21 @@ namespace OnlabNews.ViewModels
 			if (UserNameText.Equals(_settingsService.ActiveUser.Name))
 				return;
 
-			User userToLoad;
 			using (var db = new AppDbContext())
 			{
-				userToLoad = db.Users.SingleOrDefault(u => u.Name == UserNameText);
+				User userToLoad = db.Users.SingleOrDefault(u => u.Name == UserNameText);
 
-				if (userToLoad == null)
-					return;
-				else
+				if (userToLoad != null)
 				{
-					var currentUser = db.Users.SingleOrDefault(u => u.LastLoggedIn == true);
+					var currentUser = db.Users.Include(x => x.Subscriptions).SingleOrDefault(u => u.LastLoggedIn == true);
 						currentUser.LastLoggedIn = false;
 
 					userToLoad.LastLoggedIn = true;
-					db.SaveChanges();
-
 				
+					_settingsService.ActiveUser = userToLoad;
+					db.SaveChanges();	
 				}
 			}
-			_settingsService.ActiveUser = userToLoad;
-			GetItems();
 		}
 
 		public void SubButtonClick()
@@ -129,17 +150,14 @@ namespace OnlabNews.ViewModels
 				using (var db = new AppDbContext())
 				{
 					var rssItem = db.RssFeeds.SingleOrDefault(f => f.Uri == FeedUriText);
-					if(rssItem == null)
+
+					if (rssItem == null)
 					{
 						rssItem = new RssFeed { ID = db.RssFeeds.Last().ID + 1 /*lol*/, Name = FeedNameText, Uri = FeedUriText };
 						db.RssFeeds.Add(rssItem);
+						Items.Add(rssItem);
 					}
-				
-					db.Subscriptions.Add(new Subscription { UserID = _settingsService.ActiveUser.ID, RssFeedID = rssItem.ID });
 					db.SaveChanges();
-
-					//TODO: itt is meg kene hivni a queryarticles-t hogy letoltsuk az uj rss-t amit hozzadtunk
-					GetItems();
 				}
 			}
 		}
@@ -149,9 +167,15 @@ namespace OnlabNews.ViewModels
 			Items.Clear();
 			using (var db = new AppDbContext())
 			{
-				var subs = db.Subscriptions.Where(f => f.UserID == _settingsService.ActiveUser.ID).Include(x => x.RssFeed).ToList();
-				foreach (Subscription f in subs)
-					Items.Add(f.RssFeed);
+				//var subs = db.Subscriptions.Where(f => f.UserID == _settingsService.ActiveUser.ID).Include(x => x.RssFeed).ToList();
+				//var subs = db.Subscriptions.Include(x => x.RssFeed).ToList();
+				//foreach (Subscription s in subs)
+				//	Items.Add(s.RssFeed);
+
+				var feeds = db.RssFeeds.ToList();
+				foreach (RssFeed f in feeds)
+					Items.Add(f);
+
 			}
 		}
 
@@ -172,6 +196,7 @@ namespace OnlabNews.ViewModels
 
 		public override void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)
 		{
+			//GetItems();
 			base.OnNavigatedTo(e, viewModelState);
 		}
 	}

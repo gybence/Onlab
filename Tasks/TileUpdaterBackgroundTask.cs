@@ -21,9 +21,10 @@ namespace Tasks
 			{
 				//ha volt frissen letoltve hir akkor inkabb azt hasznaljuk majd
 				var localSettings = ApplicationData.Current.LocalSettings;
-				var age = (int) localSettings.Values["age"];
-				
-				if (age < 1)                                                        //ha kevesebb mint 1 oraja toltotte le a hireket az app akkor meg hasznalhato
+				var pubDate = (string) localSettings.Values["pubDate"];
+
+				var age = DateTime.Now - DateTime.Parse(pubDate);
+				if (age.TotalHours < 1)                                             //ha kevesebb mint 1 oraja toltotte le a hireket az app akkor meg hasznalhato
 				{                                                                   //mert hatha csak most kerult utemezesre a task.
 					string source = localSettings.Values["source"].ToString();      //ugye legalabb 15 percet kell varni amig futhat es meg utana ki tudja mennyit
 					string title = localSettings.Values["title"].ToString();

@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+	xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Interactions="using:Microsoft.Xaml.Interactions.Core"
 	prism:ViewModelLocator.AutoWireViewModel="True" >
 
 	<Pivot Name="Pivot" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Style="{StaticResource PivotWithoutMarginStyle}">
@@ -65,9 +66,17 @@
 					<TextBox PlaceholderText="Feed URL" Margin="3,5,0,5" Grid.Row="1" Grid.Column="2" Text="{x:Bind ViewModel.FeedUriText, Mode=TwoWay}"></TextBox>
 					<Button Margin="3,5,0,5"  Grid.Row="1" Grid.Column="3" Click="{x:Bind ViewModel.SubButtonClick}">Subscribe</Button>
 
-					<ListView Grid.ColumnSpan="4" Grid.Row="2" Name="Items" 
+					<ListView Grid.ColumnSpan="4" Grid.Row="2" Name="SubscriptionListView" 
 							  ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
 							  ItemTemplate="{StaticResource SubscriptionListItemTemplate}">
+
+						<Interactivity:Interaction.Behaviors>
+							<Interactions:EventTriggerBehavior EventName="Tapped">
+								<Interactions:InvokeCommandAction 
+										Command="{Binding OnSubscriptionItemClickCommand}" 
+										CommandParameter="{Binding ElementName=SubscriptionListView, Path=SelectedItem}"/>
+							</Interactions:EventTriggerBehavior>
+						</Interactivity:Interaction.Behaviors>
 					</ListView>
 
 				</Grid>

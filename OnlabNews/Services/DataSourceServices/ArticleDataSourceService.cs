@@ -25,6 +25,8 @@ using Windows.ApplicationModel.Background;
 using Windows.Foundation.Collections;
 using Windows.Storage;
 using Tasks;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Collections.Specialized;
 
 namespace OnlabNews.Services.DataSourceServices
 {
@@ -39,24 +41,29 @@ namespace OnlabNews.Services.DataSourceServices
 		private CoreDispatcher dispatcher;
 		private BackgroundTaskRegistration _registration;
 
-		
+
 		#endregion
 
 		public ArticleDataSourceService(ISettingsService settingsService)
 		{
-			_settingsService = settingsService;
-			
+			_settingsService = settingsService;			
 			dispatcher = Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher;
 
 			RegisterBackgroundTaskAsync("TimeTriggeredTileUpdaterBackgroundTask", "Tasks.TileUpdaterBackgroundTask", new TimeTrigger(15, false));
 			//RegisterBackgroundTask("ApplicationTriggeredTileUpdaterBackgroundTask", "Tasks.TileUpdaterBackgroundTask", new ApplicationTrigger());
-
 			Task.Run(() => CreateArticlesAsync(_settingsService.Cts.Token), _settingsService.Cts.Token);
 
 			_settingsService.OnUpdateStatus += CreateArticlesAsync;
+			(_settingsService.ActiveUser.Subscriptions as ObservableHashSet<Subscription>).CollectionChanged += async (s, e) => await CreateArticlesAsync(new CancellationToken());
+
+			(_settingsService.ActiveUser.Subscriptions as ObservableHashSet<Subscription>).CollectionChanged += ArticleDataSourceService_CollectionChanged;
 
 		}
 
+		private void ArticleDataSourceService_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			
+		}
 
 		public async Task CreateArticlesAsync(CancellationToken ct)
 		{
@@ -186,8 +193,7 @@ namespace OnlabNews.Services.DataSourceServices
 				var localSettings = ApplicationData.Current.LocalSettings;
 				localSettings.Values["source"] = firstArticle.SourceFeedName;
 				localSettings.Values["title"] = firstArticle.Title;
-				var age = (DateTime.Now - firstArticle.Published);
-				localSettings.Values["age"] = age.Hours;
+				localSettings.Values["pubDate"] = firstArticle.Published.ToString();
 			}
 		}
 

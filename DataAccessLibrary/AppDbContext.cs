@@ -19,6 +19,8 @@ namespace DataAccessLibrary
 		}
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
+			modelBuilder.HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangedNotifications);
+
 			//TODO: code-first, fluent
 			//modelBuilder.Entity<User>().Property(t => t.UserName).IsRequired();
 		}
