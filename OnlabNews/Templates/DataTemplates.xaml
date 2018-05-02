@@ -7,7 +7,10 @@
     mc:Ignorable="d"
     xmlns:local="using:OnlabNews.Templates"
 	xmlns:vm="using:OnlabNews.ViewModels"
-	xmlns:conv="using:OnlabNews.Converters">
+	xmlns:v="using:OnlabNews.Views"
+	xmlns:conv="using:OnlabNews.Converters"
+	xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Interactions="using:Microsoft.Xaml.Interactions.Core"
+	>
 
 	<conv:UriToBitmapImageConverter x:Key="UriToBitmapImageConverter"/>
 
@@ -34,7 +37,7 @@
 		<ItemsWrapGrid MaximumRowsOrColumns="2" Orientation="Horizontal"/>
 	</ItemsPanelTemplate>
 	
-	<DataTemplate x:Key="ZoomedInArticleGridViewItemTemplate" x:DataType="vm:ArticleItem">
+	<DataTemplate x:Key="ZoomedInArticleGridViewItemTemplate" x:DataType="vm:ArticleItem" x:Name="asd">
 		<Grid Width="480" Height="380">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
@@ -52,6 +55,11 @@
 				   Source="{x:Bind ImageUri, Converter={StaticResource UriToBitmapImageConverter}, Mode=OneWay}" />
 			<TextBlock Grid.Row="2" Grid.ColumnSpan="2" Margin="10" TextWrapping="WrapWholeWords" Height="70" Style="{StaticResource TitleTextBlockStyle}" 
 					   Foreground="Black" TextTrimming="CharacterEllipsis" Text="{x:Bind Title, Mode=OneWay}"/>
+			<Interactivity:Interaction.Behaviors>
+				<Interactions:EventTriggerBehavior EventName="Tapped">
+					<Interactions:NavigateToPageAction TargetPage="OnlabNews.Views.ArticlePage" Parameter="{Binding}"/>
+				</Interactions:EventTriggerBehavior>
+			</Interactivity:Interaction.Behaviors>
 		</Grid>
 	</DataTemplate>
 
@@ -74,7 +82,7 @@
 						<AdaptiveTrigger MinWindowWidth="641" />
 					</VisualState.StateTriggers>
 					<VisualState.Setters>
-						<Setter Target="headerGrid.Margin" Value="24,0,24,0"/>
+						<Setter Target="headerGrid.Margin" Value="24,32,24,0"/>
 					</VisualState.Setters>
 					</VisualState>
 				</VisualStateGroup>

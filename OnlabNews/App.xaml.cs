@@ -17,6 +17,9 @@ using OnlabNews.Services.FacebookServices;
 using Windows.ApplicationModel.Background;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Collections.Generic;
+using Windows.ApplicationModel.Core;
+using Windows.UI.ViewManagement;
+using Windows.UI;
 
 namespace OnlabNews
 {
@@ -25,15 +28,15 @@ namespace OnlabNews
 	{
 
 		public App()
-		{ 
-			InitializeDataBase();	
-            this.InitializeComponent();			
+		{
+			InitializeDataBase();
+			this.InitializeComponent();
 		}
-
+		
 		#region prism
 		protected override UIElement CreateShell(Frame rootFrame)
 		{
-			var shell = Container.Resolve<AppShell>();
+			var shell = Container.Resolve<AppShell>();		
 			var service = Container.Resolve<INavigationService>();
 			shell.SetContentFrame(rootFrame, service);
 			return shell;

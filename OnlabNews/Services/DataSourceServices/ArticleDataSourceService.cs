@@ -1,28 +1,16 @@
-﻿using DataAccessLibrary;
-using DataAccessLibrary.Model;
-using Microsoft.EntityFrameworkCore;
+﻿using DataAccessLibrary.Model;
 using OnlabNews.ViewModels;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Core;
 using Windows.Web.Syndication;
 using OnlabNews.Services.SettingsServices;
 using OnlabNews.Models;
 using OnlabNews.Extensions;
-using OnlabNews.Helpers;
 using System.Threading;
-using System.Net;
-using Microsoft.Toolkit.Uwp.Notifications;
-using Windows.UI.Notifications;
-using System.ComponentModel;
-using System.ServiceModel.Dispatcher;
 using Windows.ApplicationModel.Background;
-using Windows.Foundation.Collections;
 using Windows.Storage;
 using Tasks;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -84,23 +72,72 @@ namespace OnlabNews.Services.DataSourceServices
 
 						string itemTitle = item.Title == null ? "No title" : item.Title.Text;
 						string itemLink = item.Links == null ? "No link" : item.Links.FirstOrDefault().Uri.ToString();
-						var published = item.PublishedDate.LocalDateTime;
 
+						DateTime published;
+
+						if(item.PublishedDate.Year != 1601)
+							published = item.PublishedDate.LocalDateTime;
+						else //persze nyilvan mi van ha a lastupdated is 1601 mert azt se toltottek ki rendesen... 
+							published = item.LastUpdatedTime.LocalDateTime;
+
+						string imageUri = "";
+						foreach (SyndicationNode element in item.ElementExtensions)
+						{
+							imageUri = SearchElementForURIs(element);
+							if (!String.IsNullOrEmpty(imageUri))
+								break;
+						}
+
+						#region non-recursive
+						//foreach (SyndicationNode element in item.ElementExtensions)
+						//{
+
+						//		//GetObject<XElement>(); element.elementextensions.tolist()[0].attributextensions.tolist()[2];
+
+						//	if (element.AttributeExtensions.Count != 0) //bbc
+						//	{
+						//		foreach (var attribute in element.AttributeExtensions)
+						//		{
+						//			string value = attribute.Value;
+						//			if ((value.StartsWith("http://") || value.StartsWith("https://")) && ((value.EndsWith(".jpg") || value.EndsWith(".png") || value.EndsWith(".gif"))))
+						//			{
+						//				imageUris.Add(value); // erdemes lehet az 1. talalat utane breakelni
+						//			}
+						//		}
+						//	}
+						//}
+						if (String.IsNullOrEmpty(imageUri))
+						{
+							foreach (var link in item.Links) //index
+							{
+								string value = link.Uri.OriginalString;
+								if ((value.StartsWith("http://") || value.StartsWith("https://")) && ((value.EndsWith(".jpg") || value.EndsWith(".png") || value.EndsWith(".gif"))))
+								{
+									imageUri = value;
+									break;
+								}
+							}
+						}
+						///444 egy rakas fos lol, de item.Summary.Text-ben benne van vegulis
+						///reddit: item.Content.Text-ben ... :/
+
+						//item.Links
 						//TODO: csak BBC-hez mukodik, lehet mindnek kulon meg kell csinalni?
-						var itemElementExtensions = item.ElementExtensions.ToList();
-						string itemImageUri = itemElementExtensions.FirstOrDefault(x => x.NodeName == "thumbnail") == null ? "ms-appx:///Assets/StoreLogo.png" :
-												itemElementExtensions.ToList().FirstOrDefault(x => x.NodeName == "thumbnail").AttributeExtensions.ToList().FirstOrDefault(y => y.Name == "url") == null ? "ms-appx:///Assets/StoreLogo.png" :
-													itemElementExtensions.ToList().FirstOrDefault(x => x.NodeName == "thumbnail").AttributeExtensions.ToList().FirstOrDefault(y => y.Name == "url").Value;
+						//var itemElementExtensions = item.ElementExtensions.ToList();
+						//string itemImageUri = itemElementExtensions.FirstOrDefault(x => x.NodeName == "thumbnail") == null ? "ms-appx:///Assets/StoreLogo.png" :
+						//						itemElementExtensions.ToList().FirstOrDefault(x => x.NodeName == "thumbnail").AttributeExtensions.ToList().FirstOrDefault(y => y.Name == "url") == null ? "ms-appx:///Assets/StoreLogo.png" :
+						//							itemElementExtensions.ToList().FirstOrDefault(x => x.NodeName == "thumbnail").AttributeExtensions.ToList().FirstOrDefault(y => y.Name == "url").Value;
+						#endregion
 
 						var time = DateTime.Now - published;
-
 						if (time.TotalDays < 1)
 						{
 							list.Add(new ArticleItem
 							{
 								Title = itemTitle,
 								Uri = itemLink,
-								ImageUri = itemImageUri,
+								ImageUri = String.IsNullOrEmpty(imageUri) ? "ms-appx:///Assets/StoreLogo.png" : imageUri,
+								//ImageUri = itemImageUri,
 								SourceFeedName = feed.Title.Text,
 								Published = published,
 								Key = time.Hours
@@ -125,6 +162,44 @@ namespace OnlabNews.Services.DataSourceServices
 			}
 		}
 
+		private string SearchElementForURIs(SyndicationNode element)
+		{
+			string uri = null;
+			if (element.AttributeExtensions.Count != 0) //bbc
+			{
+				foreach (var attribute in element.AttributeExtensions)
+				{
+					string value = attribute.Value;
+					if ((value.StartsWith("http://") || value.StartsWith("https://")) && ((value.EndsWith(".jpg") || value.EndsWith(".png") || value.EndsWith(".gif"))))
+					{
+						uri = value; // erdemes lehet az 1. talalat utane breakelni
+						break;
+					}
+				}
+				if(String.IsNullOrEmpty(uri))
+				{
+					if (element.ElementExtensions.Count != 0)
+						foreach (var elem in element.ElementExtensions)
+						{
+							uri = SearchElementForURIs(element);
+							if (!String.IsNullOrEmpty(uri))
+								break;
+						}
+				}
+			}
+			else
+			{
+				if (element.ElementExtensions.Count != 0)
+					foreach (SyndicationNode elem in element.ElementExtensions)
+					{
+						uri = SearchElementForURIs(elem);
+						if (!String.IsNullOrEmpty(uri))
+							break;
+					}
+			}
+
+			return uri;
+		}
 
 		private void MakeGroups(List<ArticleItem> articles)
 		{

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Background;
@@ -13,6 +14,7 @@ namespace Tasks
 {
 	public sealed class TileUpdaterBackgroundTask : IBackgroundTask
 	{
+		
 		BackgroundTaskDeferral _deferral;
 		public async void Run(IBackgroundTaskInstance taskInstance)
 		{
@@ -31,7 +33,8 @@ namespace Tasks
 
 					UpdateTile(source, title);
 				}
-				else
+				//https://stackoverflow.com/questions/35901526/how-to-check-internet-connectivity-type-in-universal-windows-platform
+				else if (NetworkInterface.GetIsNetworkAvailable())
 				{
 					RssFeedGetter rfg = new RssFeedGetter();
 					await rfg.DownloadFeedsAsync();

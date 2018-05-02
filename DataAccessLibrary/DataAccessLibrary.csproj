@@ -2,7 +2,7 @@
 
   <PropertyGroup>
 	<RuntimeFrameworkVersion>2.0.3</RuntimeFrameworkVersion> 
-	<TargetFrameworks>netcoreapp2.0;netstandard2.0</TargetFrameworks>
+	<TargetFrameworks>netstandard2.0</TargetFrameworks>
 	<GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
 

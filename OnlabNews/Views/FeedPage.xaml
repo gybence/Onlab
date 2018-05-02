@@ -38,19 +38,19 @@
 								  ItemContainerStyle="{StaticResource ZoomedInArticleGridItemContainerStyle}" 
 								  ItemsSource="{Binding Source={StaticResource ArticlesCvs}}" 
 								  ItemTemplate="{StaticResource ZoomedInArticleGridViewItemTemplate}"
-								 
+								
 								  >
 							<GridView.GroupStyle>
 								<GroupStyle HidesIfEmpty="False" HeaderTemplate="{StaticResource ArticlesCvsHeaderTemplate}" />
 							</GridView.GroupStyle>
 							<!--ext:ItemClickCommand.Command="{x:Bind ViewModel.OnItemClickCommand}"-->
-							<Interactivity:Interaction.Behaviors>
-								<Interactions:EventTriggerBehavior EventName="Tapped">
+							<!--<Interactivity:Interaction.Behaviors>
+								<Interactions:EventTriggerBehavior EventName="SelectionChanged">
 									<Interactions:InvokeCommandAction 
 										Command="{Binding OnItemClickCommand}" 
 										CommandParameter="{Binding ElementName=ZoomedInArticleGrid, Path=SelectedItem}"/>
 								</Interactions:EventTriggerBehavior>
-							</Interactivity:Interaction.Behaviors>
+							</Interactivity:Interaction.Behaviors>-->
 						</GridView>
 					</SemanticZoom.ZoomedInView>
 
