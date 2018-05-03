@@ -119,17 +119,17 @@ namespace OnlabNews.Controls
 		#region find functions
 
 		NavigationViewItem FindStart()
-			  => MenuItems.OfType<NavigationViewItem>()
+			  => (MenuItemsSource as List<object>).OfType<NavigationViewItem>()
 				.SingleOrDefault(x => (bool)x.GetValue(NavProperties.IsStartPageProperty));
 
 
 		NavigationViewItem Find(string content)
-		  => MenuItems.OfType<NavigationViewItem>()
+		  => (MenuItemsSource as List<object>).OfType<NavigationViewItem>()
 			.SingleOrDefault(x => x.Content.Equals(content));
 
 
 		NavigationViewItem Find(Type type)
-		  => MenuItems.OfType<NavigationViewItem>()
+		  => (MenuItemsSource as List<object>).OfType<NavigationViewItem>()
 			.SingleOrDefault(x => type.Equals(x.GetValue(NavProperties.PageTypeProperty)));
 
 		#endregion
@@ -140,7 +140,7 @@ namespace OnlabNews.Controls
 		public HeaderBehaviors HeaderBehavior { get; set; } = HeaderBehaviors.Remove;
 		private void UpdatePaneHeadersVisibility(DependencyObject sender, DependencyProperty dp)
 		{
-			foreach (var item in MenuItems.OfType<NavigationViewItemHeader>())
+			foreach (var item in (MenuItemsSource as List<object>).OfType<NavigationViewItemHeader>())
 			{
 				switch (HeaderBehavior)
 				{
