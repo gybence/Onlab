@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using OnlabNews.Models;
 using OnlabNews.Services.DataSourceServices;
-using Microsoft.Toolkit.Uwp.Services.Facebook;
 using OnlabNews.Services.FacebookServices;
 
 namespace OnlabNews.ViewModels
@@ -17,22 +16,18 @@ namespace OnlabNews.ViewModels
 
 		private IArticleDataSourceService _articleDataSource;
 		private INavigationService _navigationService;
-		private IFacebookGraphService _facebookGraphService;
 
 		public DelegateCommand<object> OnItemClickCommand { get; private set; }
 
 		public RangeObservableCollection<MutableGrouping<int, ArticleItem>> GroupedArticles { get { return _articleDataSource.GroupedArticles; } }
-		public RangeObservableCollection<FacebookPost> FacebookPosts { get { return _facebookGraphService.FacebookPosts; } }
-
 		#endregion
 
-		public FeedPageViewModel(INavigationService navigationService, IArticleDataSourceService dataSourceService, IFacebookGraphService facebookGraphService)
+		public FeedPageViewModel(INavigationService navigationService, IArticleDataSourceService dataSourceService)
 		{
 			_articleDataSource = dataSourceService;
 			_navigationService = navigationService;
-			_facebookGraphService = facebookGraphService;
 			OnItemClickCommand = new DelegateCommand<object>(OnClickNavigate);
-			_facebookGraphService.LoadFacebookPosts();
+
 		}
 
 		public void OnClickNavigate(object clickedItem)

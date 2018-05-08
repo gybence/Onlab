@@ -29,8 +29,8 @@
 	</prism:SessionStateAwarePage.Resources>
 
 	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-		<Pivot Style="{StaticResource PivotWithoutMarginStyle}">
-			<PivotItem Header="RSS">
+		<!--<Pivot Style="{StaticResource PivotWithoutMarginStyle}">
+			<PivotItem Header="RSS">-->
 				<SemanticZoom>
 					<SemanticZoom.ZoomedInView>
 						<GridView IsItemClickEnabled="True" x:Name="ZoomedInArticleGrid" 
@@ -71,11 +71,11 @@
 					</SemanticZoom.ZoomedOutView>
 				</SemanticZoom>
 
-			</PivotItem>
+			<!--</PivotItem>-->
 
 
-			<PivotItem Margin="0" Header="Facebook">
-				<Grid>
+			<!--<PivotItem Margin="0" Header="Facebook">-->
+				<!--<Grid>
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition/>
 					</Grid.ColumnDefinitions>
@@ -86,11 +86,11 @@
 							  ItemsSource="{x:Bind ViewModel.FacebookPosts, Mode=OneWay}"
 							  ItemTemplate="{StaticResource FacebookPostListViewItemTemplate}">
 					</ListView>
-				</Grid>
+				</Grid>-->
 
 
-			</PivotItem>
-		</Pivot>
+			<!--</PivotItem>
+		</Pivot>-->
 		
 	</Grid>
 </prism:SessionStateAwarePage>

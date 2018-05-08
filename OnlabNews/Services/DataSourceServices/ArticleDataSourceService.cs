@@ -42,9 +42,9 @@ namespace OnlabNews.Services.DataSourceServices
 			Task.Run(() => CreateArticlesAsync(_settingsService.Cts.Token), _settingsService.Cts.Token);
 
 			_settingsService.OnUpdateStatus += CreateArticlesAsync;
-			(_settingsService.ActiveUser.Subscriptions as ObservableHashSet<Subscription>).CollectionChanged += async (s, e) => await CreateArticlesAsync(new CancellationToken());
+			//(_settingsService.ActiveUser.Subscriptions as ObservableHashSet<Subscription>).CollectionChanged += async (s, e) => await CreateArticlesAsync(new CancellationToken());
 
-			(_settingsService.ActiveUser.Subscriptions as ObservableHashSet<Subscription>).CollectionChanged += ArticleDataSourceService_CollectionChanged;
+			//(_settingsService.ActiveUser.Subscriptions as ObservableHashSet<Subscription>).CollectionChanged += ArticleDataSourceService_CollectionChanged;
 
 		}
 
@@ -89,23 +89,6 @@ namespace OnlabNews.Services.DataSourceServices
 						}
 
 						#region non-recursive
-						//foreach (SyndicationNode element in item.ElementExtensions)
-						//{
-
-						//		//GetObject<XElement>(); element.elementextensions.tolist()[0].attributextensions.tolist()[2];
-
-						//	if (element.AttributeExtensions.Count != 0) //bbc
-						//	{
-						//		foreach (var attribute in element.AttributeExtensions)
-						//		{
-						//			string value = attribute.Value;
-						//			if ((value.StartsWith("http://") || value.StartsWith("https://")) && ((value.EndsWith(".jpg") || value.EndsWith(".png") || value.EndsWith(".gif"))))
-						//			{
-						//				imageUris.Add(value); // erdemes lehet az 1. talalat utane breakelni
-						//			}
-						//		}
-						//	}
-						//}
 						if (String.IsNullOrEmpty(imageUri))
 						{
 							foreach (var link in item.Links) //index
@@ -120,13 +103,6 @@ namespace OnlabNews.Services.DataSourceServices
 						}
 						///444 egy rakas fos lol, de item.Summary.Text-ben benne van vegulis
 						///reddit: item.Content.Text-ben ... :/
-
-						//item.Links
-						//TODO: csak BBC-hez mukodik, lehet mindnek kulon meg kell csinalni?
-						//var itemElementExtensions = item.ElementExtensions.ToList();
-						//string itemImageUri = itemElementExtensions.FirstOrDefault(x => x.NodeName == "thumbnail") == null ? "ms-appx:///Assets/StoreLogo.png" :
-						//						itemElementExtensions.ToList().FirstOrDefault(x => x.NodeName == "thumbnail").AttributeExtensions.ToList().FirstOrDefault(y => y.Name == "url") == null ? "ms-appx:///Assets/StoreLogo.png" :
-						//							itemElementExtensions.ToList().FirstOrDefault(x => x.NodeName == "thumbnail").AttributeExtensions.ToList().FirstOrDefault(y => y.Name == "url").Value;
 						#endregion
 
 						var time = DateTime.Now - published;
@@ -247,6 +223,8 @@ namespace OnlabNews.Services.DataSourceServices
 					BackgroundTaskBuilder taskBuilder = new BackgroundTaskBuilder();
 					taskBuilder.Name = taskName;
 					taskBuilder.TaskEntryPoint = taskEntryPoint;
+					taskBuilder.AddCondition(new SystemCondition(SystemConditionType.InternetAvailable));
+					taskBuilder.AddCondition(new SystemCondition(SystemConditionType.UserPresent));
 					taskBuilder.SetTrigger(trigger);
 					_registration = taskBuilder.Register();
 					_registration.Completed += _registration_Completed;

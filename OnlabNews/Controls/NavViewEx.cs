@@ -71,7 +71,8 @@ namespace OnlabNews.Controls
 			ItemInvoked += NavViewEx_ItemInvoked; //navigacio navview menu itemre kattintassal 
 			Loaded += NavViewEx_Loaded;
 			DisplayModeChanged += ChangeMarginThickness;
-			RegisterPropertyChangedCallback(IsPaneOpenProperty, UpdatePaneHeadersVisibility);	
+			RegisterPropertyChangedCallback(IsPaneOpenProperty, UpdatePaneHeadersVisibility);
+
 		}
 
 

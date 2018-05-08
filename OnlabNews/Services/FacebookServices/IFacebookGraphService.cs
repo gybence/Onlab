@@ -1,5 +1,4 @@
-﻿using Microsoft.Toolkit.Uwp.Services.Facebook;
-using OnlabNews.Models;
+﻿using OnlabNews.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,8 +11,5 @@ namespace OnlabNews.Services.FacebookServices
 	public interface IFacebookGraphService
 	{
 		string FacebookGraphAppID { get; }
-		FacebookService FacebookServiceInstance { get; }
-		RangeObservableCollection<FacebookPost> FacebookPosts { get; }
-		void LoadFacebookPosts();
 	}
 }

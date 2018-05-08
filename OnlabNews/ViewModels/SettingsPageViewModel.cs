@@ -1,24 +1,15 @@
 ﻿using Prism.Commands;
 using Prism.Windows.Mvvm;
 using Prism.Windows.Navigation;
-using System;
 using System.Collections.Generic;
-using Windows.Web.Syndication;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
-using OnlabNews.Views;
 using DataAccessLibrary;
 using DataAccessLibrary.Model;
 using System.Collections.ObjectModel;
-using OnlabNews.Models;
 using Microsoft.EntityFrameworkCore;
 using Windows.UI.Core;
 using OnlabNews.Services.SettingsServices;
 using OnlabNews.Services.DataSourceServices;
-using Microsoft.Toolkit.Uwp.Services.Facebook;
-using System.Globalization;
 using OnlabNews.Services.FacebookServices;
 
 namespace OnlabNews.ViewModels
@@ -44,10 +35,11 @@ namespace OnlabNews.ViewModels
 		string _userNameText;
 		public string UserNameText { get { return _userNameText; } set { SetProperty(ref _userNameText, value); } }
 
-		ObservableCollection<DataAccessLibrary.Model.RssFeed> _items = new ObservableCollection<RssFeed>();
-		public ObservableCollection<DataAccessLibrary.Model.RssFeed> Items { get => _items; set { SetProperty(ref _items, value); } }
+		ObservableCollection<RssFeed> _items = new ObservableCollection<RssFeed>();
+		public ObservableCollection<RssFeed> Items { get => _items; set { SetProperty(ref _items, value); } }
 
 		public DelegateCommand<object> OnSubscriptionItemClickCommand { get; private set; }
+		public DelegateCommand FacebookLoginCommand { get; private set; }
 
 		#endregion
 
@@ -63,6 +55,7 @@ namespace OnlabNews.ViewModels
 			UserNameText = _settingsService.ActiveUser.Name;
 
 			OnSubscriptionItemClickCommand = new DelegateCommand<object>(OnSubscriptionItemClick);
+			FacebookLoginCommand = new DelegateCommand(FacebookLogin);
 			GetItems();
 		}
 
@@ -181,17 +174,10 @@ namespace OnlabNews.ViewModels
 
 		#endregion
 
-		public async void FacebookLoginButtonClick()
+		public void FacebookLogin()
 		{
-			if (_facebookGraphService.FacebookServiceInstance.LoggedUser == null)
-			{
-				//TOTO: lefut de megse lep be
-				await _facebookGraphService.FacebookServiceInstance.LoginAsync();
 
-				_facebookGraphService.LoadFacebookPosts();
-			}
-			else
-				await _facebookGraphService.FacebookServiceInstance.LogoutAsync();
+
 		}
 
 		public override void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)

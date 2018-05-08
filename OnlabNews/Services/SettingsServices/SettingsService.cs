@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using DataAccessLibrary;
 using DataAccessLibrary.Model;
-using Microsoft.Toolkit.Uwp.Services.Facebook;
 using Windows.Security.Authentication.Web;
 
 namespace OnlabNews.Services.SettingsServices
