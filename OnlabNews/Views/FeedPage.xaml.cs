@@ -38,6 +38,16 @@ namespace OnlabNews.Views
 		{
 			this.InitializeComponent();
 			this.SetValue(NavProperties.HeaderProperty, "Feeds");
+			var headerButtons = new ObservableCollection<object>();
+			var refreshButton = new AppBarButton
+			{
+				Label = "Refresh",
+				Icon = new SymbolIcon { Symbol = (Symbol)Enum.Parse(typeof(Symbol), "Refresh") },
+				Command = ViewModel.RefreshButtonCommand
+			};
+
+			headerButtons.Add(refreshButton);
+			SetValue(NavProperties.HeaderCommandsProperty, headerButtons);
 		}
 	}
 }

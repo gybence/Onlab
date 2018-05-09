@@ -7,9 +7,14 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+	xmlns:converters="using:OnlabNews.Converters"
 	xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Interactions="using:Microsoft.Xaml.Interactions.Core"
 	prism:ViewModelLocator.AutoWireViewModel="True" >
 
+	<prism:SessionStateAwarePage.Resources>
+		<converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+	</prism:SessionStateAwarePage.Resources>
+	
 	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition MinWidth="300" Width="*"/>
@@ -30,9 +35,17 @@
 
 
 			<TextBlock Text="Linked social account" FontSize="20" Margin="0,5"/>
-			<TextBlock Text="asd" Margin="0,5" Grid.Row="1" VerticalAlignment="Center" ></TextBlock>
+			<TextBlock Text="{x:Bind ViewModel.UserNameText, Mode=OneWay}" Margin="0,5" Grid.Row="1" VerticalAlignment="Center" ></TextBlock>
 
-			<Button Grid.Column="1" Command="{x:Bind ViewModel.FacebookLoginCommand}" Margin="0,5" Grid.Row="1" Content="Facebook"/>
+			<Button Grid.Column="0" 
+					Command="{x:Bind ViewModel.FacebookLoginCommand}" Margin="0,5" Grid.Row="1" Content="Facebook Login"
+					Visibility="{x:Bind ViewModel.UserNameText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter='invert'}"
+					/>
+
+			<Button Grid.Column="1" 
+					Command="{x:Bind ViewModel.FacebookLogoutCommand}" Margin="0,5" Grid.Row="1" Content="Logout"
+					Visibility="{x:Bind ViewModel.UserNameText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+					/>
 
 			<!--<TextBlock Margin="0,5" Grid.Row="0" Text="Username" FontSize="20" Grid.ColumnSpan="2"/>-->
 			<!--<TextBlock Margin="0,0,0,3" Grid.Row="1" Text="Name" VerticalAlignment="Center" HorizontalAlignment="Center"/>-->
@@ -58,6 +71,7 @@
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
+				<RowDefinition Height="*" />
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 
@@ -81,6 +95,7 @@
 				</Interactivity:Interaction.Behaviors>
 			</ListView>
 
+			<Button HorizontalAlignment="Right" Grid.Row="3" Grid.Column="2" Content="Save"/>
 		</Grid>
 	</Grid>
 </prism:SessionStateAwarePage>

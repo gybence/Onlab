@@ -39,21 +39,15 @@ namespace OnlabNews.Services.DataSourceServices
 
 			RegisterBackgroundTaskAsync("TimeTriggeredTileUpdaterBackgroundTask", "Tasks.TileUpdaterBackgroundTask", new TimeTrigger(15, false));
 			//RegisterBackgroundTask("ApplicationTriggeredTileUpdaterBackgroundTask", "Tasks.TileUpdaterBackgroundTask", new ApplicationTrigger());
-			Task.Run(() => CreateArticlesAsync(_settingsService.Cts.Token), _settingsService.Cts.Token);
+			Task.Run(() => CreateArticlesAsync());
 
-			_settingsService.OnUpdateStatus += CreateArticlesAsync;
 			//(_settingsService.ActiveUser.Subscriptions as ObservableHashSet<Subscription>).CollectionChanged += async (s, e) => await CreateArticlesAsync(new CancellationToken());
 
 			//(_settingsService.ActiveUser.Subscriptions as ObservableHashSet<Subscription>).CollectionChanged += ArticleDataSourceService_CollectionChanged;
 
 		}
 
-		private void ArticleDataSourceService_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			
-		}
-
-		public async Task CreateArticlesAsync(CancellationToken ct)
+		public async Task CreateArticlesAsync()
 		{
 			try
 			{
@@ -68,7 +62,7 @@ namespace OnlabNews.Services.DataSourceServices
 				{
 					foreach (SyndicationItem item in feed.Items)
 					{
-						ct.ThrowIfCancellationRequested();
+						//ct.ThrowIfCancellationRequested();
 
 						string itemTitle = item.Title == null ? "No title" : item.Title.Text;
 						string itemLink = item.Links == null ? "No link" : item.Links.FirstOrDefault().Uri.ToString();
@@ -122,15 +116,16 @@ namespace OnlabNews.Services.DataSourceServices
 
 					}
 				}
-				await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+				if (list.Count != 0)
 				{
-					MakeGroups(list);
-				});
+					await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+					{
+						MakeGroups(list);
+					});
 
-
-				ct.ThrowIfCancellationRequested();
-				PassTileDataToBackgroundTask();
-
+					//ct.ThrowIfCancellationRequested();
+					PassTileDataToBackgroundTask();
+				}
 			}
 			catch (OperationCanceledException)
 			{

@@ -102,6 +102,7 @@
       <DependentUpon>AppShell.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\NavConverter.cs" />
+    <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="Converters\UriToBitmapImageConverter.cs" />
     <Compile Include="Extensions\BinaryInsertExtensions.cs" />
     <Compile Include="Extensions\ItemClickCommand.cs" />
@@ -111,8 +112,8 @@
     <Compile Include="Models\MutableGrouping.cs" />
     <Compile Include="Models\RangeObservableCollection.cs" />
     <Compile Include="Services\DataSourceServices\IArticleDataSourceService.cs" />
-    <Compile Include="Services\FacebookServices\FacebookGraphService.cs" />
-    <Compile Include="Services\FacebookServices\IFacebookGraphService.cs" />
+    <Compile Include="Services\FacebookServices\FacebookService.cs" />
+    <Compile Include="Services\FacebookServices\IFacebookService.cs" />
     <Compile Include="Services\SettingsServices\SettingsService.cs" />
     <Compile Include="Controls\NavViewEx.cs" />
     <Compile Include="Services\SettingsServices\ISettingsService.cs" />

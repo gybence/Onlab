@@ -56,8 +56,9 @@ namespace OnlabNews
 		{
 			Container.RegisterInstance<INavigationService>(NavigationService);
 			Container.RegisterInstance<ISettingsService>(new SettingsService(), new ContainerControlledLifetimeManager());
+			Container.RegisterInstance<IFacebookService>(new FacebookService(Container.Resolve<ISettingsService>()), new ContainerControlledLifetimeManager());
+
 			Container.RegisterInstance<IArticleDataSourceService>(new ArticleDataSourceService(Container.Resolve<ISettingsService>()), new ContainerControlledLifetimeManager());
-			Container.RegisterType<IFacebookGraphService, FacebookGraphService>(new ContainerControlledLifetimeManager());
 			//Container.RegisterInstance<IResourceLoader>(new ResourceLoaderAdapter(new ResourceLoader()));
 			
 			return base.OnInitializeAsync(args);
@@ -91,12 +92,16 @@ namespace OnlabNews
 				}
 				catch
 				{
-					System.Diagnostics.Debugger.Break();
+
 				}
 			}
 		}
 
+		protected override void OnActivated(IActivatedEventArgs args)
+		{
+			base.OnActivated(args);
 
+		}
 
 
 	}

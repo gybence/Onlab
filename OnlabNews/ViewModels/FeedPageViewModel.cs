@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using OnlabNews.Models;
 using OnlabNews.Services.DataSourceServices;
 using OnlabNews.Services.FacebookServices;
+using System;
 
 namespace OnlabNews.ViewModels
 {
@@ -18,6 +19,7 @@ namespace OnlabNews.ViewModels
 		private INavigationService _navigationService;
 
 		public DelegateCommand<object> OnItemClickCommand { get; private set; }
+		public DelegateCommand RefreshButtonCommand { get; private set; }
 
 		public RangeObservableCollection<MutableGrouping<int, ArticleItem>> GroupedArticles { get { return _articleDataSource.GroupedArticles; } }
 		#endregion
@@ -27,7 +29,13 @@ namespace OnlabNews.ViewModels
 			_articleDataSource = dataSourceService;
 			_navigationService = navigationService;
 			OnItemClickCommand = new DelegateCommand<object>(OnClickNavigate);
+			RefreshButtonCommand = new DelegateCommand(OnRefreshButtonClick);
 
+		}
+
+		private async void OnRefreshButtonClick()
+		{
+			await _articleDataSource.CreateArticlesAsync();
 		}
 
 		public void OnClickNavigate(object clickedItem)

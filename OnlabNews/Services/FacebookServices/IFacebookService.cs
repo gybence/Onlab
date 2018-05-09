@@ -8,8 +8,12 @@ using System.Threading.Tasks;
 
 namespace OnlabNews.Services.FacebookServices
 {
-	public interface IFacebookGraphService
+	public interface IFacebookService
 	{
-		string FacebookGraphAppID { get; }
+		string AppID { get; }
+		string UserID { get; }
+
+		Task<bool> SignInFacebookAsync();
+		Task<bool> SignOutFacebookAsync();
 	}
 }

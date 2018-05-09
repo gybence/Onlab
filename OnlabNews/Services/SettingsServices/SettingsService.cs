@@ -49,7 +49,7 @@ namespace OnlabNews.Services.SettingsServices
 			_cts = new CancellationTokenSource();
 			using (var db = new AppDbContext())
 			{
-				ActiveUser = db.Users.ToList().SingleOrDefault(u => u.LastLoggedIn == true);						
+				ActiveUser = db.Users.ToList().SingleOrDefault(u => u.Name == "Default");						
 			}
 		}
 	}

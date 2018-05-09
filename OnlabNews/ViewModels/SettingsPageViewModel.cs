@@ -22,7 +22,7 @@ namespace OnlabNews.ViewModels
 		INavigationService _navigationService;
 		private IArticleDataSourceService _articleDataSource;
 		private ISettingsService _settingsService;
-		private IFacebookGraphService _facebookGraphService;
+		private IFacebookService _facebookService;
 		private CoreDispatcher dispatcher;
 
 
@@ -40,26 +40,29 @@ namespace OnlabNews.ViewModels
 
 		public DelegateCommand<object> OnSubscriptionItemClickCommand { get; private set; }
 		public DelegateCommand FacebookLoginCommand { get; private set; }
-
+		public DelegateCommand FacebookLogoutCommand { get; private set; }
 		#endregion
 
-		public SettingsPageViewModel(INavigationService navigationService, ISettingsService settingsService, IArticleDataSourceService dataSourceService, IFacebookGraphService facebookService)
+		public SettingsPageViewModel(INavigationService navigationService, 
+									 ISettingsService settingsService, 
+									 IArticleDataSourceService dataSourceService, 
+									 IFacebookService facebookService)
 		{
 			_articleDataSource = dataSourceService;
 			_settingsService = settingsService;
 			_navigationService = navigationService;
-			_facebookGraphService = facebookService;
+			_facebookService = facebookService;
 
 
 			dispatcher = Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher;
-			UserNameText = _settingsService.ActiveUser.Name;
-
+	
 			OnSubscriptionItemClickCommand = new DelegateCommand<object>(OnSubscriptionItemClick);
 			FacebookLoginCommand = new DelegateCommand(FacebookLogin);
+			FacebookLogoutCommand = new DelegateCommand(FacebookLogout);
 			GetItems();
 		}
 
-		private void OnSubscriptionItemClick(object obj)
+		private async void OnSubscriptionItemClick(object obj)
 		{
 			var rssItem = obj as RssFeed;
 			using (var db = new AppDbContext())
@@ -76,60 +79,14 @@ namespace OnlabNews.ViewModels
 				{
 					db.Subscriptions.Remove(sub);
 					db.SaveChanges();
-					//TODO: valamiert hiaba iratkoztam fel a CollectionChanged eseményre, nem hivodik meg :/
 					_settingsService.ActiveUser.Subscriptions.Remove(sub);
 				}
 			}
-
+			await _articleDataSource.CreateArticlesAsync();
 		}
 
 
 		#region button click handlers
-		public void AddNewUserButtonClick()
-		{
-			if (UserNameText.Equals(_settingsService.ActiveUser.Name))
-				return;
-
-			User newUser;
-			using (var db = new AppDbContext())
-			{
-				newUser = db.Users.SingleOrDefault(u => u.Name == UserNameText);
-
-				if(newUser == null)
-				{
-					var currentUser = db.Users.SingleOrDefault(u => u.LastLoggedIn == true);
-						currentUser.LastLoggedIn = false;
-
-					newUser = new User { Name = UserNameText, LastLoggedIn = true };
-					db.Users.Add(newUser);
-					db.SaveChanges();
-				}
-			}
-			_settingsService.ActiveUser = newUser;
-			//GetItems();
-		}
-
-		public void LoadButtonClick()
-		{
-			if (UserNameText.Equals(_settingsService.ActiveUser.Name))
-				return;
-
-			using (var db = new AppDbContext())
-			{
-				User userToLoad = db.Users.SingleOrDefault(u => u.Name == UserNameText);
-
-				if (userToLoad != null)
-				{
-					var currentUser = db.Users.Include(x => x.Subscriptions).SingleOrDefault(u => u.LastLoggedIn == true);
-						currentUser.LastLoggedIn = false;
-
-					userToLoad.LastLoggedIn = true;
-				
-					_settingsService.ActiveUser = userToLoad;
-					db.SaveChanges();	
-				}
-			}
-		}
 
 		public void SubButtonClick()
 		{
@@ -160,28 +117,77 @@ namespace OnlabNews.ViewModels
 			Items.Clear();
 			using (var db = new AppDbContext())
 			{
-				//var subs = db.Subscriptions.Where(f => f.UserID == _settingsService.ActiveUser.ID).Include(x => x.RssFeed).ToList();
-				//var subs = db.Subscriptions.Include(x => x.RssFeed).ToList();
-				//foreach (Subscription s in subs)
-				//	Items.Add(s.RssFeed);
-
 				var feeds = db.RssFeeds.ToList();
 				foreach (RssFeed f in feeds)
 					Items.Add(f);
-
 			}
 		}
 
 		#endregion
 
-		public void FacebookLogin()
+		public async void FacebookLogin()
 		{
+			bool success = await _facebookService.SignInFacebookAsync();
 
 
+			if (success)
+			{
+				UserNameText = _facebookService.UserID;
+
+				using (var db = new AppDbContext())
+				{
+					User userToLoad = db.Users.SingleOrDefault(u => u.Name == _facebookService.UserID);
+					if (userToLoad == null)
+					{
+						var currentUser = db.Users.SingleOrDefault(u => u.LastLoggedIn == true);
+						currentUser.LastLoggedIn = false;
+
+						userToLoad = new User { Name = UserNameText, LastLoggedIn = true };
+						db.Users.Add(userToLoad);
+						db.SaveChanges();
+					}
+					else
+					{
+						var currentUser = db.Users.Include(x => x.Subscriptions).SingleOrDefault(u => u.LastLoggedIn == true);
+						currentUser.LastLoggedIn = false;
+
+						userToLoad.LastLoggedIn = true;
+
+						_settingsService.ActiveUser = userToLoad;
+						db.SaveChanges();
+					}
+				}
+				await _articleDataSource.CreateArticlesAsync();
+			}
+		}
+		public async void FacebookLogout()
+		{
+			bool success = await _facebookService.SignOutFacebookAsync();
+
+			if (success)
+			{
+				UserNameText = null;
+				using (var db = new AppDbContext())
+				{
+					User userToLoad = db.Users.SingleOrDefault(u => u.Name == _facebookService.UserID);
+					var currentUser = db.Users.Include(x => x.Subscriptions).SingleOrDefault(u => u.LastLoggedIn == true);
+					currentUser.LastLoggedIn = false;
+
+					userToLoad.LastLoggedIn = true;
+
+					_settingsService.ActiveUser = userToLoad;
+					db.SaveChanges();
+				}
+				await _articleDataSource.CreateArticlesAsync();
+			}
 		}
 
 		public override void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)
 		{
+			if (_facebookService.UserID == "Default")
+				UserNameText = null;
+			else
+				UserNameText = _facebookService.UserID;
 			//GetItems();
 			base.OnNavigatedTo(e, viewModelState);
 		}
