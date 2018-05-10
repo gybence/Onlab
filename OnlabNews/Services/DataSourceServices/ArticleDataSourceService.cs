@@ -41,10 +41,6 @@ namespace OnlabNews.Services.DataSourceServices
 			//RegisterBackgroundTask("ApplicationTriggeredTileUpdaterBackgroundTask", "Tasks.TileUpdaterBackgroundTask", new ApplicationTrigger());
 			Task.Run(() => CreateArticlesAsync());
 
-			//(_settingsService.ActiveUser.Subscriptions as ObservableHashSet<Subscription>).CollectionChanged += async (s, e) => await CreateArticlesAsync(new CancellationToken());
-
-			//(_settingsService.ActiveUser.Subscriptions as ObservableHashSet<Subscription>).CollectionChanged += ArticleDataSourceService_CollectionChanged;
-
 		}
 
 		public async Task CreateArticlesAsync()
@@ -106,7 +102,7 @@ namespace OnlabNews.Services.DataSourceServices
 							{
 								Title = itemTitle,
 								Uri = itemLink,
-								ImageUri = String.IsNullOrEmpty(imageUri) ? "ms-appx:///Assets/StoreLogo.png" : imageUri,
+								ImageUri = String.IsNullOrEmpty(imageUri) ? "ms-appx:///Assets/StoreLogoInverted.png" : imageUri,
 								//ImageUri = itemImageUri,
 								SourceFeedName = feed.Title.Text,
 								Published = published,
@@ -222,15 +218,8 @@ namespace OnlabNews.Services.DataSourceServices
 					taskBuilder.AddCondition(new SystemCondition(SystemConditionType.UserPresent));
 					taskBuilder.SetTrigger(trigger);
 					_registration = taskBuilder.Register();
-					_registration.Completed += _registration_Completed;
 				}
 			}
-		}
-
-
-		private void _registration_Completed(BackgroundTaskRegistration sender, BackgroundTaskCompletedEventArgs args)
-		{
-
 		}
 
 		private void PassTileDataToBackgroundTask()

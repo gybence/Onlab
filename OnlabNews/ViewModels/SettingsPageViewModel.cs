@@ -11,6 +11,7 @@ using Windows.UI.Core;
 using OnlabNews.Services.SettingsServices;
 using OnlabNews.Services.DataSourceServices;
 using OnlabNews.Services.FacebookServices;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace OnlabNews.ViewModels
 {
@@ -38,9 +39,12 @@ namespace OnlabNews.ViewModels
 		ObservableCollection<RssFeed> _items = new ObservableCollection<RssFeed>();
 		public ObservableCollection<RssFeed> Items { get => _items; set { SetProperty(ref _items, value); } }
 
+		private List<Subscription> _subscriptionModificationList;
+
 		public DelegateCommand<object> OnSubscriptionItemClickCommand { get; private set; }
 		public DelegateCommand FacebookLoginCommand { get; private set; }
 		public DelegateCommand FacebookLogoutCommand { get; private set; }
+		
 		#endregion
 
 		public SettingsPageViewModel(INavigationService navigationService, 
@@ -62,31 +66,8 @@ namespace OnlabNews.ViewModels
 			GetItems();
 		}
 
-		private async void OnSubscriptionItemClick(object obj)
-		{
-			var rssItem = obj as RssFeed;
-			using (var db = new AppDbContext())
-			{
-				var sub = db.Subscriptions.SingleOrDefault(s => s.UserID == _settingsService.ActiveUser.ID && s.RssFeedID == rssItem.ID);
-				if(sub == null)
-				{
-					sub = new Subscription { UserID = _settingsService.ActiveUser.ID, RssFeedID = rssItem.ID };
-					db.Subscriptions.Add(sub);
-					db.SaveChanges();
-					_settingsService.ActiveUser.Subscriptions.Add(sub);
-				}
-				else
-				{
-					db.Subscriptions.Remove(sub);
-					db.SaveChanges();
-					_settingsService.ActiveUser.Subscriptions.Remove(sub);
-				}
-			}
-			await _articleDataSource.CreateArticlesAsync();
-		}
-
-
-		#region button click handlers
+		
+		#region click handlers
 
 		public void SubButtonClick()
 		{
@@ -112,6 +93,65 @@ namespace OnlabNews.ViewModels
 			}
 		}
 
+		private void OnSubscriptionItemClick(object obj)
+		{
+			var rssItem = obj as RssFeed;
+			using (var db = new AppDbContext())
+			{
+				var sub = _subscriptionModificationList.FirstOrDefault(x => x.RssFeedID == rssItem.ID);
+				//var sub = db.Subscriptions.Include(x => x.User).SingleOrDefault(s => s.UserID == _settingsService.ActiveUser.ID && s.RssFeedID == rssItem.ID);
+				if (sub == null)
+				{
+					sub = new Subscription { UserID = _settingsService.ActiveUser.ID, RssFeedID = rssItem.ID };
+
+					_subscriptionModificationList.Add(sub);
+					//db.Subscriptions.Add(sub);
+					//db.SaveChanges();
+					//_settingsService.ActiveUser.Subscriptions.Add(sub);
+				}
+				else
+				{
+					_subscriptionModificationList.Remove(sub);
+					//foreach(Subscription s in _subscriptionModificationList)
+					//{
+					//	if(s.SubscriptionID == sub.SubscriptionID)
+					//	{
+					//		_subscriptionModificationList.Remove(s);
+					//		break;
+					//	}
+					//}
+					//db.Subscriptions.Remove(sub);
+					//db.SaveChanges();
+					//_settingsService.ActiveUser.Subscriptions.Remove(sub);
+				}
+			}
+			//await _articleDataSource.CreateArticlesAsync();
+		}
+
+		public async void SaveButtonClick()
+		{
+			using (var db = new AppDbContext())
+			{
+				var userID = _settingsService.ActiveUser.ID;
+				
+				//kidobjuk a db-bol ami nincs benne az uj listaban
+				foreach (var s in db.Subscriptions)
+				{
+					if (s.UserID == userID && !_subscriptionModificationList.Exists(x=> x.SubscriptionID == s.SubscriptionID))
+						db.Subscriptions.Remove(s);
+				}
+				//hozza kell adni a listabol azokat amik meg nincsenek a db-ben
+				db.Subscriptions.AddRange(_subscriptionModificationList.Where(x => !db.Subscriptions.Any(y => y.SubscriptionID == x.SubscriptionID)));
+				
+				db.SaveChanges();
+				//active user, settings es db szinkronizalasa
+				_settingsService.ActiveUser.Subscriptions = db.Users.FirstOrDefault(x => x.ID == _settingsService.ActiveUser.ID).Subscriptions;
+				_subscriptionModificationList = new List<Subscription>(_settingsService.ActiveUser.Subscriptions);
+
+			}
+			await _articleDataSource.CreateArticlesAsync();
+		}
+
 		private void GetItems()
 		{
 			Items.Clear();
@@ -121,9 +161,7 @@ namespace OnlabNews.ViewModels
 				foreach (RssFeed f in feeds)
 					Items.Add(f);
 			}
-		}
-
-		#endregion
+		}	
 
 		public async void FacebookLogin()
 		{
@@ -182,12 +220,15 @@ namespace OnlabNews.ViewModels
 			}
 		}
 
+		#endregion
+
 		public override void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)
 		{
 			if (_facebookService.UserID == "Default")
 				UserNameText = null;
 			else
 				UserNameText = _facebookService.UserID;
+			_subscriptionModificationList = new List<Subscription>(_settingsService.ActiveUser.Subscriptions);
 			//GetItems();
 			base.OnNavigatedTo(e, viewModelState);
 		}

@@ -54,6 +54,7 @@ namespace OnlabNews
 
 		protected override Task OnInitializeAsync(IActivatedEventArgs args)
 		{
+	
 			Container.RegisterInstance<INavigationService>(NavigationService);
 			Container.RegisterInstance<ISettingsService>(new SettingsService(), new ContainerControlledLifetimeManager());
 			Container.RegisterInstance<IFacebookService>(new FacebookService(Container.Resolve<ISettingsService>()), new ContainerControlledLifetimeManager());

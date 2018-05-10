@@ -30,7 +30,7 @@ namespace OnlabNews
 				new NavItemSeparatorEx(),
 				new NavItemHeaderEx {Text="Pages", /*Opacity=0*/},
 				new NavItemEx { Content = "Feed", Symbol="List",PageToken="Feed", PageType = typeof(FeedPage), IsStartPage=true},
-				//new NavItemEx { Content = "Article page", Symbol="Document",  PageToken="Article", PageType = typeof(ArticlePage)},
+				new NavItemEx { Content = "Article page", Symbol="Document",  PageToken="Article", PageType = typeof(ArticlePage)},
 				//new NavItemEx { Content = "Dummy page", Symbol="Emoji", PageToken="Settings", PageType = typeof(SettingsPage)},
 				//new NavItemSeparatorEx(),
 				//new NavItemEx { Text = "My content", Symbol="Folder", Tag="content", PageType = typeof(MainPage)},

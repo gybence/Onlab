@@ -17,6 +17,6 @@ namespace DataAccessLibrary.Model
 		public string Name { get => _name; set { SetWithNotify(value, ref _name); } }
 		public bool LastLoggedIn { get => _lastLoggedIn; set { SetWithNotify(value, ref _lastLoggedIn); } }
 
-		public ICollection<Subscription> Subscriptions { get; } = new ObservableHashSet<Subscription>();
+		public ICollection<Subscription> Subscriptions { get; set; } = new ObservableHashSet<Subscription>();
 	}
 }

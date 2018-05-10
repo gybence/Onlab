@@ -95,7 +95,7 @@
 				</Interactivity:Interaction.Behaviors>
 			</ListView>
 
-			<Button HorizontalAlignment="Right" Grid.Row="3" Grid.Column="2" Content="Save"/>
+			<Button HorizontalAlignment="Right" Grid.Row="3" Grid.Column="2" Content="Save" Click="{x:Bind ViewModel.SaveButtonClick}"/>
 		</Grid>
 	</Grid>
 </prism:SessionStateAwarePage>
