@@ -11,7 +11,6 @@ using Windows.UI.Core;
 using OnlabNews.Services.SettingsServices;
 using OnlabNews.Services.DataSourceServices;
 using OnlabNews.Services.FacebookServices;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace OnlabNews.ViewModels
 {
@@ -56,8 +55,6 @@ namespace OnlabNews.ViewModels
 			_settingsService = settingsService;
 			_navigationService = navigationService;
 			_facebookService = facebookService;
-
-
 			dispatcher = Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher;
 	
 			OnSubscriptionItemClickCommand = new DelegateCommand<object>(OnSubscriptionItemClick);

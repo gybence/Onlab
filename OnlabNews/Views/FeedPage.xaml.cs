@@ -16,6 +16,7 @@ using Prism.Windows.Mvvm;
 using OnlabNews.ViewModels;
 using OnlabNews.Extensions;
 using System.Collections.ObjectModel;
+using Windows.ApplicationModel.Resources;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -37,11 +38,11 @@ namespace OnlabNews.Views
 		public FeedPage()
 		{
 			this.InitializeComponent();
-			this.SetValue(NavProperties.HeaderProperty, "Feeds");
+			this.SetValue(NavProperties.HeaderProperty, ResourceLoader.GetForCurrentView().GetString("Feeds"));
 			var headerButtons = new ObservableCollection<object>();
 			var refreshButton = new AppBarButton
 			{
-				Label = "Refresh",
+				Label = ResourceLoader.GetForCurrentView().GetString("Refresh"),
 				Icon = new SymbolIcon { Symbol = (Symbol)Enum.Parse(typeof(Symbol), "Refresh") },
 				Command = ViewModel.RefreshButtonCommand
 			};

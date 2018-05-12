@@ -28,6 +28,7 @@
 				    MenuItemsSource="{x:Bind MenuItems, Converter={StaticResource NavConverter}}"
 					HeaderTemplate="{StaticResource NavigationViewHeaderTemplate}"
 					SettingsPageType="views:SettingsPage"
+					IsBackButtonVisible="Collapsed"
 					>
 
 		<NavigationView.AutoSuggestBox>

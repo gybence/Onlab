@@ -143,6 +143,8 @@
       <SubType>Designer</SubType>
     </AppxManifest>
     <None Include="OnlabNews_TemporaryKey.pfx" />
+    <PRIResource Include="Strings\en-US\Resources.resw" />
+    <PRIResource Include="Strings\hu-HU\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\StoreLogoInverted.png" />
@@ -231,6 +233,7 @@
       <Name>Tasks</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -38,12 +39,12 @@ namespace OnlabNews.Views
 		{
 			this.InitializeComponent();
 
-			this.SetValue(NavProperties.HeaderProperty, "Article");
+			this.SetValue(NavProperties.HeaderProperty, ResourceLoader.GetForCurrentView().GetString("Article"));
 
 			var headerButtons = new ObservableCollection<object>();
 			var shareButton = new AppBarButton
 			{
-				Label = "Share",
+				Label = ResourceLoader.GetForCurrentView().GetString("Share"),
 				Icon = new SymbolIcon { Symbol = (Symbol)Enum.Parse(typeof(Symbol), "Share") },
 				Command = ViewModel.ShareButtonCommand
 			};

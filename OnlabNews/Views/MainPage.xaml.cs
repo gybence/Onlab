@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -39,7 +40,7 @@ namespace OnlabNews.Views
 		{
 			this.InitializeComponent();
 
-			this.SetValue(NavProperties.HeaderProperty, "Welcome");
+			this.SetValue(NavProperties.HeaderProperty, ResourceLoader.GetForCurrentView().GetString("Welcome"));
 
 			this.Unloaded += (sender, e) =>
 			{

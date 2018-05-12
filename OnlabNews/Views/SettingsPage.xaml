@@ -28,36 +28,20 @@
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
-				<!--<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>-->
 			</Grid.RowDefinitions>
 
-
-
-			<TextBlock Text="Linked social account" FontSize="20" Margin="0,5"/>
+			<TextBlock x:Uid="LinkedText" Text="Linked social account" FontSize="20" Margin="0,5"/>
 			<TextBlock Text="{x:Bind ViewModel.UserNameText, Mode=OneWay}" Margin="0,5" Grid.Row="1" VerticalAlignment="Center" ></TextBlock>
 
 			<Button Grid.Column="0" 
-					Command="{x:Bind ViewModel.FacebookLoginCommand}" Margin="0,5" Grid.Row="1" Content="Facebook Login"
+					Command="{x:Bind ViewModel.FacebookLoginCommand}" Margin="0,5" Grid.Row="1" x:Uid="FacebookLoginButton" Content="Facebook Login"
 					Visibility="{x:Bind ViewModel.UserNameText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter='invert'}"
 					/>
 
 			<Button Grid.Column="1" 
-					Command="{x:Bind ViewModel.FacebookLogoutCommand}" Margin="0,5" Grid.Row="1" Content="Logout"
+					Command="{x:Bind ViewModel.FacebookLogoutCommand}" Margin="0,5" Grid.Row="1" x:Uid="FacebookLogoutButton" Content="Logout"
 					Visibility="{x:Bind ViewModel.UserNameText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
 					/>
-
-			<!--<TextBlock Margin="0,5" Grid.Row="0" Text="Username" FontSize="20" Grid.ColumnSpan="2"/>-->
-			<!--<TextBlock Margin="0,0,0,3" Grid.Row="1" Text="Name" VerticalAlignment="Center" HorizontalAlignment="Center"/>-->
-			<!--<TextBox PlaceholderText="Username" Margin="0,5,0,5" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Text="{x:Bind ViewModel.UserNameText, Mode=TwoWay}"></TextBox>-->
-			<!--<Button Margin="3,5,0,5" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Stretch" Click="{x:Bind ViewModel.AddNewUserButtonClick}">+</Button>-->
-			<!--<Button Margin="3,5,0,5" Grid.Row="1" Grid.Column="3" HorizontalAlignment="Stretch" Click="{x:Bind ViewModel.LoadButtonClick}">Load</Button>-->
-
-			<!--<StackPanel Grid.ColumnSpan="3" Grid.Row="2">
-						<TextBlock Text="Add new user"/>
-						<TextBox Text="{x:Bind ViewModel.UserNameText, Mode=TwoWay}"></TextBox>
-						<Button Click="{x:Bind ViewModel.AddNewUserButtonClick}">Add</Button>
-					</StackPanel>-->
 
 		</Grid>
 
@@ -75,12 +59,12 @@
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 
-			<TextBlock Grid.ColumnSpan="2" Margin="0,5" Grid.Row="0" Text="Subscriptions" FontSize="20"/>
+			<TextBlock Grid.ColumnSpan="2" Margin="0,5" Grid.Row="0" x:Uid="SubscriptionsTitle" Text="Subscriptions" FontSize="20"/>
 
-			<TextBlock Margin="0,5,0,5" Grid.Row="1" Text="Subscribe" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-			<TextBox PlaceholderText="Feed name" Margin="3,5,0,5" Grid.Row="1" Grid.Column="1" Text="{x:Bind ViewModel.FeedNameText, Mode=TwoWay}"></TextBox>
-			<TextBox PlaceholderText="Feed URL" Margin="3,5,0,5" Grid.Row="1" Grid.Column="2" Text="{x:Bind ViewModel.FeedUriText, Mode=TwoWay}"></TextBox>
-			<Button Margin="3,5,0,5"  Grid.Row="1" Grid.Column="3" Click="{x:Bind ViewModel.SubButtonClick}">Subscribe</Button>
+			<TextBlock Margin="0,5,0,5" Grid.Row="1" x:Uid="SubscribeLabel" Text="Subscribe" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+			<TextBox x:Uid="FeedNameTextBox" PlaceholderText="Feed name" Margin="3,5,0,5" Grid.Row="1" Grid.Column="1" Text="{x:Bind ViewModel.FeedNameText, Mode=TwoWay}"></TextBox>
+			<TextBox x:Uid="FeedURLTextBox" PlaceholderText="Feed URL" Margin="3,5,0,5" Grid.Row="1" Grid.Column="2" Text="{x:Bind ViewModel.FeedUriText, Mode=TwoWay}"></TextBox>
+			<Button x:Uid="SubscribeButton" Margin="3,5,0,5"  Grid.Row="1" Grid.Column="3" Click="{x:Bind ViewModel.SubButtonClick}">Subscribe</Button>
 
 			<ListView Grid.ColumnSpan="4" Grid.Row="2" Name="SubscriptionListView" 
 							  ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
@@ -95,7 +79,7 @@
 				</Interactivity:Interaction.Behaviors>
 			</ListView>
 
-			<Button HorizontalAlignment="Right" Grid.Row="3" Grid.Column="2" Content="Save" Click="{x:Bind ViewModel.SaveButtonClick}"/>
+			<Button x:Uid="SaveButton" HorizontalAlignment="Right" Grid.Row="3" Grid.Column="2" Content="Save" Click="{x:Bind ViewModel.SaveButtonClick}"/>
 		</Grid>
 	</Grid>
 </prism:SessionStateAwarePage>

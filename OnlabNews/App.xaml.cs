@@ -20,6 +20,8 @@ using System.Collections.Generic;
 using Windows.ApplicationModel.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI;
+using Prism.Windows.AppModel;
+using Windows.ApplicationModel.Resources;
 
 namespace OnlabNews
 {

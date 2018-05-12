@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using OnlabNews.Extensions;
+using Windows.ApplicationModel.Resources;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -37,7 +38,7 @@ namespace OnlabNews.Views
         {
 			
             this.InitializeComponent();
-			this.SetValue(NavProperties.HeaderProperty, "Settings");
+			this.SetValue(NavProperties.HeaderProperty, ResourceLoader.GetForCurrentView().GetString("Settings"));
 		}	
 	}
 }

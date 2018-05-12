@@ -45,18 +45,10 @@ namespace OnlabNews.ViewModels
 			}
 		}
 		
-
-
 		int _key;
 		public int Key { get => _key;
 			set
 			{
-				//if (Char.IsPunctuation(value))
-				//	_key = '&';
-				//else if (Char.IsNumber(value))
-				//	_key = '#';
-				//else
-				//	_key = Char.ToUpper(value);
 				_key = value;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Key)));
 			}

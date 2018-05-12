@@ -215,7 +215,6 @@ namespace OnlabNews.Services.DataSourceServices
 					taskBuilder.Name = taskName;
 					taskBuilder.TaskEntryPoint = taskEntryPoint;
 					taskBuilder.AddCondition(new SystemCondition(SystemConditionType.InternetAvailable));
-					taskBuilder.AddCondition(new SystemCondition(SystemConditionType.UserPresent));
 					taskBuilder.SetTrigger(trigger);
 					_registration = taskBuilder.Register();
 				}
