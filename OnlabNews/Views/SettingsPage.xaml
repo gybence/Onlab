@@ -69,7 +69,9 @@
 
 			<ListView Grid.ColumnSpan="4" Grid.Row="2" Name="SubscriptionListView" 
 							  ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
-							  ItemTemplate="{StaticResource SubscriptionListItemTemplate}">
+							  ItemTemplate="{StaticResource SubscriptionListItemTemplate}"
+							 
+							  >
 
 				<Interactivity:Interaction.Behaviors>
 					<Interactions:EventTriggerBehavior EventName="Tapped">
