@@ -7,12 +7,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-	xmlns:converters="using:OnlabNews.Converters"
+	xmlns:c="using:OnlabNews.Converters"
 	xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Interactions="using:Microsoft.Xaml.Interactions.Core"
 	prism:ViewModelLocator.AutoWireViewModel="True" >
 
 	<prism:SessionStateAwarePage.Resources>
-		<converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+		<c:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+		<c:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 	</prism:SessionStateAwarePage.Resources>
 	
 	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -45,11 +46,11 @@
 
 		</Grid>
 
-		<Grid Grid.Column="1">
+		<Grid Grid.Column="1" Margin="0,0,10,0">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition Width="*"/>
-				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="2*"/>
 				<ColumnDefinition Width="Auto"/>
 			</Grid.ColumnDefinitions>
 			<Grid.RowDefinitions>
@@ -59,12 +60,12 @@
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 
-			<TextBlock Grid.ColumnSpan="2" Margin="0,5" Grid.Row="0" x:Uid="SubscriptionsTitle" Text="Subscriptions" FontSize="20"/>
+			<TextBlock Grid.ColumnSpan="2" Margin="0,5" Grid.Row="0" x:Uid="SubscriptionsTitle" Text="Feeds" FontSize="20"/>
 
-			<TextBlock Margin="0,5,0,5" Grid.Row="1" x:Uid="SubscribeLabel" Text="Subscribe" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+			<TextBlock Margin="0,5,0,5" Grid.Row="1" x:Uid="SubscribeLabel" Text="New Feed" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 			<TextBox x:Uid="FeedNameTextBox" PlaceholderText="Feed name" Margin="3,5,0,5" Grid.Row="1" Grid.Column="1" Text="{x:Bind ViewModel.FeedNameText, Mode=TwoWay}"></TextBox>
 			<TextBox x:Uid="FeedURLTextBox" PlaceholderText="Feed URL" Margin="3,5,0,5" Grid.Row="1" Grid.Column="2" Text="{x:Bind ViewModel.FeedUriText, Mode=TwoWay}"></TextBox>
-			<Button x:Uid="SubscribeButton" Margin="3,5,0,5"  Grid.Row="1" Grid.Column="3" Click="{x:Bind ViewModel.SubButtonClick}">Subscribe</Button>
+			<Button x:Uid="SubscribeButton" Margin="3,5,0,5"  Grid.Row="1" Grid.Column="3" Click="{x:Bind ViewModel.SubButtonClick}">Add</Button>
 
 			<ListView Grid.ColumnSpan="4" Grid.Row="2" Name="SubscriptionListView" 
 							  ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
@@ -79,7 +80,10 @@
 				</Interactivity:Interaction.Behaviors>
 			</ListView>
 
-			<Button x:Uid="SaveButton" HorizontalAlignment="Right" Grid.Row="3" Grid.Column="2" Content="Save" Click="{x:Bind ViewModel.SaveButtonClick}"/>
+			<Button x:Uid="SaveButton" HorizontalAlignment="Right" Grid.Row="3" Grid.Column="3" Content="Save" 
+					Click="{x:Bind ViewModel.SaveButtonClick}"
+					Visibility="{x:Bind ViewModel.ChangesHappened, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+					/>
 		</Grid>
 	</Grid>
 </prism:SessionStateAwarePage>

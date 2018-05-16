@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DataAccessLibrary;
 using DataAccessLibrary.Model;
+using Microsoft.EntityFrameworkCore;
 using Windows.Security.Authentication.Web;
 
 namespace OnlabNews.Services.SettingsServices
@@ -49,7 +50,7 @@ namespace OnlabNews.Services.SettingsServices
 			_cts = new CancellationTokenSource();
 			using (var db = new AppDbContext())
 			{
-				ActiveUser = db.Users.ToList().SingleOrDefault(u => u.Name == "Default");						
+				ActiveUser = db.Users.Include(x => x.Subscriptions).SingleOrDefault(u => u.LastLoggedIn == true);
 			}
 		}
 	}

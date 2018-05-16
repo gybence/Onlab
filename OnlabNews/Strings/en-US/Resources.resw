@@ -154,13 +154,13 @@
     <value>Share</value>
   </data>
   <data name="SubscribeButton.Content" xml:space="preserve">
-    <value>Subscribe</value>
+    <value>Add</value>
   </data>
   <data name="SubscribeLabel.Text" xml:space="preserve">
-    <value>Subscribe</value>
+    <value>New Feed</value>
   </data>
   <data name="SubscriptionsTitle.Text" xml:space="preserve">
-    <value>Subscriptions</value>
+    <value>Feeds</value>
   </data>
   <data name="Welcome" xml:space="preserve">
     <value>Welcome</value>

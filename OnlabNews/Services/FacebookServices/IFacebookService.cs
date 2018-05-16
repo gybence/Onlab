@@ -12,6 +12,7 @@ namespace OnlabNews.Services.FacebookServices
 	{
 		string AppID { get; }
 		string UserID { get; }
+		string UserName { get; }
 
 		Task<bool> SignInFacebookAsync();
 		Task<bool> SignOutFacebookAsync();

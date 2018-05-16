@@ -15,6 +15,7 @@ using Windows.Storage;
 using Tasks;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Collections.Specialized;
+using RSSDownloader;
 
 namespace OnlabNews.Services.DataSourceServices
 {
@@ -39,7 +40,7 @@ namespace OnlabNews.Services.DataSourceServices
 
 			RegisterBackgroundTaskAsync("TimeTriggeredTileUpdaterBackgroundTask", "Tasks.TileUpdaterBackgroundTask", new TimeTrigger(15, false));
 			//RegisterBackgroundTask("ApplicationTriggeredTileUpdaterBackgroundTask", "Tasks.TileUpdaterBackgroundTask", new ApplicationTrigger());
-			Task.Run(() => CreateArticlesAsync());
+			//Task.Run(() => CreateArticlesAsync());
 
 		}
 
@@ -50,11 +51,12 @@ namespace OnlabNews.Services.DataSourceServices
 				if (GroupedArticles.Count != 0)
 					GroupedArticles.Clear();
 
-				RssFeedGetter rfg = new RssFeedGetter();
-				await rfg.DownloadFeedsAsync();
+				RssFeedDownloader rfg = new RssFeedDownloader();
+				var results = await rfg.DownloadFeedsAsync(_settingsService.ActiveUser);
 
+				//results.count != 0
 				List<ArticleItem> list = new List<ArticleItem>();
-				foreach (SyndicationFeed feed in rfg.Result)
+				foreach (SyndicationFeed feed in results)
 				{
 					foreach (SyndicationItem item in feed.Items)
 					{

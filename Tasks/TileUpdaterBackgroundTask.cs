@@ -1,4 +1,7 @@
-﻿using Microsoft.Toolkit.Uwp.Notifications;
+﻿using DataAccessLibrary;
+using DataAccessLibrary.Model;
+using Microsoft.Toolkit.Uwp.Notifications;
+using RSSDownloader;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,17 +39,21 @@ namespace Tasks
 				//https://stackoverflow.com/questions/35901526/how-to-check-internet-connectivity-type-in-universal-windows-platform
 				else if (NetworkInterface.GetIsNetworkAvailable())
 				{
-					RssFeedGetter rfg = new RssFeedGetter();
-					await rfg.DownloadFeedsAsync();
-					IList<SyndicationItem> items = new List<SyndicationItem>();
-					foreach (SyndicationFeed f in rfg.Result)
-					{
-						f.Items[0].Source = f;
-						items.Add(f.Items[0]);
-					}
-					items.OrderBy(i => i.PublishedDate);
-					if (items.Count > 0)
-						UpdateTile(items[0].Source.Title.Text ?? "asd", items[0].Title.Text);
+
+						RssFeedDownloader rfg = new RssFeedDownloader();
+						var results = await rfg.DownloadFeedsAsync();
+
+						IList<SyndicationItem> items = new List<SyndicationItem>();
+						foreach (SyndicationFeed f in results)
+						{
+							f.Items[0].Source = f;
+							items.Add(f.Items[0]);
+						}
+						items.OrderBy(i => i.PublishedDate);
+						if (items.Count > 0)
+							UpdateTile(items[0].Source.Title.Text ?? "OnlabNews", items[0].Title.Text);
+					
+					
 				}
 			}
 			catch

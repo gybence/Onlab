@@ -31,9 +31,9 @@
 					IsBackButtonVisible="Collapsed"
 					>
 
-		<NavigationView.AutoSuggestBox>
+		<!--<NavigationView.AutoSuggestBox>
 			<AutoSuggestBox x:Name="ASB" QueryIcon="Find"/>
-		</NavigationView.AutoSuggestBox>
+		</NavigationView.AutoSuggestBox>-->
 
 		<!--<NavigationView.PaneFooter>
 			<HyperlinkButton x:Name="MoreInfoBtn"

@@ -102,6 +102,7 @@
       <DependentUpon>AppShell.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\NavConverter.cs" />
+    <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="Converters\UriToBitmapImageConverter.cs" />
     <Compile Include="Extensions\BinaryInsertExtensions.cs" />
@@ -227,6 +228,10 @@
     <ProjectReference Include="..\DataAccessLibrary\DataAccessLibrary.csproj">
       <Project>{68ac2140-2095-4c4c-90e6-25c77400ae88}</Project>
       <Name>DataAccessLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RSSDownloader\RSSDownloader.csproj">
+      <Project>{8b072c92-3ea3-4907-82a3-d1b91c5b6061}</Project>
+      <Name>RSSDownloader</Name>
     </ProjectReference>
     <ProjectReference Include="..\Tasks\Tasks.csproj">
       <Project>{4c6b32be-0d92-4900-8f43-6ff9723f7a7a}</Project>

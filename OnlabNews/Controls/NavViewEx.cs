@@ -110,9 +110,9 @@ namespace OnlabNews.Controls
 		private void ChangeMarginThickness(NavigationView sender, NavigationViewDisplayModeChangedEventArgs e)
 		{
 			if (DisplayMode == NavigationViewDisplayMode.Minimal)
-				_frame.Margin = new Thickness(12, 12, 0, 12);
+				_frame.Margin = new Thickness(12, 0, 0, 12);
 			else
-				_frame.Margin = new Thickness(24, 24, 0, 24);
+				_frame.Margin = new Thickness(24, 0, 0, 24);
 		}
 
 		#endregion

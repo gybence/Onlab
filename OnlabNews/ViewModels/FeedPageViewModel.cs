@@ -7,6 +7,7 @@ using OnlabNews.Models;
 using OnlabNews.Services.DataSourceServices;
 using OnlabNews.Services.FacebookServices;
 using System;
+using System.Threading.Tasks;
 
 namespace OnlabNews.ViewModels
 {
@@ -22,6 +23,7 @@ namespace OnlabNews.ViewModels
 		public DelegateCommand RefreshButtonCommand { get; private set; }
 
 		public RangeObservableCollection<MutableGrouping<int, ArticleItem>> GroupedArticles { get { return _articleDataSource.GroupedArticles; } }
+		
 		#endregion
 
 		public FeedPageViewModel(INavigationService navigationService, IArticleDataSourceService dataSourceService)
@@ -30,7 +32,7 @@ namespace OnlabNews.ViewModels
 			_navigationService = navigationService;
 			OnItemClickCommand = new DelegateCommand<object>(OnClickNavigate);
 			RefreshButtonCommand = new DelegateCommand(OnRefreshButtonClick);
-
+			Task.Run(() => _articleDataSource.CreateArticlesAsync());
 		}
 
 		private async void OnRefreshButtonClick()
