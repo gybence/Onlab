@@ -41,7 +41,7 @@ namespace OnlabNews.ViewModels
 		ObservableCollection<RssFeed> _items = new ObservableCollection<RssFeed>();
 		public ObservableCollection<RssFeed> Items { get => _items; set { SetProperty(ref _items, value); } }
 
-		private List<Subscription> _subscriptionModificationList;
+		private List<Subscription> _subEdits;
 
 
 		public DelegateCommand<object> OnSubscriptionItemClickCommand { get; private set; }
@@ -100,17 +100,17 @@ namespace OnlabNews.ViewModels
 			var rssItem = obj as RssFeed;
 			using (var db = new AppDbContext())
 			{
-				var sub = _subscriptionModificationList.FirstOrDefault(x => x.RssFeedID == rssItem.ID);
+				var sub = _subEdits.FirstOrDefault(x => x.RssFeedID == rssItem.ID);
 				//var sub = db.Subscriptions.Include(x => x.User).SingleOrDefault(s => s.UserID == _settingsService.ActiveUser.ID && s.RssFeedID == rssItem.ID);
 				if (sub == null)
 				{
 					sub = new Subscription { UserID = _settingsService.ActiveUser.ID, RssFeedID = rssItem.ID };
 
-					_subscriptionModificationList.Add(sub);
+					_subEdits.Add(sub);
 				}
 				else
 				{
-					_subscriptionModificationList.Remove(sub);
+					_subEdits.Remove(sub);
 				}
 			}
 			ChangesHappened = true;
@@ -125,11 +125,11 @@ namespace OnlabNews.ViewModels
 				//kidobjuk a db-bol ami nincs benne az uj listaban
 				foreach (var s in db.Subscriptions)
 				{
-					if (s.UserID == _settingsService.ActiveUser.ID && !_subscriptionModificationList.Exists(x => x.SubscriptionID == s.SubscriptionID))
+					if (s.UserID == _settingsService.ActiveUser.ID && !_subEdits.Exists(x => x.SubscriptionID == s.SubscriptionID))
 						db.Subscriptions.Remove(s);
 				}
 				//hozza kell adni a listabol azokat amik meg nincsenek a db-ben
-				db.Subscriptions.AddRange(_subscriptionModificationList.Where(x => !db.Subscriptions.Any(y => y.SubscriptionID == x.SubscriptionID)));
+				db.Subscriptions.AddRange(_subEdits.Where(x => !db.Subscriptions.Any(y => y.SubscriptionID == x.SubscriptionID)));
 
 				db.SaveChanges();
 				//active user, settings es db szinkronizalasa
@@ -152,7 +152,7 @@ namespace OnlabNews.ViewModels
 			}
 		}
 
-		public async void FacebookLogin()
+		private async void FacebookLogin()
 		{
 			bool success = await _facebookService.SignInFacebookAsync();
 
@@ -169,7 +169,8 @@ namespace OnlabNews.ViewModels
 						var currentUser = db.Users.SingleOrDefault(u => u.LastLoggedIn == true);
 						currentUser.LastLoggedIn = false;
 
-						userToLoad = new User { Name = UserNameText, LastLoggedIn = true };
+						
+						userToLoad = new User { Name = _facebookService.UserID, LastLoggedIn = true };
 						db.Users.Add(userToLoad);
 						_settingsService.ActiveUser = userToLoad;
 						db.SaveChanges();
@@ -188,7 +189,7 @@ namespace OnlabNews.ViewModels
 				await _articleDataSource.CreateArticlesAsync();
 			}
 		}
-		public async void FacebookLogout()
+		private async void FacebookLogout()
 		{
 			bool success = await _facebookService.SignOutFacebookAsync();
 
@@ -219,7 +220,7 @@ namespace OnlabNews.ViewModels
 			else
 				UserNameText = _facebookService.UserName;
 
-			_subscriptionModificationList = new List<Subscription>(_settingsService.ActiveUser.Subscriptions);
+			_subEdits = new List<Subscription>(_settingsService.ActiveUser.Subscriptions);
 
 			ChangesHappened = false;
 

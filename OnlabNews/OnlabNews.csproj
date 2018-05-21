@@ -119,7 +119,7 @@
     <Compile Include="Controls\NavViewEx.cs" />
     <Compile Include="Services\SettingsServices\ISettingsService.cs" />
     <Compile Include="Templates\DataTemplates.cs" />
-    <Compile Include="ViewModels\ArticleItem.cs" />
+    <Compile Include="Models\ArticleItem.cs" />
     <Compile Include="Services\DataSourceServices\ArticleDataSourceService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\ArticlePageViewModel.cs" />

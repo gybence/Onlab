@@ -7,6 +7,7 @@
     mc:Ignorable="d"
     xmlns:local="using:OnlabNews.Templates"
 	xmlns:vm="using:OnlabNews.ViewModels"
+	xmlns:m="using:OnlabNews.Models"
 	xmlns:v="using:OnlabNews.Views"
 	xmlns:conv="using:OnlabNews.Converters"
 	xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Interactions="using:Microsoft.Xaml.Interactions.Core"
@@ -37,7 +38,7 @@
 		<ItemsWrapGrid MaximumRowsOrColumns="2" Orientation="Horizontal"/>
 	</ItemsPanelTemplate>
 	
-	<DataTemplate x:Key="ZoomedInArticleGridViewItemTemplate" x:DataType="vm:ArticleItem" x:Name="asd">
+	<DataTemplate x:Key="ZoomedInArticleGridViewItemTemplate" x:DataType="m:ArticleItem" x:Name="asd">
 		<Grid Width="480" Height="380">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>

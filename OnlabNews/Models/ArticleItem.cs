@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OnlabNews.ViewModels
+namespace OnlabNews.Models
 {
 	public class ArticleItem : INotifyPropertyChanged, IComparable
 	{

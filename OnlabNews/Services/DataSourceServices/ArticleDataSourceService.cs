@@ -1,6 +1,4 @@
-﻿using DataAccessLibrary.Model;
-using OnlabNews.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,12 +7,8 @@ using Windows.Web.Syndication;
 using OnlabNews.Services.SettingsServices;
 using OnlabNews.Models;
 using OnlabNews.Extensions;
-using System.Threading;
 using Windows.ApplicationModel.Background;
 using Windows.Storage;
-using Tasks;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using System.Collections.Specialized;
 using RSSDownloader;
 
 namespace OnlabNews.Services.DataSourceServices

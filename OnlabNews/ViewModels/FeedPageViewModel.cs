@@ -40,7 +40,7 @@ namespace OnlabNews.ViewModels
 			await _articleDataSource.CreateArticlesAsync();
 		}
 
-		public void OnClickNavigate(object clickedItem)
+		private void OnClickNavigate(object clickedItem)
 		{
 			_navigationService.Navigate("Article", clickedItem);	
 		}
