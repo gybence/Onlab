@@ -8,6 +8,7 @@
     xmlns:local="using:OnlabNews.Templates"
 	xmlns:vm="using:OnlabNews.ViewModels"
 	xmlns:m="using:OnlabNews.Models"
+	xmlns:a="using:DataAccessLibrary.Model"
 	xmlns:v="using:OnlabNews.Views"
 	xmlns:conv="using:OnlabNews.Converters"
 	xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Interactions="using:Microsoft.Xaml.Interactions.Core"
@@ -107,16 +108,15 @@
 	</DataTemplate>
 
 
-	<DataTemplate x:Key="SubscriptionListItemTemplate">
+	<DataTemplate x:Key="SubscriptionListItemTemplate" x:DataType="a:RssFeed">
 		<Grid>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition MinWidth="200" Width="600"/>
 				<ColumnDefinition />
 			</Grid.ColumnDefinitions>
-			<TextBlock Text="{Binding Name}" HorizontalAlignment="Left"/>
-			<CheckBox Grid.Column="1" Visibility="Collapsed"/>
-		</Grid>
-		
-	</DataTemplate>
+			<CheckBox Content="{x:Bind Name}" HorizontalAlignment="Left"/>
 
+		</Grid>
+
+	</DataTemplate>
 </ResourceDictionary>

@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
 	xmlns:c="using:OnlabNews.Converters"
+	xmlns:m="using:OnlabNews.Models"
 	xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Interactions="using:Microsoft.Xaml.Interactions.Core"
 	prism:ViewModelLocator.AutoWireViewModel="True" >
 
@@ -49,9 +50,9 @@
 		<Grid Grid.Column="1" Margin="0,0,10,0">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="4*"/>
+				<ColumnDefinition Width="7*"/>
 				<ColumnDefinition Width="*"/>
-				<ColumnDefinition Width="2*"/>
-				<ColumnDefinition Width="Auto"/>
 			</Grid.ColumnDefinitions>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto" />
@@ -67,22 +68,53 @@
 			<TextBox x:Uid="FeedURLTextBox" PlaceholderText="Feed URL" Margin="3,5,0,5" Grid.Row="1" Grid.Column="2" Text="{x:Bind ViewModel.FeedUriText, Mode=TwoWay}"></TextBox>
 			<Button x:Uid="SubscribeButton" Margin="3,5,0,5"  Grid.Row="1" Grid.Column="3" Click="{x:Bind ViewModel.SubButtonClick}">Add</Button>
 
-			<ListView Grid.ColumnSpan="4" Grid.Row="2" Name="SubscriptionListView" 
+			<ListView Grid.ColumnSpan="3" Grid.Row="2" Name="SubscriptionListView" 
 							  ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
 							  ItemTemplate="{StaticResource SubscriptionListItemTemplate}"
-							 
-							  >
-
+							  
+					  >
 				<Interactivity:Interaction.Behaviors>
+					<!--The ItemClick event is actually specific to the ListView xaml control, 
+					which is why the compiler complains that it cannot be added to the BehaviorCollection, 
+					so in our event trigger behavior we had to use a different event entirely. 
+					The Tapped event is the event we want, it is a high level event to cover both touch and mouse interactions.-->
 					<Interactions:EventTriggerBehavior EventName="Tapped">
 						<Interactions:InvokeCommandAction 
 										Command="{Binding OnSubscriptionItemClickCommand}" 
-										CommandParameter="{Binding ElementName=SubscriptionListView, Path=SelectedItem}"/>
+										CommandParameter="{Binding ElementName=SubscriptionListView, Path=SelectedIndex}"/>
 					</Interactions:EventTriggerBehavior>
 				</Interactivity:Interaction.Behaviors>
 			</ListView>
 
-			<Button x:Uid="SaveButton" HorizontalAlignment="Right" Grid.Row="3" Grid.Column="3" Content="Save" 
+			
+			<ListView Grid.Column="3" Grid.Row="2" Name="SubTickBoxListView"
+					  ItemsSource="{x:Bind ViewModel.ItemsBool, Mode=TwoWay}"
+					 
+					  >
+				<ListView.ItemTemplate>
+					<DataTemplate x:DataType="m:BooleanWithIndex">
+						<CheckBox IsChecked="{Binding Path=Value}" x:Name="CheckBoxButton" Click="CheckBoxButton_Click">
+							<!--<Interactivity:Interaction.Behaviors>
+								<Interactions:EventTriggerBehavior EventName="Checked">
+									<Interactions:InvokeCommandAction  
+										Command="{Binding Vmi}" 
+										/>
+								</Interactions:EventTriggerBehavior>
+							</Interactivity:Interaction.Behaviors>-->
+						</CheckBox>
+					</DataTemplate>
+				</ListView.ItemTemplate>
+				<!--<Interactivity:Interaction.Behaviors>
+					<Interactions:EventTriggerBehavior EventName="Tapped">
+						<Interactions:InvokeCommandAction 
+										Command="{Binding TappedEventHandler}" 
+										CommandParameter="{Binding .}"/>
+					</Interactions:EventTriggerBehavior>
+				</Interactivity:Interaction.Behaviors>-->
+			</ListView>
+			
+			
+			<Button x:Uid="SaveButton" HorizontalAlignment="Right" Grid.Row="3" Grid.Column="2" Content="Save" 
 					Click="{x:Bind ViewModel.SaveButtonClick}"
 					Visibility="{x:Bind ViewModel.ChangesHappened, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
 					/>

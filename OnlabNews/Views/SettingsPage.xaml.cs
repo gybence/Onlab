@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using OnlabNews.Extensions;
 using Windows.ApplicationModel.Resources;
+using OnlabNews.Models;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -39,6 +40,12 @@ namespace OnlabNews.Views
 			
             this.InitializeComponent();
 			this.SetValue(NavProperties.HeaderProperty, ResourceLoader.GetForCurrentView().GetString("Settings"));
-		}	
+		}
+
+		private void CheckBoxButton_Click(object sender, RoutedEventArgs e)
+		{
+			var context = (BooleanWithIndex)((CheckBox)sender).DataContext;
+			ViewModel.OnSubscriptionItemClick(context.Index);
+		}
 	}
 }
