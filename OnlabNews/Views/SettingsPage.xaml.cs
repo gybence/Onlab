@@ -33,7 +33,10 @@ namespace OnlabNews.Views
 			{
 				return DataContext as SettingsPageViewModel;
 			}
-			private set { DataContext = value; }
+			private set
+			{
+				DataContext = value;
+			}
 		}
 		public SettingsPage()
         {
@@ -44,8 +47,10 @@ namespace OnlabNews.Views
 
 		private void CheckBoxButton_Click(object sender, RoutedEventArgs e)
 		{
-			var context = (BooleanWithIndex)((CheckBox)sender).DataContext;
-			ViewModel.OnSubscriptionItemClick(context.Index);
+			var context = ((CheckBox)sender).Content;
+			if(context == null)
+				context = ((BooleanWithIndex)((CheckBox)sender).DataContext).Index;
+			ViewModel.OnSubscriptionItemClick(context);
 		}
 	}
 }

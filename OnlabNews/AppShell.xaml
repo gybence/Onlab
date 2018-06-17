@@ -16,12 +16,12 @@
 
 	<Grid>
 
-		<TextBlock x:Name="AppTitle" 
+		<!--<TextBlock x:Name="AppTitle" 
         xmlns:appmodel="using:Windows.ApplicationModel"
         Text="{x:Bind appmodel:Package.Current.DisplayName}" 
         Style="{StaticResource CaptionTextBlockStyle}" 
         IsHitTestVisible="False" 
-        Canvas.ZIndex="1"/>
+        Canvas.ZIndex="1"/>-->
 
 		<cont:NavViewEx x:Name="NavView"  
                     Canvas.ZIndex="0"

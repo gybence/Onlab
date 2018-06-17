@@ -9,6 +9,7 @@
     mc:Ignorable="d"
 	xmlns:c="using:OnlabNews.Converters"
 	xmlns:m="using:OnlabNews.Models"
+	xmlns:a="using:DataAccessLibrary.Model"
 	xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Interactions="using:Microsoft.Xaml.Interactions.Core"
 	prism:ViewModelLocator.AutoWireViewModel="True" >
 
@@ -70,48 +71,70 @@
 
 			<ListView Grid.ColumnSpan="3" Grid.Row="2" Name="SubscriptionListView" 
 							  ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
-							  ItemTemplate="{StaticResource SubscriptionListItemTemplate}"
-							  
+						  
 					  >
-				<Interactivity:Interaction.Behaviors>
-					<!--The ItemClick event is actually specific to the ListView xaml control, 
+				<!--ItemTemplate="{StaticResource SubscriptionListItemTemplate}"-->
+				<ListView.ItemTemplate>
+					<DataTemplate><!--x:Key="SubscriptionListItemTemplate"-->
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition MinWidth="200" Width="600"/>
+								<ColumnDefinition />
+							</Grid.ColumnDefinitions>
+							<CheckBox Content="{Binding Path=Item1.Name}" IsChecked="{Binding Path=Item2}" HorizontalAlignment="Left" Click="CheckBoxButton_Click">
+								<!--<Interactivity:Interaction.Behaviors>
+									<Interactions:EventTriggerBehavior EventName="Click">
+										<Interactions:InvokeCommandAction 
+										Command="{Binding OnSubscriptionItemClickCommand}" 
+										CommandParameter="{Binding}"/>
+									</Interactions:EventTriggerBehavior>
+								</Interactivity:Interaction.Behaviors>-->
+
+
+							</CheckBox>
+
+						</Grid>
+
+					</DataTemplate>
+				</ListView.ItemTemplate>
+				<!--The ItemClick event is actually specific to the ListView xaml control, 
 					which is why the compiler complains that it cannot be added to the BehaviorCollection, 
 					so in our event trigger behavior we had to use a different event entirely. 
 					The Tapped event is the event we want, it is a high level event to cover both touch and mouse interactions.-->
+				<!--<Interactivity:Interaction.Behaviors>
 					<Interactions:EventTriggerBehavior EventName="Tapped">
 						<Interactions:InvokeCommandAction 
 										Command="{Binding OnSubscriptionItemClickCommand}" 
 										CommandParameter="{Binding ElementName=SubscriptionListView, Path=SelectedIndex}"/>
 					</Interactions:EventTriggerBehavior>
-				</Interactivity:Interaction.Behaviors>
+				</Interactivity:Interaction.Behaviors>-->
+				<ListView.ItemContainerStyle>
+					<Style TargetType="ListViewItem">
+						<Setter Property="Template">
+							<Setter.Value>
+								<ControlTemplate>
+									<ContentPresenter/>
+								</ControlTemplate>
+							</Setter.Value>
+						</Setter>
+					</Style>
+				</ListView.ItemContainerStyle>
+
+
 			</ListView>
 
 			
-			<ListView Grid.Column="3" Grid.Row="2" Name="SubTickBoxListView"
+			<!--<ListView Grid.Column="3" Grid.Row="2" Name="SubTickBoxListView"
 					  ItemsSource="{x:Bind ViewModel.ItemsBool, Mode=TwoWay}"
 					 
 					  >
 				<ListView.ItemTemplate>
 					<DataTemplate x:DataType="m:BooleanWithIndex">
 						<CheckBox IsChecked="{Binding Path=Value}" x:Name="CheckBoxButton" Click="CheckBoxButton_Click">
-							<!--<Interactivity:Interaction.Behaviors>
-								<Interactions:EventTriggerBehavior EventName="Checked">
-									<Interactions:InvokeCommandAction  
-										Command="{Binding Vmi}" 
-										/>
-								</Interactions:EventTriggerBehavior>
-							</Interactivity:Interaction.Behaviors>-->
 						</CheckBox>
 					</DataTemplate>
 				</ListView.ItemTemplate>
-				<!--<Interactivity:Interaction.Behaviors>
-					<Interactions:EventTriggerBehavior EventName="Tapped">
-						<Interactions:InvokeCommandAction 
-										Command="{Binding TappedEventHandler}" 
-										CommandParameter="{Binding .}"/>
-					</Interactions:EventTriggerBehavior>
-				</Interactivity:Interaction.Behaviors>-->
-			</ListView>
+			</ListView>-->
 			
 			
 			<Button x:Uid="SaveButton" HorizontalAlignment="Right" Grid.Row="3" Grid.Column="2" Content="Save" 

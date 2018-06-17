@@ -44,7 +44,7 @@ namespace OnlabNews
 		public void SetContentFrame(Frame frame, INavigationService service)
 		{
 			NavView.Setup(frame, service);
-			ExtendIntoTitleBar();
+			//ExtendIntoTitleBar();
 		}
 		private void ExtendIntoTitleBar()
 		{
@@ -65,7 +65,7 @@ namespace OnlabNews
 		{
 			var full = (ApplicationView.GetForCurrentView().IsFullScreenMode);
 			var left = 12 + (full ? 0 : CoreApplication.GetCurrentView().TitleBar.SystemOverlayLeftInset);
-				AppTitle.Margin = new Thickness(left, 8, 0, 48);
+				//AppTitle.Margin = new Thickness(left, 8, 0, 48);
 		}
 	}
 }

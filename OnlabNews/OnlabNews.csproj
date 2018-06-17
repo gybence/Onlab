@@ -112,6 +112,7 @@
     <Compile Include="Helpers\XamlUtilities.cs" />
     <Compile Include="Models\BooleanWithIndex.cs" />
     <Compile Include="Models\MutableGrouping.cs" />
+    <Compile Include="Models\Pair.cs" />
     <Compile Include="Models\RangeObservableCollection.cs" />
     <Compile Include="Services\DataSourceServices\IArticleDataSourceService.cs" />
     <Compile Include="Services\FacebookServices\FacebookService.cs" />

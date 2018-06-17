@@ -41,11 +41,11 @@ namespace OnlabNews.ViewModels
 		private bool _changesHappened;
 		public bool ChangesHappened { get => _changesHappened; set { SetProperty(ref _changesHappened, value); } }
 
-		ObservableCollection<RssFeed> _items = new ObservableCollection<RssFeed>();
-		public ObservableCollection<RssFeed> Items { get => _items; set { SetProperty(ref _items, value); } }
+		ObservableCollection<Pair<RssFeed,bool>> _items = new ObservableCollection<Pair<RssFeed, bool>>();
+		public ObservableCollection<Pair<RssFeed, bool>> Items { get => _items; set { SetProperty(ref _items, value); } }
 
-		private ObservableCollection<BooleanWithIndex> _itemsBool = new ObservableCollection<BooleanWithIndex>();
-		public ObservableCollection<BooleanWithIndex> ItemsBool { get => _itemsBool; set { SetProperty(ref _itemsBool, value); } }
+		//private ObservableCollection<BooleanWithIndex> _itemsBool = new ObservableCollection<BooleanWithIndex>();
+		//public ObservableCollection<BooleanWithIndex> ItemsBool { get => _itemsBool; set { SetProperty(ref _itemsBool, value); } }
 
 		private List<Subscription> _subEdits;
 		
@@ -96,9 +96,10 @@ namespace OnlabNews.ViewModels
 					{
 						rssItem = new RssFeed { ID = db.RssFeeds.Last().ID + 1 /*lol*/, Name = FeedNameText, Uri = FeedUriText };
 						db.RssFeeds.Add(rssItem);
-						Items.Add(rssItem);
-						var bwi = new BooleanWithIndex(false,ItemsBool.Count);
-						ItemsBool.Add(bwi);
+						var tuple = new Pair<RssFeed, bool>(rssItem, false);
+						Items.Add(tuple);
+						//var bwi = new BooleanWithIndex(false,ItemsBool.Count);
+						//ItemsBool.Add(bwi);
 					}
 					db.SaveChanges();
 				}
@@ -110,25 +111,37 @@ namespace OnlabNews.ViewModels
 		//}
 		public void OnSubscriptionItemClick(object obj)
 		{
-			int index = (int)obj;
+			int index;
+			if (obj is string)
+			{
+				index = Items.ToList().FindIndex(x => x.Item1.Name == (obj as string));
+			}
+			else
+			{
+				index = (int)obj;
+			}
+			 
 			try
 			{
 				var rssItem = Items[index];
 				using (var db = new AppDbContext())
 				{
-					var sub = _subEdits.FirstOrDefault(x => x.RssFeedID == rssItem.ID);
+					var sub = _subEdits.FirstOrDefault(x => x.RssFeedID == rssItem.Item1.ID);
 					//var sub = db.Subscriptions.Include(x => x.User).SingleOrDefault(s => s.UserID == _settingsService.ActiveUser.ID && s.RssFeedID == rssItem.ID);
 					if (sub == null)
 					{
-						sub = new Subscription { UserID = _settingsService.ActiveUser.ID, RssFeedID = rssItem.ID };
+						sub = new Subscription { UserID = _settingsService.ActiveUser.ID, RssFeedID = rssItem.Item1.ID };
 
 						_subEdits.Add(sub);
-						ItemsBool[index].Value = true;
+						Items[index].Item2 = true; ;
+						
+						//ItemsBool[index].Value = true;
 					}
 					else
 					{
 						_subEdits.Remove(sub);
-						ItemsBool[index].Value = false;
+						Items[index].Item2 = false;
+						//ItemsBool[index].Value = false;
 					}
 				}
 				ChangesHappened = true;
@@ -168,22 +181,26 @@ namespace OnlabNews.ViewModels
 		private void GetItems()
 		{
 			Items.Clear();
-			ItemsBool.Clear();
+			//ItemsBool.Clear();
 			using (var db = new AppDbContext())
 			{
 				var feeds = db.RssFeeds.ToList();
 				foreach (RssFeed f in feeds)
 				{
-					Items.Add(f);
+					
 					if (_subEdits.Exists(x => x.RssFeedID == f.ID))
 					{
-						var bwi = new BooleanWithIndex(true, ItemsBool.Count);
-						ItemsBool.Add(bwi);
+						var tuple = new Pair<RssFeed, bool>(f, true);
+						Items.Add(tuple);
+						//var bwi = new BooleanWithIndex(true, ItemsBool.Count);
+						//ItemsBool.Add(bwi);
 					}
 					else
 					{
-						var bwi = new BooleanWithIndex(false, ItemsBool.Count);
-						ItemsBool.Add(bwi);
+						var tuple = new Pair<RssFeed, bool>(f, false);
+						Items.Add(tuple);
+						//var bwi = new BooleanWithIndex(false, ItemsBool.Count);
+						//ItemsBool.Add(bwi);
 					}
 				}
 
@@ -262,10 +279,19 @@ namespace OnlabNews.ViewModels
 		{
 			for (int i = 0; i < Items.Count; i++)
 			{
-				if (_subEdits.Exists(x => x.RssFeedID == Items[i].ID))
-					ItemsBool[i].Value = true;
+				var rssItem = Items[i];
+				if (_subEdits.Exists(x => x.RssFeedID == rssItem.Item1.ID))
+				{
+					Items[i].Item2 = true; ;
+					//ItemsBool[i].Value = true;
+				}
+
 				else
-					ItemsBool[i].Value = false;
+				{
+					Items[i].Item2 = false;
+					//ItemsBool[i].Value = false;
+				}
+					
 			}
 		}
 		public override void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)
