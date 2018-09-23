@@ -57,8 +57,8 @@
 					</Interactions:EventTriggerBehavior>
 				</Interactivity:Interaction.Behaviors>
 			</CheckBox>
-			<TextBox Width="200" Margin="5,5,0,5" Grid.Column="1"  Text="{x:Bind RssFeed.Name}" IsReadOnly="{x:Bind IsReadOnly, Mode=TwoWay}"/>
-			<TextBox Margin="5" HorizontalAlignment="Stretch" Grid.Column="2"  Text="{x:Bind RssFeed.Uri}" IsReadOnly="{x:Bind IsReadOnly, Mode=TwoWay}" Visibility="{x:Bind IsReadOnly, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}"/>
+			<TextBox Width="200" Margin="5,5,0,5" Grid.Column="1"  Text="{x:Bind RssFeed.Name, Mode=TwoWay}" IsReadOnly="{x:Bind IsReadOnly, Mode=TwoWay}"/>
+			<TextBox Margin="5" HorizontalAlignment="Stretch" Grid.Column="2"  Text="{x:Bind RssFeed.Uri, Mode=TwoWay}" IsReadOnly="{x:Bind IsReadOnly, Mode=TwoWay}" Visibility="{x:Bind IsReadOnly, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}"/>
 
 			<Button Grid.Column="3" Content="E">
 				<Interactivity:Interaction.Behaviors>

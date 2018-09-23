@@ -142,6 +142,14 @@ namespace OnlabNews.ViewModels
 			SettingsModified = false;
 			using (var db = new AppDbContext())
 			{
+				foreach (var fdto in Items)
+				{
+					var f = db.RssFeeds.FirstOrDefault(x => x.ID == fdto.RssFeed.ID);
+					if (f.Name != fdto.RssFeed.Name)
+						f.Name = fdto.RssFeed.Name;
+					if (f.Uri != fdto.RssFeed.Uri)
+						f.Uri = fdto.RssFeed.Uri;
+				}
 				//kidobjuk a db-bol ami nincs benne az uj listaban
 				foreach (var s in db.Subscriptions)
 				{
