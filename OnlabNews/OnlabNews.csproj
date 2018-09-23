@@ -101,6 +101,7 @@
     <Compile Include="AppShell.xaml.cs">
       <DependentUpon>AppShell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\BoolInverter.cs" />
     <Compile Include="Converters\DateTimeToStringConverter.cs" />
     <Compile Include="Converters\NavConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
@@ -112,6 +113,7 @@
     <Compile Include="Extensions\NavProperties.cs" />
     <Compile Include="Helpers\XamlUtilities.cs" />
     <Compile Include="Models\BooleanWithIndex.cs" />
+    <Compile Include="Models\DTOs\RssFeedDTO.cs" />
     <Compile Include="Models\MutableGrouping.cs" />
     <Compile Include="Models\Pair.cs" />
     <Compile Include="Models\RangeObservableCollection.cs" />

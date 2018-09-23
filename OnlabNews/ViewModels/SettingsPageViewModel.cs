@@ -1,19 +1,18 @@
-﻿using Prism.Commands;
-using Prism.Windows.Mvvm;
-using Prism.Windows.Navigation;
-using System.Collections.Generic;
-using System.Linq;
-using DataAccessLibrary;
+﻿using DataAccessLibrary;
 using DataAccessLibrary.Model;
-using System.Collections.ObjectModel;
 using Microsoft.EntityFrameworkCore;
-using Windows.UI.Core;
-using OnlabNews.Services.SettingsServices;
+using OnlabNews.Models.DTOs;
 using OnlabNews.Services.DataSourceServices;
 using OnlabNews.Services.FacebookServices;
-using OnlabNews.Models;
+using OnlabNews.Services.SettingsServices;
+using Prism.Commands;
+using Prism.Windows.Mvvm;
+using Prism.Windows.Navigation;
 using System;
-using Windows.UI.Xaml;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using Windows.UI.Core;
 
 namespace OnlabNews.ViewModels
 {
@@ -38,22 +37,19 @@ namespace OnlabNews.ViewModels
 		string _userNameText;
 		public string UserNameText { get { return _userNameText; } set { SetProperty(ref _userNameText, value); } }
 
-		private bool _changesHappened;
-		public bool ChangesHappened { get => _changesHappened; set { SetProperty(ref _changesHappened, value); } }
+		private bool _settingsModified;
+		public bool SettingsModified { get => _settingsModified; set { SetProperty(ref _settingsModified, value); } }
 
-		ObservableCollection<Pair<RssFeed,bool>> _items = new ObservableCollection<Pair<RssFeed, bool>>();
-		public ObservableCollection<Pair<RssFeed, bool>> Items { get => _items; set { SetProperty(ref _items, value); } }
-
-		//private ObservableCollection<BooleanWithIndex> _itemsBool = new ObservableCollection<BooleanWithIndex>();
-		//public ObservableCollection<BooleanWithIndex> ItemsBool { get => _itemsBool; set { SetProperty(ref _itemsBool, value); } }
+		ObservableCollection<RssFeedDTO> _items = new ObservableCollection<RssFeedDTO>();
+		public ObservableCollection<RssFeedDTO> Items { get => _items; set { SetProperty(ref _items, value); } }
 
 		private List<Subscription> _subEdits;
-		
+
 
 		public DelegateCommand<object> OnSubscriptionItemClickCommand { get; private set; }
+		public DelegateCommand<object> OnEditRowButtonClickCommand { get; private set; }
 		public DelegateCommand FacebookLoginCommand { get; private set; }
 		public DelegateCommand FacebookLogoutCommand { get; private set; }
-		//public DelegateCommand<object> TappedEventHandlerCommand { get; private set; }
 
 		#endregion
 
@@ -69,16 +65,29 @@ namespace OnlabNews.ViewModels
 			dispatcher = Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher;
 
 			OnSubscriptionItemClickCommand = new DelegateCommand<object>(OnSubscriptionItemClick);
+			OnEditRowButtonClickCommand = new DelegateCommand<object>(OnEditRowButtonClick);
 			FacebookLoginCommand = new DelegateCommand(FacebookLogin);
 			FacebookLogoutCommand = new DelegateCommand(FacebookLogout);
-			//TappedEventHandlerCommand = new DelegateCommand<object>(TappedEventHandler);
-
 		}
-
 
 		#region click handlers
 
-		public void SubButtonClick()
+		private void OnEditRowButtonClick(object obj)
+		{
+			RssFeedDTO rssFeedDTO = obj as RssFeedDTO;
+			if (rssFeedDTO.IsReadOnly)
+			{
+				rssFeedDTO.IsReadOnly = false;
+			}
+			else
+			{
+				rssFeedDTO.IsReadOnly = true;
+				SettingsModified = true;
+
+			}
+		}
+
+		public void AddNewRssSubscribtionButtonClick()
 		{
 			//peldak:
 			//UriStrings.Add("https://index.hu/24ora/rss/");
@@ -96,69 +105,43 @@ namespace OnlabNews.ViewModels
 					{
 						rssItem = new RssFeed { ID = db.RssFeeds.Last().ID + 1 /*lol*/, Name = FeedNameText, Uri = FeedUriText };
 						db.RssFeeds.Add(rssItem);
-						var tuple = new Pair<RssFeed, bool>(rssItem, false);
-						Items.Add(tuple);
-						//var bwi = new BooleanWithIndex(false,ItemsBool.Count);
-						//ItemsBool.Add(bwi);
+						var item = new RssFeedDTO(rssItem, false, Items.Count);
+						Items.Add(item);
 					}
 					db.SaveChanges();
+					FeedNameText = "";
+					FeedUriText = "";
 				}
 			}
 		}
-		//public void TappedEventHandler(object obj)
-		//{
 
-		//}
-		public void OnSubscriptionItemClick(object obj)
+		private void OnSubscriptionItemClick(object obj)
 		{
-			int index;
-			if (obj is string)
+			RssFeedDTO rssFeedDTO = obj as RssFeedDTO;
+
+			using (var db = new AppDbContext())
 			{
-				index = Items.ToList().FindIndex(x => x.Item1.Name == (obj as string));
-			}
-			else
-			{
-				index = (int)obj;
-			}
-			 
-			try
-			{
-				var rssItem = Items[index];
-				using (var db = new AppDbContext())
+				var sub = _subEdits.FirstOrDefault(x => x.RssFeedID == rssFeedDTO.RssFeed.ID);
+				if (sub == null)
 				{
-					var sub = _subEdits.FirstOrDefault(x => x.RssFeedID == rssItem.Item1.ID);
-					//var sub = db.Subscriptions.Include(x => x.User).SingleOrDefault(s => s.UserID == _settingsService.ActiveUser.ID && s.RssFeedID == rssItem.ID);
-					if (sub == null)
-					{
-						sub = new Subscription { UserID = _settingsService.ActiveUser.ID, RssFeedID = rssItem.Item1.ID };
-
-						_subEdits.Add(sub);
-						Items[index].Item2 = true; ;
-						
-						//ItemsBool[index].Value = true;
-					}
-					else
-					{
-						_subEdits.Remove(sub);
-						Items[index].Item2 = false;
-						//ItemsBool[index].Value = false;
-					}
+					sub = new Subscription { UserID = _settingsService.ActiveUser.ID, RssFeedID = rssFeedDTO.RssFeed.ID };
+					_subEdits.Add(sub);
+					rssFeedDTO.Enabled = true; ;
 				}
-				ChangesHappened = true;
+				else
+				{
+					_subEdits.Remove(sub);
+					rssFeedDTO.Enabled = false;
+				}
 			}
-			catch(Exception)
-			{
-
-			}
-			
+			SettingsModified = true;
 		}
 
 		public async void SaveButtonClick()
 		{
-			ChangesHappened = false;
+			SettingsModified = false;
 			using (var db = new AppDbContext())
 			{
-
 				//kidobjuk a db-bol ami nincs benne az uj listaban
 				foreach (var s in db.Subscriptions)
 				{
@@ -172,36 +155,20 @@ namespace OnlabNews.ViewModels
 				//active user, settings es db szinkronizalasa
 				_settingsService.ActiveUser.Subscriptions = db.Users.FirstOrDefault(x => x.ID == _settingsService.ActiveUser.ID).Subscriptions;
 				//_subscriptionModificationList = new List<Subscription>(_settingsService.ActiveUser.Subscriptions);
-
 			}
-
 			await _articleDataSource.CreateArticlesAsync();
 		}
 
 		private void GetItems()
 		{
 			Items.Clear();
-			//ItemsBool.Clear();
 			using (var db = new AppDbContext())
 			{
 				var feeds = db.RssFeeds.ToList();
 				foreach (RssFeed f in feeds)
 				{
-					
-					if (_subEdits.Exists(x => x.RssFeedID == f.ID))
-					{
-						var tuple = new Pair<RssFeed, bool>(f, true);
-						Items.Add(tuple);
-						//var bwi = new BooleanWithIndex(true, ItemsBool.Count);
-						//ItemsBool.Add(bwi);
-					}
-					else
-					{
-						var tuple = new Pair<RssFeed, bool>(f, false);
-						Items.Add(tuple);
-						//var bwi = new BooleanWithIndex(false, ItemsBool.Count);
-						//ItemsBool.Add(bwi);
-					}
+					var item = new RssFeedDTO(f, _subEdits.Exists(x => x.RssFeedID == f.ID), Items.Count);
+					Items.Add(item);
 				}
 
 			}
@@ -210,7 +177,6 @@ namespace OnlabNews.ViewModels
 		private async void FacebookLogin()
 		{
 			bool success = await _facebookService.SignInFacebookAsync();
-
 
 			if (success)
 			{
@@ -221,10 +187,7 @@ namespace OnlabNews.ViewModels
 					User userToLoad = db.Users.Include(x => x.Subscriptions).SingleOrDefault(u => u.Name == _facebookService.UserID);
 					if (userToLoad == null)
 					{
-						var currentUser = db.Users.SingleOrDefault(u => u.LastLoggedIn == true);
-						currentUser.LastLoggedIn = false;
-
-
+						db.Users.SingleOrDefault(u => u.LastLoggedIn == true).LastLoggedIn = false;
 						userToLoad = new User { Name = _facebookService.UserID, LastLoggedIn = true };
 						db.Users.Add(userToLoad);
 						_settingsService.ActiveUser = userToLoad;
@@ -232,18 +195,14 @@ namespace OnlabNews.ViewModels
 					}
 					else
 					{
-						var currentUser = db.Users.SingleOrDefault(u => u.LastLoggedIn == true);
-						currentUser.LastLoggedIn = false;
-
+						var currentUser = db.Users.SingleOrDefault(u => u.LastLoggedIn == true).LastLoggedIn = false;
 						userToLoad.LastLoggedIn = true;
-
 						_settingsService.ActiveUser = userToLoad;
-
 						db.SaveChanges();
 					}
 				}
 				_subEdits = new List<Subscription>(_settingsService.ActiveUser.Subscriptions);
-				ChangesHappened = false;
+				SettingsModified = false;
 				SyncTickBoxes();
 				await _articleDataSource.CreateArticlesAsync();
 			}
@@ -268,7 +227,7 @@ namespace OnlabNews.ViewModels
 					db.SaveChanges();
 				}
 				_subEdits = new List<Subscription>(_settingsService.ActiveUser.Subscriptions);
-				ChangesHappened = false;
+				SettingsModified = false;
 				SyncTickBoxes();
 				await _articleDataSource.CreateArticlesAsync();
 			}
@@ -277,21 +236,9 @@ namespace OnlabNews.ViewModels
 		#endregion
 		private void SyncTickBoxes()
 		{
-			for (int i = 0; i < Items.Count; i++)
+			foreach (RssFeedDTO i in Items)
 			{
-				var rssItem = Items[i];
-				if (_subEdits.Exists(x => x.RssFeedID == rssItem.Item1.ID))
-				{
-					Items[i].Item2 = true; ;
-					//ItemsBool[i].Value = true;
-				}
-
-				else
-				{
-					Items[i].Item2 = false;
-					//ItemsBool[i].Value = false;
-				}
-					
+				i.Enabled = _subEdits.Exists(x => x.RssFeedID == i.RssFeed.ID); ;
 			}
 		}
 		public override void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)
@@ -303,9 +250,7 @@ namespace OnlabNews.ViewModels
 
 			_subEdits = new List<Subscription>(_settingsService.ActiveUser.Subscriptions);
 
-
-
-			ChangesHappened = false;
+			SettingsModified = false;
 			GetItems();
 			base.OnNavigatedTo(e, viewModelState);
 		}

@@ -8,6 +8,7 @@
     xmlns:local="using:OnlabNews.Templates"
 	xmlns:vm="using:OnlabNews.ViewModels"
 	xmlns:m="using:OnlabNews.Models"
+	xmlns:dto="using:OnlabNews.Models.DTOs"
 	xmlns:a="using:DataAccessLibrary.Model"
 	xmlns:v="using:OnlabNews.Views"
 	xmlns:conv="using:OnlabNews.Converters"
@@ -15,6 +16,8 @@
 	>
 
 	<conv:UriToBitmapImageConverter x:Key="UriToBitmapImageConverter"/>
+	<conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+
 	<conv:DateTimeToStringConverter 
             x:Name="dateStringConverter" 
             Format="dd-MM-yyyy" />
@@ -24,6 +27,7 @@
 	<conv:DateTimeToStringConverter
             x:Name="dateandTimeStringConverter"
             Format="yyyy.MM.dd HH:mm" />
+	<conv:BoolInverter x:Key="BoolInverter"/>
 
 
 	<DataTemplate x:Key="FacebookPostListViewItemTemplate">
@@ -35,7 +39,38 @@
 			<TextBlock Text="{Binding Key}"/>
 		</StackPanel>
 	</DataTemplate>
-	
+
+	<DataTemplate x:Key="SubscriptionListItemTemplate" x:DataType="dto:RssFeedDTO">
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="2*"/>
+				<ColumnDefinition Width="Auto"/>
+			</Grid.ColumnDefinitions>
+			<CheckBox Width="20" MinWidth="20" Grid.Column="0" IsChecked="{x:Bind Enabled, Mode=TwoWay}" HorizontalAlignment="Left">
+				<Interactivity:Interaction.Behaviors>
+					<Interactions:EventTriggerBehavior EventName="Click">
+						<Interactions:InvokeCommandAction 
+												Command="{Binding DataContext.OnSubscriptionItemClickCommand, ElementName=SubscriptionListView}"
+												CommandParameter="{Binding}"/>
+					</Interactions:EventTriggerBehavior>
+				</Interactivity:Interaction.Behaviors>
+			</CheckBox>
+			<TextBox Width="200" Margin="5,5,0,5" Grid.Column="1"  Text="{x:Bind RssFeed.Name}" IsReadOnly="{x:Bind IsReadOnly, Mode=TwoWay}"/>
+			<TextBox Margin="5" HorizontalAlignment="Stretch" Grid.Column="2"  Text="{x:Bind RssFeed.Uri}" IsReadOnly="{x:Bind IsReadOnly, Mode=TwoWay}" Visibility="{x:Bind IsReadOnly, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}"/>
+
+			<Button Grid.Column="3" Content="E">
+				<Interactivity:Interaction.Behaviors>
+					<Interactions:EventTriggerBehavior EventName="Click">
+						<Interactions:InvokeCommandAction 
+												Command="{Binding DataContext.OnEditRowButtonClickCommand, ElementName=SubscriptionListView}"
+												CommandParameter="{Binding}"/>
+					</Interactions:EventTriggerBehavior>
+				</Interactivity:Interaction.Behaviors>
+			</Button>
+		</Grid>
+	</DataTemplate>
 
 	<DataTemplate x:Key="ZoomedOutArticleGridViewItemTemplate">
 		<StackPanel Width="100" Height="80">
@@ -46,7 +81,7 @@
 	<ItemsPanelTemplate x:Key="ZoomedInArticleGridViewItemsPanelTemplate">
 		<ItemsWrapGrid MaximumRowsOrColumns="2" Orientation="Horizontal"/>
 	</ItemsPanelTemplate>
-	
+
 	<DataTemplate x:Key="ZoomedInArticleGridViewItemTemplate" x:DataType="m:ArticleItem" x:Name="asd">
 		<Grid Width="480" Height="380">
 			<Grid.RowDefinitions>
@@ -60,7 +95,7 @@
 			</Grid.ColumnDefinitions>
 			<TextBlock Height="20" Margin="10" Text="{x:Bind Published, Converter={StaticResource dateandTimeStringConverter}, Mode=OneWay}"/>
 			<TextBlock HorizontalAlignment="Right" Grid.Column="1" Height="20" Margin="10" FontSize="14" Foreground="DarkGray" Text="{x:Bind SourceFeedName, Mode=OneWay}"/>
-			
+
 			<Image Grid.Row="1" Grid.ColumnSpan="2" Stretch="Fill" Margin="10,0" HorizontalAlignment="Center" Height="250"  
 				   Source="{x:Bind ImageUri, Converter={StaticResource UriToBitmapImageConverter}, Mode=OneWay}" x:Phase="1"/>
 			<TextBlock Grid.Row="2" Grid.ColumnSpan="2" Margin="10" TextWrapping="WrapWholeWords" Height="70" Style="{StaticResource TitleTextBlockStyle}" 
@@ -76,45 +111,45 @@
 
 	<DataTemplate x:Key="NavigationViewHeaderTemplate">
 		<UserControl>
-		<Grid x:Name="headerGrid">
-			<VisualStateManager.VisualStateGroups>
-				<VisualStateGroup x:Name="AdaptiveVisualStateGroup">
-					<VisualState x:Name="VisualStateCompactMode">
-						<VisualState.StateTriggers>
-							<AdaptiveTrigger MinWindowWidth="0" />
-						</VisualState.StateTriggers>
-						<VisualState.Setters>
-							<Setter Target="headerGrid.Margin" Value="12,32,12,0"/>
-						</VisualState.Setters>
-					</VisualState>
-					<VisualState x:Name="VisualStateExpandedMode">
-						<VisualState.StateTriggers>
-						<AdaptiveTrigger MinWindowWidth="641" />
-					</VisualState.StateTriggers>
-					<VisualState.Setters>
-						<Setter Target="headerGrid.Margin" Value="24,32,24,0"/>
-					</VisualState.Setters>
-					</VisualState>
-				</VisualStateGroup>
-			</VisualStateManager.VisualStateGroups>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto"/>
-				<ColumnDefinition/>
-			</Grid.ColumnDefinitions>
-			<TextBlock Style="{StaticResource TitleTextBlockStyle}"                
+			<Grid x:Name="headerGrid">
+				<VisualStateManager.VisualStateGroups>
+					<VisualStateGroup x:Name="AdaptiveVisualStateGroup">
+						<VisualState x:Name="VisualStateCompactMode">
+							<VisualState.StateTriggers>
+								<AdaptiveTrigger MinWindowWidth="0" />
+							</VisualState.StateTriggers>
+							<VisualState.Setters>
+								<Setter Target="headerGrid.Margin" Value="12,32,12,0"/>
+							</VisualState.Setters>
+						</VisualState>
+						<VisualState x:Name="VisualStateExpandedMode">
+							<VisualState.StateTriggers>
+								<AdaptiveTrigger MinWindowWidth="641" />
+							</VisualState.StateTriggers>
+							<VisualState.Setters>
+								<Setter Target="headerGrid.Margin" Value="24,32,24,0"/>
+							</VisualState.Setters>
+						</VisualState>
+					</VisualStateGroup>
+				</VisualStateManager.VisualStateGroups>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+				<TextBlock Style="{StaticResource TitleTextBlockStyle}"                
                            VerticalAlignment="Center"
                            Text="{Binding}"
 						   FontSize="28"/>
-			<CommandBar Grid.Column="1" x:Name="asdasddasdas" 
+				<CommandBar Grid.Column="1" x:Name="asdasddasdas" 
                             HorizontalAlignment="Right"
                             VerticalAlignment="Top"
                             DefaultLabelPosition="Right"
                             Background="{ThemeResource SystemControlBackgroundAltHighBrush}">
-			</CommandBar>
-		</Grid>
+				</CommandBar>
+			</Grid>
 		</UserControl>
 	</DataTemplate>
 
 
-	
+
 </ResourceDictionary>

@@ -44,13 +44,5 @@ namespace OnlabNews.Views
             this.InitializeComponent();
 			this.SetValue(NavProperties.HeaderProperty, ResourceLoader.GetForCurrentView().GetString("Settings"));
 		}
-
-		private void CheckBoxButton_Click(object sender, RoutedEventArgs e)
-		{
-			var context = ((CheckBox)sender).Content;
-			if(context == null)
-				context = ((BooleanWithIndex)((CheckBox)sender).DataContext).Index;
-			ViewModel.OnSubscriptionItemClick(context);
-		}
 	}
 }
