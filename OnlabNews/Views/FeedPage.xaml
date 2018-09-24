@@ -10,9 +10,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
 	NavigationCacheMode="Enabled"
+	xmlns:t="using:Microsoft.Toolkit.Uwp.UI.Controls"
 	xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Interactions="using:Microsoft.Xaml.Interactions.Core"
 	prism:ViewModelLocator.AutoWireViewModel="True">
-	
+
 	<prism:SessionStateAwarePage.Resources>
 		<CollectionViewSource  x:Key="ArticlesCvs" x:Name="ArticlesCvs" IsSourceGrouped="True" Source="{x:Bind ViewModel.GroupedArticles, Mode=OneWay}"/>
 		<ControlTemplate x:Name="ScrollViewerScrollBarlessTemplate" TargetType="ScrollViewer">
@@ -25,57 +26,46 @@
 				<ScrollContentPresenter x:Name="ScrollContentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Margin="{TemplateBinding Padding}"/>
 			</Grid>
 		</ControlTemplate>
-		
+
 	</prism:SessionStateAwarePage.Resources>
 
 	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 		<!--<Pivot Style="{StaticResource PivotWithoutMarginStyle}">
 			<PivotItem Header="RSS">-->
-				<SemanticZoom>
-					<SemanticZoom.ZoomedInView>
-						<GridView IsItemClickEnabled="True" x:Name="ZoomedInArticleGrid" 
-								  ItemsPanel="{StaticResource ZoomedInArticleGridViewItemsPanelTemplate}" 
-								  ItemContainerStyle="{StaticResource ZoomedInArticleGridItemContainerStyle}" 
-								  ItemsSource="{Binding Source={StaticResource ArticlesCvs}}" 
-								  ItemTemplate="{StaticResource ZoomedInArticleGridViewItemTemplate}"
-								
-								  >
-							<GridView.GroupStyle>
-								<GroupStyle HidesIfEmpty="False" HeaderTemplate="{StaticResource ArticlesCvsHeaderTemplate}" />
-							</GridView.GroupStyle>
-							<!--ext:ItemClickCommand.Command="{x:Bind ViewModel.OnItemClickCommand}"-->
-							<!--<Interactivity:Interaction.Behaviors>
-								<Interactions:EventTriggerBehavior EventName="SelectionChanged">
-									<Interactions:InvokeCommandAction 
-										Command="{Binding OnItemClickCommand}" 
-										CommandParameter="{Binding ElementName=ZoomedInArticleGrid, Path=SelectedItem}"/>
-								</Interactions:EventTriggerBehavior>
-							</Interactivity:Interaction.Behaviors>-->
-						</GridView>
-					</SemanticZoom.ZoomedInView>
+		<SemanticZoom>
+			<SemanticZoom.ZoomedInView>
+				<t:AdaptiveGridView IsItemClickEnabled="True" x:Name="ZoomedInArticleGrid" 
+									DesiredWidth="480"
+									
+									ItemContainerStyle="{StaticResource ZoomedInArticleGridItemContainerStyle}" 
+									ItemsSource="{Binding Source={StaticResource ArticlesCvs}}" 
+									ItemTemplate="{StaticResource ZoomedInArticleGridViewItemTemplate}">
+					<GridView.GroupStyle>
+						<GroupStyle HidesIfEmpty="False" HeaderTemplate="{StaticResource ArticlesCvsHeaderTemplate}" />
+					</GridView.GroupStyle>
+				</t:AdaptiveGridView>
+			</SemanticZoom.ZoomedInView>
 
-					<SemanticZoom.ZoomedOutView>
-						<GridView IsItemClickEnabled="True" x:Name="ZoomedOutArticleGrid" 
+			<SemanticZoom.ZoomedOutView>
+				<ListView IsItemClickEnabled="True" x:Name="ZoomedOutArticleGrid" 
 								  ItemsSource="{x:Bind ArticlesCvs.View.CollectionGroups}"
 								  ItemTemplate="{StaticResource ZoomedOutArticleGridViewItemTemplate}"
-								  VerticalAlignment="Center"
-								  HorizontalAlignment="Center"
-								  >
-						
-							<GridView.ItemsPanel>
-								<ItemsPanelTemplate>
-									<ItemsWrapGrid Orientation="Horizontal" MaximumRowsOrColumns="6"/>
-								</ItemsPanelTemplate>
-							</GridView.ItemsPanel>
-						</GridView>
-					</SemanticZoom.ZoomedOutView>
-				</SemanticZoom>
+								  VerticalAlignment="Top"
+								  HorizontalAlignment="Left">
+					<!--<GridView.ItemsPanel>
+						<ItemsPanelTemplate>
+							<ItemsWrapGrid Orientation="Horizontal" MaximumRowsOrColumns="6"/>
+						</ItemsPanelTemplate>
+					</GridView.ItemsPanel>-->
+				</ListView>
+			</SemanticZoom.ZoomedOutView>
+		</SemanticZoom>
 
-			<!--</PivotItem>-->
+		<!--</PivotItem>-->
 
 
-			<!--<PivotItem Margin="0" Header="Facebook">-->
-				<!--<Grid>
+		<!--<PivotItem Margin="0" Header="Facebook">-->
+		<!--<Grid>
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition/>
 					</Grid.ColumnDefinitions>
@@ -89,8 +79,8 @@
 				</Grid>-->
 
 
-			<!--</PivotItem>
+		<!--</PivotItem>
 		</Pivot>-->
-		
+
 	</Grid>
 </prism:SessionStateAwarePage>

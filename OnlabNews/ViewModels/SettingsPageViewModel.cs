@@ -126,7 +126,7 @@ namespace OnlabNews.ViewModels
 				{
 					sub = new Subscription { UserID = _settingsService.ActiveUser.ID, RssFeedID = rssFeedDTO.RssFeed.ID };
 					_subEdits.Add(sub);
-					rssFeedDTO.Enabled = true; ;
+					rssFeedDTO.Enabled = true;
 				}
 				else
 				{

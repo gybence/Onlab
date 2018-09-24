@@ -73,33 +73,29 @@
 	</DataTemplate>
 
 	<DataTemplate x:Key="ZoomedOutArticleGridViewItemTemplate">
-		<StackPanel Width="100" Height="80">
-			<TextBlock HorizontalAlignment="Center" Text="{Binding Group.Key}" FontSize="50"/>
-		</StackPanel>
+		<TextBlock HorizontalAlignment="Left" Text="{Binding Group.Key}" FontSize="20"/>
 	</DataTemplate>
 
 	<ItemsPanelTemplate x:Key="ZoomedInArticleGridViewItemsPanelTemplate">
 		<ItemsWrapGrid MaximumRowsOrColumns="2" Orientation="Horizontal"/>
 	</ItemsPanelTemplate>
 
-	<DataTemplate x:Key="ZoomedInArticleGridViewItemTemplate" x:DataType="m:ArticleItem" x:Name="asd">
-		<Grid Width="480" Height="380">
+	<DataTemplate x:Key="ZoomedInArticleGridViewItemTemplate" x:DataType="m:ArticleItem">
+		<Grid>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="250"/>
 				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition/>
-				<ColumnDefinition/>
-			</Grid.ColumnDefinitions>
-			<TextBlock Height="20" Margin="10" Text="{x:Bind Published, Converter={StaticResource dateandTimeStringConverter}, Mode=OneWay}"/>
-			<TextBlock HorizontalAlignment="Right" Grid.Column="1" Height="20" Margin="10" FontSize="14" Foreground="DarkGray" Text="{x:Bind SourceFeedName, Mode=OneWay}"/>
+			<TextBlock Height="20" Margin="10" Text="{x:Bind Published, Converter={StaticResource timeStringConverter}, Mode=OneWay}"/>
+			<TextBlock Height="20" Margin="10" HorizontalAlignment="Right" Foreground="DarkGray" Text="{x:Bind SourceFeedName, Mode=OneWay}"/>
 
-			<Image Grid.Row="1" Grid.ColumnSpan="2" Stretch="Fill" Margin="10,0" HorizontalAlignment="Center" Height="250"  
-				   Source="{x:Bind ImageUri, Converter={StaticResource UriToBitmapImageConverter}, Mode=OneWay}" x:Phase="1"/>
-			<TextBlock Grid.Row="2" Grid.ColumnSpan="2" Margin="10" TextWrapping="WrapWholeWords" Height="70" Style="{StaticResource TitleTextBlockStyle}" 
-					   Foreground="Black" TextTrimming="CharacterEllipsis" Text="{x:Bind Title, Mode=OneWay}"/>
+			<Image Source="{x:Bind ImageUri, Converter={StaticResource UriToBitmapImageConverter}, Mode=OneWay}"
+				   Grid.Row="1" Margin="10,0" x:Phase="1"/>
+			<TextBlock Text="{x:Bind Title, Mode=OneWay}"
+					   Style="{StaticResource TitleTextBlockStyle}"
+					   Grid.Row="2" Margin="10" Foreground="Black" Height="70"
+					   TextTrimming="CharacterEllipsis" TextWrapping="WrapWholeWords"/>
 			<Interactivity:Interaction.Behaviors>
 				<Interactions:EventTriggerBehavior EventName="Tapped">
 					<Interactions:NavigateToPageAction TargetPage="OnlabNews.Views.ArticlePage" Parameter="{Binding}"/>
