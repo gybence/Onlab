@@ -74,10 +74,10 @@
 					<ColumnDefinition Width="2*"/>
 					<ColumnDefinition Width="Auto"/>
 				</Grid.ColumnDefinitions>
-				<TextBlock Text="++"/>
+				<TextBlock Text="   " Margin="0,5,20,0"/>
 				<TextBox Margin="5,5,0,5" Grid.Column="1" PlaceholderText="Feed name" Text="{x:Bind ViewModel.FeedNameText, Mode=TwoWay}"></TextBox>
-				<TextBox Margin="5" Grid.Column="2" PlaceholderText="Feed URL" Text="{x:Bind ViewModel.FeedUriText, Mode=TwoWay}"></TextBox>
-				<Button Grid.Column="3" Content="A" Click="{x:Bind ViewModel.AddNewRssSubscribtionButtonClick}"/>
+				<TextBox HorizontalAlignment="Stretch" Margin="5" Grid.Column="2" PlaceholderText="Feed URL" Text="{x:Bind ViewModel.FeedUriText, Mode=TwoWay}"></TextBox>
+				<Button HorizontalAlignment="Right" Grid.Column="3" FontFamily="Segoe MDL2 Assets" Content="&#xE710;" Click="{x:Bind ViewModel.AddNewRssSubscribtionButtonClick}"/>
 
 			</Grid>
 
