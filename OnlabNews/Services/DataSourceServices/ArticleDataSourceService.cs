@@ -29,7 +29,7 @@ namespace OnlabNews.Services.DataSourceServices
 
 		public ArticleDataSourceService(ISettingsService settingsService)
 		{
-			_settingsService = settingsService;			
+			_settingsService = settingsService;
 			dispatcher = Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher;
 
 			RegisterBackgroundTaskAsync("TimeTriggeredTileUpdaterBackgroundTask", "Tasks.TileUpdaterBackgroundTask", new TimeTrigger(15, false));

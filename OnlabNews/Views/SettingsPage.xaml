@@ -32,20 +32,29 @@
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
 
 			<TextBlock x:Uid="LinkedText" Text="Linked social account" FontSize="20" Margin="0,5"/>
 			<TextBlock Text="{x:Bind ViewModel.UserNameText, Mode=OneWay}" Margin="0,5" Grid.Row="1" VerticalAlignment="Center" ></TextBlock>
 
-			<Button Grid.Column="0" 
-					Command="{x:Bind ViewModel.FacebookLoginCommand}" Margin="0,5" Grid.Row="1" x:Uid="FacebookLoginButton" Content="Facebook Login"
-					Visibility="{x:Bind ViewModel.UserNameText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter='invert'}"
-					/>
+			<Button x:Uid="FacebookLoginButton" Content="Facebook Login"
+					Grid.Column="0" Grid.Row="1" Margin="0,5"
+					Command="{x:Bind ViewModel.FacebookLoginCommand}"
+					Visibility="{x:Bind ViewModel.UserNameText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter='invert'}"/>
 
-			<Button Grid.Column="1" 
-					Command="{x:Bind ViewModel.FacebookLogoutCommand}" Margin="0,5" Grid.Row="1" x:Uid="FacebookLogoutButton" Content="Logout"
-					Visibility="{x:Bind ViewModel.UserNameText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-					/>
+			<Button x:Uid="FacebookLogoutButton" Content="Logout"
+					Grid.Column="1" Grid.Row="1" Margin="0,5"
+					Command="{x:Bind ViewModel.FacebookLogoutCommand}"
+					Visibility="{x:Bind ViewModel.UserNameText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"/>
+
+			<TextBlock Text="Lightweight mode" 
+					   Grid.Row="2" FontSize="20" Margin="0,5"/>
+			<ToggleSwitch OnContent="On" OffContent="Off"
+						  Grid.Row="3" Margin="0,5"
+						  IsOn="{x:Bind ViewModel.LightWeightModeEnabled, Mode=TwoWay}"/>
+
 
 		</Grid>
 

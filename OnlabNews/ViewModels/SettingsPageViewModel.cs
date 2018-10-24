@@ -40,6 +40,13 @@ namespace OnlabNews.ViewModels
 		private bool _settingsModified;
 		public bool SettingsModified { get => _settingsModified; set { SetProperty(ref _settingsModified, value); } }
 
+		private bool _lightWeightModeEnabled;
+		public bool LightWeightModeEnabled
+		{
+			get { return _lightWeightModeEnabled; }
+			set { SettingsModified = true; _lightWeightModeEnabled = value; }
+		}
+
 		ObservableCollection<RssFeedDTO> _items = new ObservableCollection<RssFeedDTO>();
 		public ObservableCollection<RssFeedDTO> Items { get => _items; set { SetProperty(ref _items, value); } }
 
@@ -159,10 +166,11 @@ namespace OnlabNews.ViewModels
 				//hozza kell adni a listabol azokat amik meg nincsenek a db-ben
 				db.Subscriptions.AddRange(_subEdits.Where(x => !db.Subscriptions.Any(y => y.SubscriptionID == x.SubscriptionID)));
 
+				db.Users.SingleOrDefault(x => x.ID == _settingsService.ActiveUser.ID).LightweightModeEnabled = LightWeightModeEnabled;
 				db.SaveChanges();
 				//active user, settings es db szinkronizalasa
 				_settingsService.ActiveUser.Subscriptions = db.Users.FirstOrDefault(x => x.ID == _settingsService.ActiveUser.ID).Subscriptions;
-				//_subscriptionModificationList = new List<Subscription>(_settingsService.ActiveUser.Subscriptions);
+				_settingsService.ActiveUser.LightweightModeEnabled = LightWeightModeEnabled;
 			}
 			await _articleDataSource.CreateArticlesAsync();
 		}
@@ -210,6 +218,7 @@ namespace OnlabNews.ViewModels
 					}
 				}
 				_subEdits = new List<Subscription>(_settingsService.ActiveUser.Subscriptions);
+				LightWeightModeEnabled = _settingsService.ActiveUser.LightweightModeEnabled;
 				SettingsModified = false;
 				SyncTickBoxes();
 				await _articleDataSource.CreateArticlesAsync();
@@ -235,6 +244,7 @@ namespace OnlabNews.ViewModels
 					db.SaveChanges();
 				}
 				_subEdits = new List<Subscription>(_settingsService.ActiveUser.Subscriptions);
+				LightWeightModeEnabled = _settingsService.ActiveUser.LightweightModeEnabled;
 				SettingsModified = false;
 				SyncTickBoxes();
 				await _articleDataSource.CreateArticlesAsync();
@@ -257,7 +267,7 @@ namespace OnlabNews.ViewModels
 				UserNameText = _facebookService.UserName;
 
 			_subEdits = new List<Subscription>(_settingsService.ActiveUser.Subscriptions);
-
+			LightWeightModeEnabled = _settingsService.ActiveUser.LightweightModeEnabled;
 			SettingsModified = false;
 			GetItems();
 			base.OnNavigatedTo(e, viewModelState);
