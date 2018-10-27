@@ -8,21 +8,31 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+	xmlns:c="using:OnlabNews.Converters"
 	prism:ViewModelLocator.AutoWireViewModel="True" >
+	
+	<prism:SessionStateAwarePage.Resources>
+		<c:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+		<c:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+	</prism:SessionStateAwarePage.Resources>
 
 	<Grid Width="Auto" Height="Auto" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
-
-
+		
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*"/>
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
-		<WebView Source="{Binding Article.Uri}">
-
+		<WebView Source="{x:Bind ViewModel.Article.Uri, Mode=OneWay}"
+				 Visibility="{x:Bind ViewModel.UseBrowser, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+				 >
 		</WebView>
+
+		<TextBlock Text="{x:Bind ViewModel.ScrapedArticle.title, Mode=OneWay}" FontSize="20" Margin="0,5" 
+				   Visibility="{x:Bind ViewModel.UseBrowser, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}"/>
+
 	</Grid>
 
 </prism:SessionStateAwarePage>

@@ -53,9 +53,7 @@
 					   Grid.Row="2" FontSize="20" Margin="0,5"/>
 			<ToggleSwitch OnContent="On" OffContent="Off"
 						  Grid.Row="3" Margin="0,5"
-						  IsOn="{x:Bind ViewModel.LightWeightModeEnabled, Mode=TwoWay}"/>
-
-
+						  IsOn="{x:Bind ViewModel.LightWeightModeEnabled}"/>
 		</Grid>
 
 		<Grid Grid.Column="1" Margin="0,0,10,0">

@@ -112,10 +112,8 @@
     <Compile Include="Extensions\NavItemEx.cs" />
     <Compile Include="Extensions\NavProperties.cs" />
     <Compile Include="Helpers\XamlUtilities.cs" />
-    <Compile Include="Models\BooleanWithIndex.cs" />
     <Compile Include="Models\DTOs\RssFeedDTO.cs" />
     <Compile Include="Models\MutableGrouping.cs" />
-    <Compile Include="Models\Pair.cs" />
     <Compile Include="Models\RangeObservableCollection.cs" />
     <Compile Include="Models\Scrapy\RelatedTitle.cs" />
     <Compile Include="Models\Scrapy\RootObject.cs" />

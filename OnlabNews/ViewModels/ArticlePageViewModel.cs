@@ -35,9 +35,24 @@ namespace OnlabNews.ViewModels
 		{
 			get
 			{                                                                   //bing >_<
-				return _article ?? new ArticleItem { Title = "No Title", Uri = "https://bing.com" };
+				return _article;
 			}
+
 			set { SetProperty(ref _article, value); }
+		}
+
+		private RootObject _scrapedArticle;
+		public RootObject ScrapedArticle
+		{
+			get { return _scrapedArticle; }
+			set { SetProperty(ref _scrapedArticle, value); }
+		}
+
+		private bool _useBrowser;
+		public bool UseBrowser
+		{
+			get { return _useBrowser; }
+			set { SetProperty(ref _useBrowser, value); }
 		}
 
 		#endregion
@@ -47,7 +62,7 @@ namespace OnlabNews.ViewModels
 			_navigationService = navigationService;
 			_settingsService = settingsService;
 			ShareButtonCommand = new DelegateCommand(ShareButtonClick);
-
+			_useBrowser = false;
 
 			_dataTransferManager = DataTransferManager.GetForCurrentView();
 			_dataTransferManager.DataRequested += DataRequestedForSharing;
@@ -59,11 +74,15 @@ namespace OnlabNews.ViewModels
 			args.Request.Data.Properties.Title = Article.Title;
 			args.Request.Data.Properties.Description = "Share this article!";
 			args.Request.Data.SetWebLink(new Uri(Article.Uri));
+
 		}
 
 		private void ShareButtonClick()
 		{
-			DataTransferManager.ShowShareUI();
+			if (Article != null)
+			{
+				DataTransferManager.ShowShareUI();
+			}
 		}
 
 		private async Task RequestArticleScrapeAsync(ArticleItem toScrape)
@@ -80,24 +99,36 @@ namespace OnlabNews.ViewModels
 				{
 					//JsonConvert.SerializeObject(yourPocoHere), Encoding.UTF8, "application/json"
 					//HttpContent content = new StringContent("{\"url\":\""+ toScrape + "\"}");
-					var content = new StringContent("{\"url\":\"" + toScrape.Uri + "\"}", Encoding.UTF8, "application/json");
+					var content = new StringContent("{\"url\":\"" + "https://index.hu/sport/forma1/2018/10/13/briatore_ravilagitott_miert_bukik_vettel_iden" + "\"}", Encoding.UTF8, "application/json");
 					HttpResponseMessage response = await httpClient.PostAsync(endpoint, content);
 
 					if (response.IsSuccessStatusCode)
 					{
 						string jsonResponse = await response.Content.ReadAsStringAsync();
-						RootObject results = JsonConvert.DeserializeObject<RootObject>(jsonResponse);
+						ScrapedArticle = JsonConvert.DeserializeObject<RootObject>(jsonResponse);
+						UseBrowser = false;
 						//do something with json response here
+						//Article = toScrape;
+					}
+					else
+					{
+						UseBrowser = true;
 						Article = toScrape;
 					}
 				}
 				catch (Exception)
 				{
+					UseBrowser = true;
 					Article = toScrape;
 					//Could not connect to server
 					//Use more specific exception handling, this is just an example
 				}
 			}
+		}
+
+		public void GombClick()
+		{
+			UseBrowser = true;
 		}
 
 
@@ -107,12 +138,12 @@ namespace OnlabNews.ViewModels
 			{
 				await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
 				{
-					//(e.Parameter as ArticleItem).Uri;
-					await RequestArticleScrapeAsync(new ArticleItem { Title = "No Title", Uri = "https://index.hu/sport/forma1/2018/10/13/briatore_ravilagitott_miert_bukik_vettel_iden" });
+					await RequestArticleScrapeAsync(e.Parameter as ArticleItem);
 				});
 			}
 			else
 			{
+				UseBrowser = true;
 				Article = e.Parameter as ArticleItem;
 			}
 			base.OnNavigatedTo(e, viewModelState);
