@@ -139,7 +139,7 @@
     <value>Linked social account</value>
   </data>
   <data name="Pages" xml:space="preserve">
-    <value>Pages</value>
+    <value>Navigation</value>
   </data>
   <data name="Refresh" xml:space="preserve">
     <value>Refresh</value>
@@ -164,5 +164,17 @@
   </data>
   <data name="Welcome" xml:space="preserve">
     <value>Welcome</value>
+  </data>
+  <data name="LightWeightHeader.Text" xml:space="preserve">
+    <value>Lightweight mode</value>
+  </data>
+  <data name="LightWeightNoteText.Text" xml:space="preserve">
+    <value>* Only certain sites work with this feature enabled!</value>
+  </data>
+  <data name="LightWeightToogleSwitch.OffContent" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="LightWeightToogleSwitch.OnContent" xml:space="preserve">
+    <value>On</value>
   </data>
 </root>

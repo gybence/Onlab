@@ -36,7 +36,7 @@
 			<SemanticZoom.ZoomedInView>
 				<t:AdaptiveGridView IsItemClickEnabled="True" x:Name="ZoomedInArticleGrid" 
 									DesiredWidth="480"
-									
+									Padding="0,0,20,0"
 									ItemContainerStyle="{StaticResource ZoomedInArticleGridItemContainerStyle}" 
 									ItemsSource="{Binding Source={StaticResource ArticlesCvs}}" 
 									ItemTemplate="{StaticResource ZoomedInArticleGridViewItemTemplate}">

@@ -58,8 +58,8 @@
 				</Interactivity:Interaction.Behaviors>
 			</CheckBox>
 
-			<TextBlock Width="200" Margin="19,10,17,0" Grid.Column="1"  Text="{x:Bind RssFeed.Name, Mode=TwoWay}" Visibility="{x:Bind IsReadOnly, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"/>
-			<TextBox Width="200" Margin="5,5,0,5" Grid.Column="1"  Text="{x:Bind RssFeed.Name, Mode=TwoWay}" IsReadOnly="{x:Bind IsReadOnly, Mode=TwoWay}" Visibility="{x:Bind IsReadOnly, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}"/>
+			<TextBlock Margin="19,10,17,0" Grid.Column="1"  Text="{x:Bind RssFeed.Name, Mode=TwoWay}" Visibility="{x:Bind IsReadOnly, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"/>
+			<TextBox Margin="5,5,0,5" Grid.Column="1"  Text="{x:Bind RssFeed.Name, Mode=TwoWay}" IsReadOnly="{x:Bind IsReadOnly, Mode=TwoWay}" Visibility="{x:Bind IsReadOnly, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}"/>
 			
 			<TextBlock Margin="17,10,17,0" HorizontalAlignment="Stretch" Grid.Column="2"  Text="{x:Bind RssFeed.Uri, Mode=TwoWay}" Visibility="{x:Bind IsReadOnly, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"/>
 			<TextBox Margin="5" HorizontalAlignment="Stretch" Grid.Column="2"  Text="{x:Bind RssFeed.Uri, Mode=TwoWay}" IsReadOnly="{x:Bind IsReadOnly, Mode=TwoWay}" Visibility="{x:Bind IsReadOnly, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}"/>

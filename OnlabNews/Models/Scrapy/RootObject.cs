@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace OnlabNews.Models.Scrapy
 {
 	public class RootObject
 	{
-		public string content_title { get; set; }
-		public string title { get; set; }
-		public string author { get; set; }
-		public string date { get; set; }
-		public List<RelatedTitle> related_titles { get; set; }
-		public string lead { get; set; }
-		public List<string> article_children { get; set; }
+		public string Url { get; set; }
+		public string ContentTitle { get; set; }
+		public string Title { get; set; }
+		public string Author { get; set; }
+		public string Date { get; set; }
+		public List<RelatedTitle> RelatedTitles { get; set; }
+		public string Lead { get; set; }
+		public List<string> ArticleChildren { get; set; }
 	}
 }

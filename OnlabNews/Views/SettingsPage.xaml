@@ -18,79 +18,119 @@
 		<c:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
 		<c:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 	</prism:SessionStateAwarePage.Resources>
+	<ScrollViewer Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalScrollBarVisibility="Auto">
+		<VisualStateManager.VisualStateGroups>
+			<VisualStateGroup>
+				<VisualState x:Name="wideView">
+					<VisualState.StateTriggers>
+						<AdaptiveTrigger MinWindowWidth="1100" />
+					</VisualState.StateTriggers>
+					<VisualState.Setters>
 
-	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition MinWidth="300" Width="*"/>
-			<ColumnDefinition MinWidth="300" Width="2*"/>
-		</Grid.ColumnDefinitions>
-		<Grid Grid.Column="0" HorizontalAlignment="Left">
+					</VisualState.Setters>
+				</VisualState>
+				<VisualState x:Name="narrowView">
+					<VisualState.Setters>
+						<Setter Target="Grid1.(Grid.RowSpan)" Value="1"></Setter>
+						<Setter Target="Grid1.(Grid.ColumnSpan)" Value="2"></Setter>
+
+						<Setter Target="Grid2.(Grid.RowSpan)" Value="1"></Setter>
+						<Setter Target="Grid2.(Grid.Row)" Value="1"></Setter>
+						<Setter Target="Grid2.(Grid.ColumnSpan)" Value="2"></Setter>
+						<Setter Target="Grid2.(Grid.Column)" Value="0"></Setter>
+					</VisualState.Setters>
+					<VisualState.StateTriggers>
+						<AdaptiveTrigger MinWindowWidth="0" />
+					</VisualState.StateTriggers>
+				</VisualState>
+			</VisualStateGroup>
+		</VisualStateManager.VisualStateGroups>
+
+		<Grid>
+
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto"/>
-				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition />
+				<ColumnDefinition />
 			</Grid.ColumnDefinitions>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="*"/>
 			</Grid.RowDefinitions>
 
-			<TextBlock x:Uid="LinkedText" Text="Linked social account" FontSize="20" Margin="0,5"/>
-			<TextBlock Text="{x:Bind ViewModel.UserNameText, Mode=OneWay}" Margin="0,5" Grid.Row="1" VerticalAlignment="Center" ></TextBlock>
+			<Grid x:Name="Grid1" Grid.RowSpan="2" Grid.Column="0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
 
-			<Button x:Uid="FacebookLoginButton" Content="Facebook Login"
+				</Grid.RowDefinitions>
+
+				<TextBlock x:Uid="LinkedText" Text="Linked social account" FontSize="20" Margin="0,5"/>
+				<TextBlock Text="{x:Bind ViewModel.UserNameText, Mode=OneWay}" Margin="0,5" Grid.Row="1" VerticalAlignment="Center" ></TextBlock>
+
+				<Button x:Uid="FacebookLoginButton" Content="Facebook Login"
 					Grid.Column="0" Grid.Row="1" Margin="0,5"
 					Command="{x:Bind ViewModel.FacebookLoginCommand}"
 					Visibility="{x:Bind ViewModel.UserNameText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter='invert'}"/>
 
-			<Button x:Uid="FacebookLogoutButton" Content="Logout"
+				<Button x:Uid="FacebookLogoutButton" Content="Logout"
 					Grid.Column="1" Grid.Row="1" Margin="0,5"
 					Command="{x:Bind ViewModel.FacebookLogoutCommand}"
 					Visibility="{x:Bind ViewModel.UserNameText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"/>
 
-			<TextBlock Text="Lightweight mode" 
+				<TextBlock x:Uid="LightWeightHeader" Text="Lightweight mode" 
 					   Grid.Row="2" FontSize="20" Margin="0,5"/>
-			<ToggleSwitch OnContent="On" OffContent="Off"
+				<ToggleSwitch x:Uid="LightWeightToogleSwitch" OnContent="On" OffContent="Off"
 						  Grid.Row="3" Margin="0,5"
-						  IsOn="{x:Bind ViewModel.LightWeightModeEnabled}"/>
-		</Grid>
+						  IsOn="{x:Bind ViewModel.LightWeightModeEnabled, Mode=TwoWay}"/>
+				<TextBlock x:Uid="LightWeightNoteText" Text="* Only certain sites work with this feature enabled!"
+					   Grid.Row="4" Grid.ColumnSpan="2" Foreground="Red" TextTrimming="CharacterEllipsis" TextWrapping="WrapWholeWords"
+					   Visibility="{x:Bind ViewModel.LightWeightModeEnabled, Mode=OneWay}"/>
+			</Grid>
 
-		<Grid Grid.Column="1" Margin="0,0,10,0">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*"/>
-			</Grid.ColumnDefinitions>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="*" />
-				<RowDefinition Height="Auto" />
-			</Grid.RowDefinitions>
+			<Grid x:Name="Grid2" Grid.Column="1" Grid.RowSpan="2" Margin="0,0,20,0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="*"/>
+				</Grid.RowDefinitions>
 
-			<TextBlock Margin="0,5" Grid.Row="0" x:Uid="SubscriptionsTitle" Text="Feeds" FontSize="20"/>
+				<TextBlock Margin="0,5" Grid.Row="0" x:Uid="SubscriptionsTitle" Text="Feeds" FontSize="20"/>
 
-			<ListView Grid.Row="1" Name="SubscriptionListView" 
+				<ListView Grid.Row="1" Name="SubscriptionListView" 
 					  ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay}" 
 					  ItemTemplate="{StaticResource SubscriptionListItemTemplate}"
 					  ItemContainerStyle="{StaticResource CheckBoxListViewItemContainerStyle}">
-			</ListView>
-			<Grid VerticalAlignment="Top" Grid.Row="2">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="2*"/>
-					<ColumnDefinition Width="Auto"/>
-				</Grid.ColumnDefinitions>
-				<TextBlock Text="   " Margin="0,5,20,0"/>
-				<TextBox Margin="5,5,0,5" Grid.Column="1" PlaceholderText="Feed name" Text="{x:Bind ViewModel.FeedNameText, Mode=TwoWay}"></TextBox>
-				<TextBox HorizontalAlignment="Stretch" Margin="5" Grid.Column="2" PlaceholderText="Feed URL" Text="{x:Bind ViewModel.FeedUriText, Mode=TwoWay}"></TextBox>
-				<Button HorizontalAlignment="Right" Grid.Column="3" FontFamily="Segoe MDL2 Assets" Content="&#xE710;" Click="{x:Bind ViewModel.AddNewRssSubscribtionButtonClick}"/>
+				</ListView>
+				<Grid Grid.Row="2">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="2*"/>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="Auto"/>
+					</Grid.ColumnDefinitions>
+					<!--<TextBlock Text="   " Margin="0,5,20,0"/>-->
+					<TextBox x:Uid="FeedNameTextBox" Margin="25,5,-14,5" Grid.Column="1" PlaceholderText="Feed name" Text="{x:Bind ViewModel.FeedNameText, Mode=TwoWay}"></TextBox>
+					<TextBox x:Uid="FeedURLTextBox"  Margin="19,5,5,5" Grid.Column="2" PlaceholderText="Feed URL" Text="{x:Bind ViewModel.FeedUriText, Mode=TwoWay}"></TextBox>
+					<Button HorizontalAlignment="Right" Grid.Column="3" FontFamily="Segoe MDL2 Assets" Content="&#xE710;" Click="{x:Bind ViewModel.AddNewRssSubscribtionButtonClick}"/>
 
-			</Grid>
+				</Grid>
 
-			<Button VerticalAlignment="Bottom" x:Uid="SaveButton" HorizontalAlignment="Right" Grid.Row="3" Grid.Column="3" Content="Save" 
+				<Button VerticalAlignment="Bottom" x:Uid="SaveButton" HorizontalAlignment="Right" Grid.Row="3" Grid.Column="3" Content="Save" 
 					Click="{x:Bind ViewModel.SaveButtonClick}"
 					Visibility="{x:Bind ViewModel.SettingsModified, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"/>
+			</Grid>
 		</Grid>
-	</Grid>
+	</ScrollViewer>
 </prism:SessionStateAwarePage>

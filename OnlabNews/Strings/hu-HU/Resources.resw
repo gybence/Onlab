@@ -127,19 +127,19 @@
     <value>Kijelentkezés</value>
   </data>
   <data name="FeedNameTextBox.PlaceholderText" xml:space="preserve">
-    <value>Feed név</value>
+    <value>Hírfolyam név</value>
   </data>
   <data name="Feeds" xml:space="preserve">
-    <value>Feed</value>
+    <value>Hírfolyamok</value>
   </data>
   <data name="FeedURLTextBox.PlaceholderText" xml:space="preserve">
-    <value>Feed URL</value>
+    <value>URL</value>
   </data>
   <data name="LinkedText.Text" xml:space="preserve">
     <value>Csatlakozás közösségi fiókkal</value>
   </data>
   <data name="Pages" xml:space="preserve">
-    <value>Oldalak</value>
+    <value>Navigácó</value>
   </data>
   <data name="Refresh" xml:space="preserve">
     <value>Frissítés</value>
@@ -160,9 +160,21 @@
     <value>Feliratkozás</value>
   </data>
   <data name="SubscriptionsTitle.Text" xml:space="preserve">
-    <value>Feliratkozások</value>
+    <value>Hírfolyamok</value>
   </data>
   <data name="Welcome" xml:space="preserve">
     <value>Üdvözöllek a Főoldalon</value>
+  </data>
+  <data name="LightWeightHeader.Text" xml:space="preserve">
+    <value>Könnyített mód</value>
+  </data>
+  <data name="LightWeightNoteText.Text" xml:space="preserve">
+    <value>* Csak néhány oldal képes kihasználni ezt a funkciót!</value>
+  </data>
+  <data name="LightWeightToogleSwitch.OffContent" xml:space="preserve">
+    <value>Ki</value>
+  </data>
+  <data name="LightWeightToogleSwitch.OnContent" xml:space="preserve">
+    <value>Be</value>
   </data>
 </root>

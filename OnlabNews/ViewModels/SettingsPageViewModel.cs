@@ -44,7 +44,7 @@ namespace OnlabNews.ViewModels
 		public bool LightWeightModeEnabled
 		{
 			get { return _lightWeightModeEnabled; }
-			set { SettingsModified = true; _lightWeightModeEnabled = value; }
+			set { SettingsModified = true; SetProperty(ref _lightWeightModeEnabled, value); }
 		}
 
 		ObservableCollection<RssFeedDTO> _items = new ObservableCollection<RssFeedDTO>();

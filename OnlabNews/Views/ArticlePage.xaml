@@ -10,29 +10,52 @@
     mc:Ignorable="d"
 	xmlns:c="using:OnlabNews.Converters"
 	prism:ViewModelLocator.AutoWireViewModel="True" >
-	
+
 	<prism:SessionStateAwarePage.Resources>
 		<c:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
 		<c:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 	</prism:SessionStateAwarePage.Resources>
 
-	<Grid Width="Auto" Height="Auto" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-		
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*"/>
-		</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="Auto"/>
-		</Grid.RowDefinitions>
-		<WebView Source="{x:Bind ViewModel.Article.Uri, Mode=OneWay}"
-				 Visibility="{x:Bind ViewModel.UseBrowser, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
-				 >
-		</WebView>
+	<ScrollViewer Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalScrollBarVisibility="Auto">
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*"/>
+			</Grid.RowDefinitions>
+			<WebView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Source="{x:Bind ViewModel.Article.Uri, Mode=OneWay}"
+					 Visibility="{x:Bind ViewModel.UseBrowser, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+					 >
+			</WebView>
 
-		<TextBlock Text="{x:Bind ViewModel.ScrapedArticle.title, Mode=OneWay}" FontSize="20" Margin="0,5" 
-				   Visibility="{x:Bind ViewModel.UseBrowser, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}"/>
-
-	</Grid>
-
+			<Grid Margin="0,0,12,0" Visibility="{x:Bind ViewModel.UseBrowser, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+				</Grid.RowDefinitions>
+				<TextBlock Text="{x:Bind ViewModel.ScrapedArticle.Title, Mode=OneWay}" 
+						   FontSize="40" Margin="24,12" TextTrimming="CharacterEllipsis" TextWrapping="WrapWholeWords"
+						   FontWeight="Bold"/>
+				<TextBlock Text="{x:Bind ViewModel.ScrapedArticle.Lead, Mode=OneWay}" 
+					   FontSize="20" Margin="24,12" Grid.Row="1" TextTrimming="CharacterEllipsis" TextWrapping="WrapWholeWords"/>
+				<ListView Name="ParagraphsListView" 
+					  Grid.Row="2" IsItemClickEnabled="False" Margin="24,12"
+					  ItemsSource="{x:Bind ViewModel.ScrapedArticle.ArticleChildren, Mode=OneWay}"
+					  ItemContainerStyle="{StaticResource CheckBoxListViewItemContainerStyle}">
+					<ListView.ItemTemplate>
+						<DataTemplate x:Name="asd" x:DataType="x:String">
+							<StackPanel Margin="0,3">
+								<TextBlock TextTrimming="CharacterEllipsis" TextWrapping="WrapWholeWords" Text="{x:Bind}"/>
+							</StackPanel>
+						</DataTemplate>
+					</ListView.ItemTemplate>
+				</ListView>
+			</Grid>
+		</Grid>
+	</ScrollViewer>
 </prism:SessionStateAwarePage>

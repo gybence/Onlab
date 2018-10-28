@@ -71,18 +71,26 @@ namespace OnlabNews.ViewModels
 
 		private void DataRequestedForSharing(DataTransferManager sender, DataRequestedEventArgs args)
 		{
-			args.Request.Data.Properties.Title = Article.Title;
+			if (_settingsService.ActiveUser.LightweightModeEnabled)
+			{
+				args.Request.Data.Properties.Title = ScrapedArticle.Title;
+				args.Request.Data.SetWebLink(new Uri(ScrapedArticle.Url));
+			}
+			else
+			{
+				args.Request.Data.Properties.Title = Article.Title;
+				args.Request.Data.SetWebLink(new Uri(Article.Uri));
+			}
 			args.Request.Data.Properties.Description = "Share this article!";
-			args.Request.Data.SetWebLink(new Uri(Article.Uri));
-
 		}
 
 		private void ShareButtonClick()
 		{
-			if (Article != null)
+			if (Article != null || ScrapedArticle != null)
 			{
 				DataTransferManager.ShowShareUI();
 			}
+
 		}
 
 		private async Task RequestArticleScrapeAsync(ArticleItem toScrape)
@@ -107,8 +115,6 @@ namespace OnlabNews.ViewModels
 						string jsonResponse = await response.Content.ReadAsStringAsync();
 						ScrapedArticle = JsonConvert.DeserializeObject<RootObject>(jsonResponse);
 						UseBrowser = false;
-						//do something with json response here
-						//Article = toScrape;
 					}
 					else
 					{
@@ -125,12 +131,6 @@ namespace OnlabNews.ViewModels
 				}
 			}
 		}
-
-		public void GombClick()
-		{
-			UseBrowser = true;
-		}
-
 
 		public override async void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)
 		{
@@ -149,4 +149,5 @@ namespace OnlabNews.ViewModels
 			base.OnNavigatedTo(e, viewModelState);
 		}
 	}
+
 }
