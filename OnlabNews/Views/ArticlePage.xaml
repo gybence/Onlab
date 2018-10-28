@@ -9,13 +9,23 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
 	xmlns:c="using:OnlabNews.Converters"
+	xmlns:conv="using:OnlabNews.Converters"
 	prism:ViewModelLocator.AutoWireViewModel="True" >
 
 	<prism:SessionStateAwarePage.Resources>
 		<c:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
 		<c:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+		<conv:DateTimeToStringConverter 
+            x:Name="dateStringConverter" 
+            Format="dd-MM-yyyy" />
+		<conv:DateTimeToStringConverter
+            x:Name="timeStringConverter"
+            Format="HH:mm" />
+		<conv:DateTimeToStringConverter
+            x:Name="dateandTimeStringConverter"
+            Format="yyyy.MM.dd HH:mm" />
+		<conv:BoolInverter x:Key="BoolInverter"/>
 	</prism:SessionStateAwarePage.Resources>
-
 	<ScrollViewer Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalScrollBarVisibility="Auto">
 		<Grid>
 			<Grid.ColumnDefinitions>
@@ -24,10 +34,16 @@
 			<Grid.RowDefinitions>
 				<RowDefinition Height="*"/>
 			</Grid.RowDefinitions>
-			<WebView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Source="{x:Bind ViewModel.Article.Uri, Mode=OneWay}"
+			<WebView Source="{x:Bind ViewModel.Article.Uri, Mode=OneWay}"
 					 Visibility="{x:Bind ViewModel.UseBrowser, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+					 HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
 					 >
 			</WebView>
+
+			<TextBlock x:Uid="ArticleErrorText" Text="An error occured..." 
+					   HorizontalAlignment="Center" VerticalAlignment="Center" 
+					   FontSize="30" 
+					   Visibility="{x:Bind ViewModel.NoInternet, Mode=OneWay,Converter={StaticResource BoolToVisibilityConverter}}"/>
 
 			<Grid Margin="0,0,12,0" Visibility="{x:Bind ViewModel.UseBrowser, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}">
 				<Grid.ColumnDefinitions>
@@ -37,25 +53,31 @@
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
 				</Grid.RowDefinitions>
 				<TextBlock Text="{x:Bind ViewModel.ScrapedArticle.Title, Mode=OneWay}" 
-						   FontSize="40" Margin="24,12" TextTrimming="CharacterEllipsis" TextWrapping="WrapWholeWords"
-						   FontWeight="Bold"/>
-				<TextBlock Text="{x:Bind ViewModel.ScrapedArticle.Lead, Mode=OneWay}" 
-					   FontSize="20" Margin="24,12" Grid.Row="1" TextTrimming="CharacterEllipsis" TextWrapping="WrapWholeWords"/>
+						   Grid.Row="0" Margin="24,12" FontSize="40" FontWeight="Bold"
+						   TextTrimming="CharacterEllipsis" TextWrapping="WrapWholeWords"/>
+				<TextBlock Text="{x:Bind ViewModel.ScrapedArticle.Author, Mode=OneWay}"
+						   Grid.Row="1" Margin="24,12" FontSize="18" FontWeight="Thin" HorizontalAlignment="Left"/>
+				<TextBlock Text="{x:Bind ViewModel.ScrapedArticle.Date, Mode=OneWay}"
+						   Grid.Row="1" Margin="24,12" FontSize="18" FontWeight="Thin" HorizontalAlignment="Right"/>
+				<TextBlock Text="{x:Bind ViewModel.ScrapedArticle.Lead, Mode=OneWay}"
+						   Grid.Row="2" Margin="24,12" FontSize="20" 
+						   TextTrimming="CharacterEllipsis" TextWrapping="WrapWholeWords"
+						   Visibility="{x:Bind ViewModel.ScrapedArticle.Lead, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"/>
 				<ListView Name="ParagraphsListView" 
-					  Grid.Row="2" IsItemClickEnabled="False" Margin="24,12"
-					  ItemsSource="{x:Bind ViewModel.ScrapedArticle.ArticleChildren, Mode=OneWay}"
-					  ItemContainerStyle="{StaticResource CheckBoxListViewItemContainerStyle}">
-					<ListView.ItemTemplate>
-						<DataTemplate x:Name="asd" x:DataType="x:String">
-							<StackPanel Margin="0,3">
-								<TextBlock TextTrimming="CharacterEllipsis" TextWrapping="WrapWholeWords" Text="{x:Bind}"/>
-							</StackPanel>
-						</DataTemplate>
-					</ListView.ItemTemplate>
+						  Grid.Row="3" IsItemClickEnabled="False" Margin="24,12"
+						  ItemsSource="{x:Bind ViewModel.ScrapedArticle.ArticleChildren, Mode=OneWay}"
+						  ItemContainerStyle="{StaticResource CheckBoxListViewItemContainerStyle}"
+						  ItemTemplate="{StaticResource ListViewArticleParagraphItemTemplate}">
 				</ListView>
+
 			</Grid>
+			<StackPanel HorizontalAlignment="Center" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" Orientation="Horizontal">
+				<ProgressRing Width="50" Height="50" Margin="10" IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}" Foreground="SlateGray"/>
+				<TextBlock x:Uid="LoadingText" FontSize="30" Text="Loading..." VerticalAlignment="Center" Foreground="SlateGray"/>
+			</StackPanel>
 		</Grid>
 	</ScrollViewer>
 </prism:SessionStateAwarePage>

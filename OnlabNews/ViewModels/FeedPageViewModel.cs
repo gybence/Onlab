@@ -1,12 +1,9 @@
-﻿using Prism.Commands;
+﻿using OnlabNews.Models;
+using OnlabNews.Services.DataSourceServices;
+using Prism.Commands;
 using Prism.Windows.Mvvm;
 using Prism.Windows.Navigation;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using OnlabNews.Models;
-using OnlabNews.Services.DataSourceServices;
-using OnlabNews.Services.FacebookServices;
-using System;
 using System.Threading.Tasks;
 
 namespace OnlabNews.ViewModels
@@ -23,7 +20,13 @@ namespace OnlabNews.ViewModels
 		public DelegateCommand RefreshButtonCommand { get; private set; }
 
 		public RangeObservableCollection<MutableGrouping<int, ArticleItem>> GroupedArticles { get { return _articleDataSource.GroupedArticles; } }
-		
+
+		private bool _isBusy;
+		public bool IsBusy
+		{
+			get { return _isBusy; }
+			set { SetProperty(ref _isBusy, value); }
+		}
 		#endregion
 
 		public FeedPageViewModel(INavigationService navigationService, IArticleDataSourceService dataSourceService)
@@ -32,17 +35,21 @@ namespace OnlabNews.ViewModels
 			_navigationService = navigationService;
 			OnItemClickCommand = new DelegateCommand<object>(OnClickNavigate);
 			RefreshButtonCommand = new DelegateCommand(OnRefreshButtonClick);
+			IsBusy = true;
 			Task.Run(() => _articleDataSource.CreateArticlesAsync());
+			IsBusy = false;
 		}
 
 		private async void OnRefreshButtonClick()
 		{
+			IsBusy = true;
 			await _articleDataSource.CreateArticlesAsync();
+			IsBusy = false;
 		}
 
 		private void OnClickNavigate(object clickedItem)
 		{
-			_navigationService.Navigate("Article", clickedItem);	
+			_navigationService.Navigate("Article", clickedItem);
 		}
 
 		public override void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)

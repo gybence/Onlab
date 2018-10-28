@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
@@ -33,11 +34,7 @@ namespace OnlabNews.ViewModels
 		private ArticleItem _article;
 		public ArticleItem Article
 		{
-			get
-			{                                                                   //bing >_<
-				return _article;
-			}
-
+			get { return _article; }
 			set { SetProperty(ref _article, value); }
 		}
 
@@ -55,6 +52,20 @@ namespace OnlabNews.ViewModels
 			set { SetProperty(ref _useBrowser, value); }
 		}
 
+		private bool _noInternet;
+		public bool NoInternet
+		{
+			get { return _noInternet; }
+			set { SetProperty(ref _noInternet, value); }
+		}
+
+		private bool _isBusy;
+		public bool IsBusy
+		{
+			get { return _isBusy; }
+			set { SetProperty(ref _isBusy, value); }
+		}
+
 		#endregion
 
 		public ArticlePageViewModel(INavigationService navigationService, ISettingsService settingsService)
@@ -63,7 +74,7 @@ namespace OnlabNews.ViewModels
 			_settingsService = settingsService;
 			ShareButtonCommand = new DelegateCommand(ShareButtonClick);
 			_useBrowser = false;
-
+			_noInternet = false;
 			_dataTransferManager = DataTransferManager.GetForCurrentView();
 			_dataTransferManager.DataRequested += DataRequestedForSharing;
 			dispatcher = Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher;
@@ -105,16 +116,17 @@ namespace OnlabNews.ViewModels
 
 				try
 				{
+					IsBusy = true;
 					//JsonConvert.SerializeObject(yourPocoHere), Encoding.UTF8, "application/json"
 					//HttpContent content = new StringContent("{\"url\":\""+ toScrape + "\"}");
-					var content = new StringContent("{\"url\":\"" + "https://index.hu/sport/forma1/2018/10/13/briatore_ravilagitott_miert_bukik_vettel_iden" + "\"}", Encoding.UTF8, "application/json");
+					var content = new StringContent("{\"url\":\"" + toScrape.Uri + "\"}", Encoding.UTF8, "application/json");
 					HttpResponseMessage response = await httpClient.PostAsync(endpoint, content);
 
 					if (response.IsSuccessStatusCode)
 					{
 						string jsonResponse = await response.Content.ReadAsStringAsync();
 						ScrapedArticle = JsonConvert.DeserializeObject<RootObject>(jsonResponse);
-						UseBrowser = false;
+
 					}
 					else
 					{
@@ -122,30 +134,54 @@ namespace OnlabNews.ViewModels
 						Article = toScrape;
 					}
 				}
+				catch (HttpRequestException)
+				{
+					if (NetworkInterface.GetIsNetworkAvailable())
+					{
+						UseBrowser = true;
+						Article = toScrape;
+					}
+					else
+					{
+						NoInternet = true;
+					}
+
+				}
 				catch (Exception)
 				{
-					UseBrowser = true;
-					Article = toScrape;
+					NoInternet = true;
 					//Could not connect to server
 					//Use more specific exception handling, this is just an example
+				}
+				finally
+				{
+					IsBusy = false;
 				}
 			}
 		}
 
 		public override async void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)
 		{
-			if (_settingsService.ActiveUser.LightweightModeEnabled)
+			if (NetworkInterface.GetIsNetworkAvailable())
 			{
-				await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
+				if (_settingsService.ActiveUser.LightweightModeEnabled)
 				{
-					await RequestArticleScrapeAsync(e.Parameter as ArticleItem);
-				});
+					await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
+					{
+						await RequestArticleScrapeAsync(e.Parameter as ArticleItem);
+					});
+				}
+				else
+				{
+					UseBrowser = true;
+					Article = e.Parameter as ArticleItem;
+				}
 			}
 			else
 			{
-				UseBrowser = true;
-				Article = e.Parameter as ArticleItem;
+				NoInternet = true;
 			}
+
 			base.OnNavigatedTo(e, viewModelState);
 		}
 	}

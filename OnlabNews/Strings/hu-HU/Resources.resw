@@ -177,4 +177,10 @@
   <data name="LightWeightToogleSwitch.OnContent" xml:space="preserve">
     <value>Be</value>
   </data>
+  <data name="ArticleErrorText.Text" xml:space="preserve">
+    <value>Hiba történt...</value>
+  </data>
+  <data name="LoadingText.Text" xml:space="preserve">
+    <value>Betöltés...</value>
+  </data>
 </root>

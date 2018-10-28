@@ -11,27 +11,29 @@
     mc:Ignorable="d"
 	NavigationCacheMode="Enabled"
 	xmlns:t="using:Microsoft.Toolkit.Uwp.UI.Controls"
+	xmlns:c="using:OnlabNews.Converters"
 	xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Interactions="using:Microsoft.Xaml.Interactions.Core"
 	prism:ViewModelLocator.AutoWireViewModel="True">
 
 	<prism:SessionStateAwarePage.Resources>
 		<CollectionViewSource  x:Key="ArticlesCvs" x:Name="ArticlesCvs" IsSourceGrouped="True" Source="{x:Bind ViewModel.GroupedArticles, Mode=OneWay}"/>
-		<ControlTemplate x:Name="ScrollViewerScrollBarlessTemplate" TargetType="ScrollViewer">
-			<Grid Background="{TemplateBinding Background}">
-				<ScrollContentPresenter x:Name="ScrollContentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Margin="{TemplateBinding Padding}"/>
-			</Grid>
-		</ControlTemplate>
-		<ControlTemplate x:Name="ScrollViewerScrollBarlessTemplate1" TargetType="ScrollViewer">
-			<Grid Background="{TemplateBinding Background}">
-				<ScrollContentPresenter x:Name="ScrollContentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Margin="{TemplateBinding Padding}"/>
-			</Grid>
-		</ControlTemplate>
-
+		<c:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+		<c:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 	</prism:SessionStateAwarePage.Resources>
 
 	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
 		<!--<Pivot Style="{StaticResource PivotWithoutMarginStyle}">
 			<PivotItem Header="RSS">-->
+		<StackPanel VerticalAlignment="Center" Canvas.ZIndex="0" HorizontalAlignment="Center" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" Orientation="Horizontal">
+			<ProgressRing Width="50" Height="50" Margin="10" IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}" Foreground="SlateGray"/>
+			<TextBlock x:Uid="LoadingText" FontSize="30" Text="Loading..." VerticalAlignment="Center" Foreground="SlateGray"/>
+		</StackPanel>
 		<SemanticZoom>
 			<SemanticZoom.ZoomedInView>
 				<t:AdaptiveGridView IsItemClickEnabled="True" x:Name="ZoomedInArticleGrid" 
@@ -44,6 +46,7 @@
 						<GroupStyle HidesIfEmpty="False" HeaderTemplate="{StaticResource ArticlesCvsHeaderTemplate}" />
 					</GridView.GroupStyle>
 				</t:AdaptiveGridView>
+
 			</SemanticZoom.ZoomedInView>
 
 			<SemanticZoom.ZoomedOutView>

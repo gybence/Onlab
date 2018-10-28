@@ -177,4 +177,10 @@
   <data name="LightWeightToogleSwitch.OnContent" xml:space="preserve">
     <value>On</value>
   </data>
+  <data name="ArticleErrorText.Text" xml:space="preserve">
+    <value>An error occured...</value>
+  </data>
+  <data name="LoadingText.Text" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
 </root>
