@@ -27,6 +27,35 @@
 		<conv:BoolInverter x:Key="BoolInverter"/>
 	</prism:SessionStateAwarePage.Resources>
 	<ScrollViewer Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalScrollBarVisibility="Auto">
+		<VisualStateManager.VisualStateGroups>
+			<VisualStateGroup>
+				<VisualState x:Name="wideView">
+					
+					<VisualState.StateTriggers>
+						<AdaptiveTrigger MinWindowWidth="1100" />
+					</VisualState.StateTriggers>
+					<VisualState.Setters>
+						
+					</VisualState.Setters>
+					<!--<VisualState.Setters>
+						<Setter Target="AuthorDateGrid.(Width)" Value="700"></Setter>
+						<Setter Target="ParagraphsListView.(Margin)" Value="200,12"></Setter>
+
+					</VisualState.Setters>-->
+				</VisualState>
+				<VisualState x:Name="narrowView">
+					<VisualState.Setters>
+						<Setter Target="AuthorDateGrid.(Width)" Value="400"></Setter>
+						<Setter Target="ParagraphsListView.(Margin)" Value="50,12"></Setter>
+
+					</VisualState.Setters>
+					<VisualState.StateTriggers>
+						<AdaptiveTrigger MinWindowWidth="0" />
+					</VisualState.StateTriggers>
+				</VisualState>
+			</VisualStateGroup>
+		</VisualStateManager.VisualStateGroups>
+		
 		<Grid>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*"/>
@@ -58,16 +87,19 @@
 				<TextBlock Text="{x:Bind ViewModel.ScrapedArticle.Title, Mode=OneWay}" 
 						   Grid.Row="0" Margin="24,12" FontSize="40" FontWeight="Bold"
 						   TextTrimming="CharacterEllipsis" TextWrapping="WrapWholeWords"/>
-				<TextBlock Text="{x:Bind ViewModel.ScrapedArticle.Author, Mode=OneWay}"
-						   Grid.Row="1" Margin="24,12" FontSize="18" FontWeight="Thin" HorizontalAlignment="Left"/>
-				<TextBlock Text="{x:Bind ViewModel.ScrapedArticle.Date, Mode=OneWay}"
-						   Grid.Row="1" Margin="24,12" FontSize="18" FontWeight="Thin" HorizontalAlignment="Right"/>
+				<Grid x:Name="AuthorDateGrid" Grid.Row="1" Width="700">
+					<TextBlock Text="{x:Bind ViewModel.ScrapedArticle.Author, Mode=OneWay}"
+						    Margin="24,12" FontSize="18" FontWeight="Thin" HorizontalAlignment="Left"/>
+					<TextBlock Text="{x:Bind ViewModel.ScrapedArticle.Date, Mode=OneWay}"
+						    Margin="24,12" FontSize="18" FontWeight="Thin" HorizontalAlignment="Right"/>
+				</Grid>
+				
 				<TextBlock Text="{x:Bind ViewModel.ScrapedArticle.Lead, Mode=OneWay}"
 						   Grid.Row="2" Margin="24,12" FontSize="20" 
 						   TextTrimming="CharacterEllipsis" TextWrapping="WrapWholeWords"
 						   Visibility="{x:Bind ViewModel.ScrapedArticle.Lead, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"/>
-				<ListView Name="ParagraphsListView" 
-						  Grid.Row="3" IsItemClickEnabled="False" Margin="24,12"
+				<ListView x:Name="ParagraphsListView"   
+						  Grid.Row="3" IsItemClickEnabled="False" Margin="200,12"
 						  ItemsSource="{x:Bind ViewModel.ScrapedArticle.ArticleChildren, Mode=OneWay}"
 						  ItemContainerStyle="{StaticResource CheckBoxListViewItemContainerStyle}"
 						  ItemTemplate="{StaticResource ListViewArticleParagraphItemTemplate}">
