@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Windows.Web.Syndication;
 
-namespace RSSDownloader
+namespace RSSDownloader.Services
 {
-	public sealed class RssFeedDownloader
+	public sealed class RssFeedDownloader : IRssFeedDownloader
 	{
 
 		public async Task<IList<SyndicationFeed>> DownloadFeedsAsync(User currentUser = null)
@@ -30,14 +30,14 @@ namespace RSSDownloader
 					try
 					{
 						Uri uri = new Uri(f.RssFeed.Uri);
-						//TODO: timeoutot lekezelni
+						//TODO: timeoutot
 						SyndicationFeed feed = await client.RetrieveFeedAsync(uri);
 						feed.Items.OrderBy(i => i.PublishedDate);
 						results.Add(feed);
 					}
 					catch (COMException e) when (RssExceptionFilter(e) == true)
 					{
-						//lehet nincs internet, vagy a DNS szerver rip
+						//lehet nincs internet, vagy a DNS szerver nem elérhetö
 					}
 					catch (UriFormatException e)
 					{

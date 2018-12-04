@@ -118,6 +118,8 @@
     <Compile Include="Models\Scrapy\RelatedTitle.cs" />
     <Compile Include="Models\Scrapy\RootObject.cs" />
     <Compile Include="Services\DataSourceServices\IArticleDataSourceService.cs" />
+    <Compile Include="Services\DataSourceServices\IScrapyService.cs" />
+    <Compile Include="Services\DataSourceServices\ScrapyService.cs" />
     <Compile Include="Services\FacebookServices\FacebookService.cs" />
     <Compile Include="Services\FacebookServices\IFacebookService.cs" />
     <Compile Include="Services\SettingsServices\SettingsService.cs" />
@@ -148,6 +150,7 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <None Include="ClassDiagram1.cd" />
     <None Include="OnlabNews_TemporaryKey.pfx" />
     <PRIResource Include="Strings\en-US\Resources.resw" />
     <PRIResource Include="Strings\hu-HU\Resources.resw" />

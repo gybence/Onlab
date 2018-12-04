@@ -9,7 +9,7 @@ using OnlabNews.Models;
 using OnlabNews.Extensions;
 using Windows.ApplicationModel.Background;
 using Windows.Storage;
-using RSSDownloader;
+using RSSDownloader.Services;
 
 namespace OnlabNews.Services.DataSourceServices
 {
@@ -18,6 +18,8 @@ namespace OnlabNews.Services.DataSourceServices
 		#region properties
 
 		private ISettingsService _settingsService;
+		private readonly IRssFeedDownloader _rssFeedDownloader;
+
 		private RangeObservableCollection<MutableGrouping<int, ArticleItem>> _groupedArticles = new RangeObservableCollection<MutableGrouping<int, ArticleItem>>();
 		public RangeObservableCollection<MutableGrouping<int, ArticleItem>> GroupedArticles { get { return _groupedArticles; } set { _groupedArticles = value; } }
 
@@ -27,9 +29,11 @@ namespace OnlabNews.Services.DataSourceServices
 
 		#endregion
 
-		public ArticleDataSourceService(ISettingsService settingsService)
+		public ArticleDataSourceService(ISettingsService settingsService, IRssFeedDownloader rssFeedDownloader)
 		{
 			_settingsService = settingsService;
+			_rssFeedDownloader = rssFeedDownloader;
+
 			dispatcher = Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher;
 
 			RegisterBackgroundTaskAsync("TimeTriggeredTileUpdaterBackgroundTask", "Tasks.TileUpdaterBackgroundTask", new TimeTrigger(15, false));
@@ -45,8 +49,7 @@ namespace OnlabNews.Services.DataSourceServices
 				if (GroupedArticles.Count != 0)
 					GroupedArticles.Clear();
 
-				RssFeedDownloader rfg = new RssFeedDownloader();
-				var results = await rfg.DownloadFeedsAsync(_settingsService.ActiveUser);
+				var results = await _rssFeedDownloader.DownloadFeedsAsync(_settingsService.ActiveUser);
 
 				//results.count != 0
 				List<ArticleItem> list = new List<ArticleItem>();
@@ -63,7 +66,7 @@ namespace OnlabNews.Services.DataSourceServices
 
 						if(item.PublishedDate.Year != 1601)
 							published = item.PublishedDate.LocalDateTime;
-						else //persze nyilvan mi van ha a lastupdated is 1601 mert azt se toltottek ki rendesen... 
+						else //mi van ha a lastupdated is 1601 mert azt se toltottek ki rendesen... 
 							published = item.LastUpdatedTime.LocalDateTime;
 
 						string imageUri = "";
@@ -87,7 +90,7 @@ namespace OnlabNews.Services.DataSourceServices
 								}
 							}
 						}
-						///444 egy rakas fos lol, de item.Summary.Text-ben benne van vegulis
+						///item.Summary.Text-ben benne van vegulis
 						///reddit: item.Content.Text-ben ... :/
 						#endregion
 
@@ -135,7 +138,7 @@ namespace OnlabNews.Services.DataSourceServices
 					string value = attribute.Value;
 					if ((value.StartsWith("http://") || value.StartsWith("https://")) && ((value.EndsWith(".jpg") || value.EndsWith(".png") || value.EndsWith(".gif"))))
 					{
-						uri = value; // erdemes lehet az 1. talalat utane breakelni
+						uri = value; // erdemes lehet az 1. talalat utan megállni
 						break;
 					}
 				}

@@ -1,17 +1,14 @@
 ﻿using Newtonsoft.Json;
 using OnlabNews.Models;
 using OnlabNews.Models.Scrapy;
+using OnlabNews.Services.DataSourceServices;
 using OnlabNews.Services.SettingsServices;
 using Prism.Commands;
 using Prism.Windows.Mvvm;
 using Prism.Windows.Navigation;
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Core;
 
@@ -24,7 +21,7 @@ namespace OnlabNews.ViewModels
 		private INavigationService _navigationService;
 
 		private ISettingsService _settingsService;
-
+		private IScrapyService _scrapyService;
 		private DataTransferManager _dataTransferManager;
 
 		private CoreDispatcher dispatcher;
@@ -68,10 +65,11 @@ namespace OnlabNews.ViewModels
 
 		#endregion
 
-		public ArticlePageViewModel(INavigationService navigationService, ISettingsService settingsService)
+		public ArticlePageViewModel(INavigationService navigationService, ISettingsService settingsService, IScrapyService scrapyService)
 		{
 			_navigationService = navigationService;
 			_settingsService = settingsService;
+			_scrapyService = scrapyService;
 			ShareButtonCommand = new DelegateCommand(ShareButtonClick);
 			_useBrowser = false;
 			_noInternet = false;
@@ -104,77 +102,34 @@ namespace OnlabNews.ViewModels
 
 		}
 
-		private async Task RequestArticleScrapeAsync(ArticleItem toScrape)
-		{
-			using (HttpClient httpClient = new HttpClient())
-			{
-				httpClient.BaseAddress = new Uri(@"http://localhost:5000");
-				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-				httpClient.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("utf-8"));
-
-				string endpoint = @"/scrape";
-
-				try
-				{
-					IsBusy = true;
-					//JsonConvert.SerializeObject(yourPocoHere), Encoding.UTF8, "application/json"
-					//HttpContent content = new StringContent("{\"url\":\""+ toScrape + "\"}");
-					var content = new StringContent("{\"url\":\"" + toScrape.Uri + "\"}", Encoding.UTF8, "application/json");
-					HttpResponseMessage response = await httpClient.PostAsync(endpoint, content);
-
-					if (response.IsSuccessStatusCode)
-					{
-						string jsonResponse = await response.Content.ReadAsStringAsync();
-						ScrapedArticle = JsonConvert.DeserializeObject<RootObject>(jsonResponse);
-
-					}
-					else
-					{
-						UseBrowser = true;
-						Article = toScrape;
-					}
-				}
-				catch (HttpRequestException)
-				{
-					if (NetworkInterface.GetIsNetworkAvailable())
-					{
-						UseBrowser = true;
-						Article = toScrape;
-					}
-					else
-					{
-						NoInternet = true;
-					}
-
-				}
-				catch (Exception)
-				{
-					NoInternet = true;
-					//Could not connect to server
-					//Use more specific exception handling, this is just an example
-				}
-				finally
-				{
-					IsBusy = false;
-				}
-			}
-		}
-
 		public override async void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)
 		{
 			if (NetworkInterface.GetIsNetworkAvailable())
 			{
 				if (_settingsService.ActiveUser.LightweightModeEnabled)
 				{
-					await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
-					{
-						await RequestArticleScrapeAsync(e.Parameter as ArticleItem);
-					});
+					IsBusy = true;
+					var s = JsonConvert.DeserializeObject<ArticleItem>(e.Parameter.ToString());
+					//await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
+					//{
+						ScrapedArticle = await _scrapyService.RequestArticleScrapeAsync(s);
+					//});
+					IsBusy = false;
+
+					if (ScrapedArticle == null && NetworkInterface.GetIsNetworkAvailable())
+					{ //azért kell itt is ellenörizni, mert lehet hogy a kérés feldolgozása között elment az internet
+						UseBrowser = true;
+						Article = s;
+					}
+					else if (ScrapedArticle == null && !NetworkInterface.GetIsNetworkAvailable())
+					{ //azért kell itt is ellenörizni, mert lehet hogy a kérés feldolgozása között elment az internet
+						NoInternet = true;	
+					}
 				}
 				else
 				{
 					UseBrowser = true;
-					Article = e.Parameter as ArticleItem;
+					Article = JsonConvert.DeserializeObject<ArticleItem>(e.Parameter.ToString());
 				}
 			}
 			else

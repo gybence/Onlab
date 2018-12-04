@@ -108,7 +108,9 @@
 					   TextTrimming="CharacterEllipsis" TextWrapping="WrapWholeWords"/>
 			<Interactivity:Interaction.Behaviors>
 				<Interactions:EventTriggerBehavior EventName="Tapped">
-					<Interactions:NavigateToPageAction TargetPage="OnlabNews.Views.ArticlePage" Parameter="{Binding}"/>
+					<Interactions:InvokeCommandAction 
+												Command="{Binding DataContext.OnItemClickCommand, ElementName=ZoomedInArticleGrid}"
+												CommandParameter="{Binding}"/>
 				</Interactions:EventTriggerBehavior>
 			</Interactivity:Interaction.Behaviors>
 		</Grid>

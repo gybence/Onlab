@@ -1,13 +1,9 @@
-﻿using DataAccessLibrary;
-using DataAccessLibrary.Model;
-using Microsoft.Toolkit.Uwp.Notifications;
-using RSSDownloader;
+﻿using Microsoft.Toolkit.Uwp.Notifications;
+using RSSDownloader.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.ApplicationModel.Background;
 using Windows.Storage;
 using Windows.UI.Notifications;
@@ -17,7 +13,7 @@ namespace Tasks
 {
 	public sealed class TileUpdaterBackgroundTask : IBackgroundTask
 	{
-		
+
 		BackgroundTaskDeferral _deferral;
 		public async void Run(IBackgroundTaskInstance taskInstance)
 		{
@@ -26,7 +22,7 @@ namespace Tasks
 			{
 				//ha volt frissen letoltve hir akkor inkabb azt hasznaljuk majd
 				var localSettings = ApplicationData.Current.LocalSettings;
-				var pubDate = (string) localSettings.Values["pubDate"];
+				var pubDate = (string)localSettings.Values["pubDate"];
 
 				var age = DateTime.Now - DateTime.Parse(pubDate);
 				if (age.TotalHours < 1)                                             //ha kevesebb mint 1 oraja toltotte le a hireket az app akkor meg hasznalhato
@@ -40,20 +36,20 @@ namespace Tasks
 				else if (NetworkInterface.GetIsNetworkAvailable())
 				{
 
-						RssFeedDownloader rfg = new RssFeedDownloader();
-						var results = await rfg.DownloadFeedsAsync();
+					RssFeedDownloader rfg = new RssFeedDownloader();
+					var results = await rfg.DownloadFeedsAsync();
 
-						IList<SyndicationItem> items = new List<SyndicationItem>();
-						foreach (SyndicationFeed f in results)
-						{
-							f.Items[0].Source = f;
-							items.Add(f.Items[0]);
-						}
-						items.OrderBy(i => i.PublishedDate);
-						if (items.Count > 0)
-							UpdateTile(items[0].Source.Title.Text ?? "OnlabNews", items[0].Title.Text);
-					
-					
+					IList<SyndicationItem> items = new List<SyndicationItem>();
+					foreach (SyndicationFeed f in results)
+					{
+						f.Items[0].Source = f;
+						items.Add(f.Items[0]);
+					}
+					items.OrderBy(i => i.PublishedDate);
+					if (items.Count > 0)
+						UpdateTile(items[0].Source.Title.Text ?? "OnlabNews", items[0].Title.Text);
+
+
 				}
 			}
 			catch

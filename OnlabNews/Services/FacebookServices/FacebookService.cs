@@ -26,7 +26,7 @@ namespace OnlabNews.Services.FacebookServices
 		private ISettingsService _settingsService;
 
 		public string AppID { get => "2032332537092014"; }
-		public string AccessToken { get; private set; }
+		protected string AccessToken { get; private set; }
 		public bool IsLoggedIn => !string.IsNullOrEmpty(AccessToken);
 		public string UserID { get; private set; } = "Default";
 		public string UserName { get; private set; }
@@ -54,7 +54,7 @@ namespace OnlabNews.Services.FacebookServices
 				//{
 				//    AccessToken = ApplicationData.Current.LocalSettings.Values[nameof(AccessToken)] as string;
 				//}
-				AccessToken = new PasswordVault().Retrieve("Onlab", nameof(AccessToken)).Password; //kivetelt dob ha nem talalja meg, le koll kezelni dx
+				AccessToken = new PasswordVault().Retrieve("Onlab", nameof(AccessToken)).Password; //kivetelt dob ha nem talalja meg, le kell kezelni
 
 				Task.Run(() => GetUserAsync()); //TODO: ez itt nagyon nem jo
 			}

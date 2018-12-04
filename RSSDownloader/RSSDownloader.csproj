@@ -106,8 +106,9 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Services\IRssFeedDownloader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RssDownloader.cs" />
+    <Compile Include="Services\RssFeedDownloader.cs" />
     <EmbeddedResource Include="Properties\RSSDownloader.rd.xml" />
   </ItemGroup>
   <ItemGroup>

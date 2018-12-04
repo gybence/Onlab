@@ -1,4 +1,5 @@
-﻿using OnlabNews.Models;
+﻿using Newtonsoft.Json;
+using OnlabNews.Models;
 using OnlabNews.Services.DataSourceServices;
 using Prism.Commands;
 using Prism.Windows.Mvvm;
@@ -49,7 +50,8 @@ namespace OnlabNews.ViewModels
 
 		private void OnClickNavigate(object clickedItem)
 		{
-			_navigationService.Navigate("Article", clickedItem);
+			string s = JsonConvert.SerializeObject(clickedItem);
+			_navigationService.Navigate("Article", s);
 		}
 
 		public override void OnNavigatedTo(NavigatedToEventArgs e, Dictionary<string, object> viewModelState)

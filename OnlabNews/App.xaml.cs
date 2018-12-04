@@ -1,6 +1,5 @@
 ﻿using Prism.Unity.Windows;
 using Prism.Windows.Navigation;
-using System;
 using System.Threading.Tasks;
 using Unity;
 using Windows.ApplicationModel.Activation;
@@ -14,14 +13,7 @@ using OnlabNews.Services.SettingsServices;
 using Unity.Lifetime;
 using OnlabNews.Services.DataSourceServices;
 using OnlabNews.Services.FacebookServices;
-using Windows.ApplicationModel.Background;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using System.Collections.Generic;
-using Windows.ApplicationModel.Core;
-using Windows.UI.ViewManagement;
-using Windows.UI;
-using Prism.Windows.AppModel;
-using Windows.ApplicationModel.Resources;
+using RSSDownloader.Services;
 
 namespace OnlabNews
 {
@@ -58,10 +50,13 @@ namespace OnlabNews
 		{
 	
 			Container.RegisterInstance<INavigationService>(NavigationService);
+			Container.RegisterInstance<IScrapyService>(new ScrapyService(), new ContainerControlledLifetimeManager());
+
+			Container.RegisterInstance<IRssFeedDownloader>(new RssFeedDownloader(), new ContainerControlledLifetimeManager());
 			Container.RegisterInstance<ISettingsService>(new SettingsService(), new ContainerControlledLifetimeManager());
 			Container.RegisterInstance<IFacebookService>(new FacebookService(Container.Resolve<ISettingsService>()), new ContainerControlledLifetimeManager());
 
-			Container.RegisterInstance<IArticleDataSourceService>(new ArticleDataSourceService(Container.Resolve<ISettingsService>()), new ContainerControlledLifetimeManager());
+			Container.RegisterInstance<IArticleDataSourceService>(new ArticleDataSourceService(Container.Resolve<ISettingsService>(), Container.Resolve<IRssFeedDownloader>()), new ContainerControlledLifetimeManager());
 			//Container.RegisterInstance<IResourceLoader>(new ResourceLoaderAdapter(new ResourceLoader()));
 			
 			return base.OnInitializeAsync(args);
