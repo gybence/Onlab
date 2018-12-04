@@ -121,7 +121,7 @@
     <value>Cikk</value>
   </data>
   <data name="FacebookLoginButton.Content" xml:space="preserve">
-    <value>Facebook Bejelentkezés</value>
+    <value>Bejelentkezés Facebook fiókkal</value>
   </data>
   <data name="FacebookLogoutButton.Content" xml:space="preserve">
     <value>Kijelentkezés</value>

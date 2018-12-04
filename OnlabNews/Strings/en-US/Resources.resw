@@ -121,7 +121,7 @@
     <value>Article</value>
   </data>
   <data name="FacebookLoginButton.Content" xml:space="preserve">
-    <value>Facebook Login</value>
+    <value>Login with Facebook</value>
   </data>
   <data name="FacebookLogoutButton.Content" xml:space="preserve">
     <value>Logout</value>
